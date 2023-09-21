@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import reactLogo from './assets/react.svg';
 import Login from './components/Login';
+import Profile from './components/Profile';
+import Review from './components/Review';
+import SignUp from './components/SignUp';
+import NavBar from './components/NavBar';
+
 
 function App() {
 
