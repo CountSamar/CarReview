@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Login = ({email, setEmail, password, setPassword}) => {
+ 
   const [message, setMessage] = useState('');
 
   const handleEmailChange = (e) => {
@@ -12,6 +12,12 @@ const Login = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+
+  const showToastMessage = () => {
+    toast.success('Login Successful !', {
+      position: toast.POSITION.BOTTOM_CENTER
+    })
+  }
 
   const login = async() => {
     try {
