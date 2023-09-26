@@ -16,7 +16,7 @@ const apiRouter = require('./api');
 app.use('/api', apiRouter);
 
 router.listen(app, 3001, () =>
-  console.log('Server is listening on port 3000...')
+  console.log('Server is listening on port 3001...')
 );
 
 module.exports = router;
