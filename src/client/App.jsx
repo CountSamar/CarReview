@@ -14,6 +14,7 @@ export default function App() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
 
   return (
     <>
@@ -37,6 +38,8 @@ export default function App() {
         path='/Login'
         element={
           <Login 
+            isLoggedIn={isLoggedIn}
+            setIsLoggedIn={setIsLoggedIn}
             email={email}
             setEmail={setEmail}
             password={password}
