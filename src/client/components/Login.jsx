@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
 
 const Login = ({email, setEmail, password, setPassword}) => {
  
   const [message, setMessage] = useState('');
+  
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -36,8 +38,8 @@ const Login = ({email, setEmail, password, setPassword}) => {
         if(!response.ok) {
           throw(result)
         }
-        setEmail('');
-        setPassword('');
+     
+        showToastMessage()
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }
