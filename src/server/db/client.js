@@ -12,11 +12,14 @@ const pool = new Pool({
 pool.connect()
   .then(() => {
     console.log("Successfully connected to the database!");
-    pool.end();
   })
   .catch(err => {
     console.error("Error connecting to the database:", err.stack);
-    pool.end();
   });
+
+// Error handler for unexpected errors on idle clients.
+pool.on('error', (err, client) => {
+  console.error('Unexpected error on idle client', err);
+});
 
 module.exports = pool;
