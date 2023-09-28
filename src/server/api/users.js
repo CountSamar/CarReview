@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -7,6 +8,12 @@ const jwt = require('jsonwebtoken');
 const { createUser, getUserByEmail, getUser } = require('../db/client.js'); 
 const db = require('../db/client');
 c
+=======
+const express = require('express');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { createUser, getUserByEmail, getUser } = require('./db/client.js'); 
+>>>>>>> origin/HenryBranch
 
 const usersRouter = express.Router();
 
@@ -56,7 +63,7 @@ usersRouter.post('/login', async (req, res, next) => {
     }
 });
 
-usersRouter.post('/register', async(req, res, next) => {
+usersRouter.post('/register', async (req, res, next) => {
     const { name, email, password } = req.body;
 
     try {
@@ -73,7 +80,7 @@ usersRouter.post('/register', async(req, res, next) => {
         const user = await createUser({
             name,
             email,
-            password
+            password: hashedPassword
         });
 
         const token = jwt.sign({
