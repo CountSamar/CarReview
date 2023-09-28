@@ -1,7 +1,12 @@
+const dotenv = require('dotenv');
+dotenv.config();
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, getUserByEmail, getUser } = require('./db/client.js'); 
+const { createUser, getUserByEmail, getUser } = require('../db/client.js'); 
+const db = require('../db/client');
+c
 
 const usersRouter = express.Router();
 
