@@ -15,10 +15,11 @@ const createFriend = async({userid, friendid }) => {
     }
 }
 
-const getFriends = async({userid, friendid}) => {
-    if(!userid || !friendid) {
-        return;
-    }
+const getFriends = async(userid) => {
+    
+    if(!userid) {
+         return;
+     }
     try {
         const friends = await getFriendsbyUserId(userid);
         if(!friends) return;
@@ -28,21 +29,20 @@ const getFriends = async({userid, friendid}) => {
     }
 }
 
-const getFriendsbyUserId = async(userid) => {
+async function getFriendsbyUserId (userid) {
+    console.log(userid, "my userid")
     try {
-        const { rows: [ friend ] } = await db.query(`
+        const { rows } = await db.query(`
         SELECT * 
         FROM friends
-        WHERE userid=$1;`, [ userid ]);
+        WHERE userid=$1`, [ userid ]);
 
-        if(!friend) {
-            return;
-        }
-        return friend;
+        return rows;
     } catch (err) {
         throw err;
     }
 }
+
 
 module.exports = {
     createFriend,

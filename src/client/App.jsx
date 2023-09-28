@@ -17,8 +17,7 @@ function App() {
     <NavBar />
     <div className='App'>
         <h1>Capstone Project</h1>
-        <img></img>
-        <p></p>
+        
 
         <Routes>
           <Route path='/' element={<Profile />} />

@@ -9,9 +9,10 @@ const {
 
 const jwt = require('jsonwebtoken')
 
-friendsRouter.get('/', async( req, res, next) => {
+friendsRouter.get('/:id', async( req, res, next) => {
+    console.log(req.params.id, "id in friends")
     try {
-        const friends = await getFriends();
+        const friends = await getFriends(req.params.id);
 
         res.send({
             friends
