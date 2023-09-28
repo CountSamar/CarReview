@@ -15,12 +15,15 @@ export default function App() {
   const [password, setPassword] = useState('')
   const [username, setUsername] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-
+  const [token, setToken] = useState('')
+  console.log(setEmail)
+  console.log(setPassword)
+  console.log(token)
   return (
     <>
     <h1>Our Project</h1>
     <NavBar />
-    <Login />
+    {/* <Login /> */}
     <Routes>
       <Route path="/" element={<Home/>}/>
       <Route
@@ -44,6 +47,8 @@ export default function App() {
             setEmail={setEmail}
             password={password}
             setPassword={setPassword}
+            token={token}
+            setToken={setToken}
             />
           }
         />
@@ -58,11 +63,13 @@ export default function App() {
             setUsername={setUsername}
             password={password}
             setPassword={setPassword}
+            token={token}
+            setToken={setToken}
             />
           }
       />
     </Routes>
-   
+    <ToastContainer />
    </>
   );
 }

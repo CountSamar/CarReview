@@ -1,7 +1,8 @@
 // SignUp.jsx
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
 
-function SignUp() {
+function SignUp({ setToken }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -9,6 +10,40 @@ function SignUp() {
     email: '',
     password: '',
   });
+
+  const showToastMessage = () => {
+    toast.success('Sign Up Successful !', {
+      position: toast.POSITION.BOTTOM_CENTER
+    })
+  }
+
+  const register = async() => {
+    try {
+        const response = await fetch('http://localhost:3000/api/users/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            }, 
+            body: JSON.stringify({
+                email: formData.email,
+                password: formData.password,
+                name: formData.firstName + ' ' + formData.lastName,
+                username: formData.username
+            })
+        });
+        const result = await response.json();
+        setMessage(result.message);
+        if(!response.ok) {
+          throw(result)
+        }
+        if (result.token) {
+          setToken(result.token)
+          localStorage.setItem('token', result.token)}
+        showToastMessage()
+    } catch (err) {
+        console.error(`${err.name}: ${err.message}`);
+    }
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,7 +55,7 @@ function SignUp() {
 
     //
     console.log('SignUp Form has been submitted:', formData);
-
+    register()
     // reset the form after account has been made
     setFormData({
       firstName: '',
