@@ -7,7 +7,7 @@ const app = express();
 const bodyParser = require('body-parser')
 app.use(bodyParser.json());
 
-app.use(express.static('public'))
+app.use(express.static('../../dist'))
 
 const db = require('./db/client')
 db.connect()
@@ -15,8 +15,8 @@ db.connect()
 const apiRouter = require('./api');
 app.use('/api', apiRouter);
 
-router.listen(app, 3000, () =>
-  console.log('Server is listening on port 3000...')
+router.listen(app, 3001, () =>
+  console.log('Server is listening on port 3001...')
 );
 
 module.exports = router;

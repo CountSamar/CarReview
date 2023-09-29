@@ -6,7 +6,8 @@
     "dev": "nodemon src/server/main.js -w src/server",
     "start": "NODE_ENV=production node src/server/main.js",
     "seed": "node ./src/server/db/seed.js",
-    "build": "vite build"
+    "build": "vite build",
+    "dev:vite": "vite"
   },
   "dependencies": {
     "bcrypt": "^5.1.0",
@@ -18,7 +19,10 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.16.0",
+<<<<<<< HEAD
     "react-toastify": "^9.1.3",
+=======
+>>>>>>> bb7cd9b0608f5c44e099dadb883f8f593207ea57
     "vite-express": "*",
     "volleyball": "^1.5.1"
   },
@@ -27,6 +31,6 @@
     "@types/react-dom": "^18.0.10",
     "@vitejs/plugin-react": "^3.0.1",
     "nodemon": "^2.0.20",
-    "vite": "^4.0.4"
+    "vite": "^4.4.9"
   }
 }
