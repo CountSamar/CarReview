@@ -12,6 +12,8 @@ import Profile from './components/Profile';
 import Review from './components/Review';
 import SignUp from './components/SignUp';
 import NavBar from './components/NavBar';
+import SendMessage from './components/SendMessage';
+import ReceiveMessage from './components/ReceiveMessage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 
