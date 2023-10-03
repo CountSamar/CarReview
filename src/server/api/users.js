@@ -4,8 +4,7 @@ dotenv.config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { createUser, getUserByEmail, getUser } = require('../db/client.js');
-const db = require('../db/client');
+
 
 const usersRouter = express.Router();
 
@@ -16,7 +15,7 @@ const {
     getAllUsers
 } = require('../db');
 
-const jwt = require('jsonwebtoken')
+
 
 usersRouter.get('/', async( req, res, next) => {
     try {
