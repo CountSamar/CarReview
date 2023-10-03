@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
+ 
   const [message, setMessage] = useState('');
+  console.log(setPassword)
+  console.log(setEmail)
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -12,6 +15,12 @@ const Login = () => {
   const handlePasswordChange = (e) => {
     setPassword(e.target.value);
   };
+
+  const showToastMessage = () => {
+    toast.success('Login Successful !', {
+      position: toast.POSITION.BOTTOM_CENTER
+    })
+  }
 
   const login = async() => {
     try {
@@ -30,8 +39,12 @@ const Login = () => {
         if(!response.ok) {
           throw(result)
         }
-        setEmail('');
-        setPassword('');
+        if (result.token) {
+          setToken(result.token)
+          localStorage.setItem('token', result.token)
+        }
+        console.log(result.token)
+        showToastMessage()
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }

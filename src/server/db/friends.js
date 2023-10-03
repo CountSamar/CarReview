@@ -1,8 +1,8 @@
 const db = require('./client')
 
 
-const createFriend = async({userid, friendid }) => {
-    
+const createFriend = async({userid, friendid}) => {
+    console.log(`${userid} and ${friendid}`)
     try {
         const { rows: [friend] } = await db.query(`
         INSERT INTO friends (userid, friendid)
@@ -33,9 +33,11 @@ async function getFriendsbyUserId (userid) {
     console.log(userid, "my userid")
     try {
         const { rows } = await db.query(`
-        SELECT * 
-        FROM friends
-        WHERE userid=$1`, [ userid ]);
+        SELECT friends.userid, friends.friendid, users.name 
+        FROM users
+        INNER JOIN friends
+        ON friends.friendid = users.id`)
+        // WHERE users.id=$1`, [ userid ]);
 
         return rows;
     } catch (err) {
@@ -46,6 +48,5 @@ async function getFriendsbyUserId (userid) {
 
 module.exports = {
     createFriend,
-    getFriends,
-    getFriendsbyUserId
+    getFriends
 };

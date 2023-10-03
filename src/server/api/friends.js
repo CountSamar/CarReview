@@ -3,8 +3,7 @@ const friendsRouter = express.Router();
 
 const {
     createFriend,
-    getFriends,
-    getFriendsbyUserId
+    getFriends
 } = require('../db');
 
 const jwt = require('jsonwebtoken')
@@ -24,6 +23,7 @@ friendsRouter.get('/:id', async( req, res, next) => {
 
 friendsRouter.post('/addfriend', async(req, res, next) => {
     const {userid, friendid } = req.body;
+    console.log(req.body, "body")
     if(!userid || !friendid) {
         next({
             name: 'MissingFriend',

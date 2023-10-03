@@ -17,6 +17,8 @@ export default function Friend() {
       }, []);
 
   return (
-    <div>Friend</div>
+    <div>
+        <h1>Friends</h1>
+    </div>
   )
 }

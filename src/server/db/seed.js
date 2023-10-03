@@ -1,3 +1,5 @@
+
+
 const db = require('./client');
 const { createUser } = require('./users');
 
@@ -6,26 +8,31 @@ const users = [
     name: 'Emily Johnson',
     email: 'emily@example.com',
     password: 'securepass',
+    username: 'johndoe'
   },
   {
     name: 'Liu Wei',
     email: 'liu@example.com',
     password: 'strongpass',
+    username: 'johndoe'
   },
   {
     name: 'Isabella García',
     email: 'bella@example.com',
     password: 'pass1234',
+    username: 'johndoe'
   },
   {
     name: 'Mohammed Ahmed',
     email: 'mohammed@example.com',
     password: 'mysecretpassword',
+    username: 'johndoe'
   },
   {
     name: 'John Smith',
     email: 'john@example.com',
     password: 'password123',
+    username: 'johndoe'
   },
   // Add more user objects as needed
 ];  
@@ -48,6 +55,7 @@ const createTables = async () => {
             id SERIAL PRIMARY KEY,
             name VARCHAR(255) DEFAULT 'name',
             email VARCHAR(255) UNIQUE NOT NULL,
+            username VARCHAR(255) NOT NULL,
             password VARCHAR(255) NOT NULL
         )`)
     }
@@ -59,7 +67,7 @@ const createTables = async () => {
 const insertUsers = async () => {
   try {
     for (const user of users) {
-      await createUser({name: user.name, email: user.email, password: user.password});
+      await createUser({name: user.name, email: user.email, username: user.username, password: user.password});
     }
     console.log('Seed data inserted successfully.');
   } catch (error) {

@@ -1,17 +1,26 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import { Routes, Route } from 'react-router-dom'
+import { useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom'
 import Login from './components/Login';
+import Home from './components/Home';
 import Profile from './components/Profile';
 import Review from './components/Review';
 import SignUp from './components/SignUp';
 import NavBar from './components/NavBar';
 import WriteReview from './components/WriteReview';
 import Logout from './components/Logout';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'
 
-function App() {
-  const [count, setCount] = useState(0);
 
+export default function App() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [username, setUsername] = useState('')
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [token, setToken] = useState('')
+  console.log(setEmail)
+  console.log(setPassword)
+  console.log(token)
   return (
     <>
     <NavBar />
@@ -32,4 +41,4 @@ function App() {
   );
 }
 
-export default App;
+
