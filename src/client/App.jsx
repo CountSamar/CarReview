@@ -8,12 +8,9 @@ import NavBar from './components/NavBar';
 import WriteReview from './components/WriteReview';
 import Logout from './components/Logout';
 import Home from './components/Home';
-import Profile from './components/Profile';
-import Review from './components/Review';
-import SignUp from './components/SignUp';
-import NavBar from './components/NavBar';
 import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css';
+
 
 
 export default function App() {
