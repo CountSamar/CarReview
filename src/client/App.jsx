@@ -8,10 +8,6 @@ import NavBar from './components/NavBar';
 import WriteReview from './components/WriteReview';
 import Logout from './components/Logout';
 import Home from './components/Home';
-import Profile from './components/Profile';
-import Review from './components/Review';
-import SignUp from './components/SignUp';
-import NavBar from './components/NavBar';
 import SendMessage from './components/SendMessage';
 import ReceiveMessage from './components/ReceiveMessage';
 import { ToastContainer, toast } from 'react-toastify';
@@ -24,8 +20,9 @@ export default function App() {
   const [username, setUsername] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [token, setToken] = useState('')
-  console.log(setEmail)
-  console.log(setPassword)
+
+  console.log(email)
+  console.log(password)
   console.log(token)
   return (
     <>
