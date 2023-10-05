@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
  
   const [message, setMessage] = useState('');
+  let navigate = useNavigate()
   console.log(setPassword)
   console.log(setEmail)
 
@@ -35,6 +36,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
             })
         });
         const result = await response.json();
+        console.log(result)
         setMessage(result.message);
         if(!response.ok) {
           throw(result)
@@ -45,6 +47,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         }
         console.log(result.token)
         showToastMessage()
+        navigate('/Profile')
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }
