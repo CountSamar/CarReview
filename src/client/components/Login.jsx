@@ -47,7 +47,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         }
         console.log(result.token)
         showToastMessage()
-        navigate('/Profile')
+        navigate('/profile')
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }
