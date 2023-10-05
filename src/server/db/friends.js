@@ -36,8 +36,8 @@ async function getFriendsbyUserId (userid) {
         SELECT friends.userid, friends.friendid, users.name 
         FROM users
         INNER JOIN friends
-        ON friends.friendid = users.id`)
-        // WHERE users.id=$1`, [ userid ]);
+        ON friends.friendid = users.id
+        WHERE friends.userid=$1`, [ userid ]);
 
         return rows;
     } catch (err) {

@@ -38,6 +38,7 @@ function SignUp({ setToken }) {
         }
         if (result.token) {
           setToken(result.token)
+          console.log(atob(result.token))
           localStorage.setItem('token', result.token)}
         showToastMessage()
     } catch (err) {

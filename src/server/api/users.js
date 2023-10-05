@@ -3,9 +3,8 @@ dotenv.config();
 
 const express = require('express');
 const bcrypt = require('bcrypt');
-// const jwt = require('jsonwebtoken');
-// const { createUser, getUserByEmail, getUser } = require('../db/client.js');
-const db = require('../db/client');
+const jwt = require('jsonwebtoken');
+
 
 const usersRouter = express.Router();
 
@@ -16,7 +15,7 @@ const {
     getAllUsers
 } = require('../db');
 
-const jwt = require('jsonwebtoken')
+
 
 usersRouter.get('/', async( req, res, next) => {
     try {
@@ -65,7 +64,7 @@ usersRouter.post('/login', async (req, res, next) => {
 });
 
 usersRouter.post('/register', async (req, res, next) => {
-    const { name, email, password } = req.body;
+    const { name, email, username, password } = req.body;
 
     try {
         const _user = await getUserByEmail(email);
@@ -77,16 +76,19 @@ usersRouter.post('/register', async (req, res, next) => {
             });
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
+       // const hashedPassword = await bcrypt.hash(password, 10);
         const user = await createUser({
             name,
             email,
-            password: hashedPassword
+            // password: hashedPassword 
+            password,
+            username
         });
 
         const token = jwt.sign({
             id: user.id,
-            email
+            email,
+            name: user.name // Added Oct 4
         }, process.env.JWT_SECRET, {
             expiresIn: '1w'
         });
