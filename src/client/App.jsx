@@ -30,7 +30,7 @@ export default function App() {
     <NavBar />
     {/* <Login /> */}
     <Routes>
-      <Route path="/" element={<Home/>}/>
+      <Route path="/" element={<Home />}/>
       <Route
         path="/Profile"
         element={
