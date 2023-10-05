@@ -6,7 +6,7 @@ const SendMessage = () => {
     const [message, setMessage] = useState('')
 
   useEffect(() => {
-    const newSocket = new WebSocket('ws.//localhost:3001')
+    const newSocket = new WebSocket('ws.//localhost:3000')
     newSocket.onopen = function() {
         setSocket(newSocket)
     }
