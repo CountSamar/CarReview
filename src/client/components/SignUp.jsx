@@ -1,8 +1,9 @@
 // SignUp.jsx
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom'
 
-function SignUp({ setToken }) {
+function SignUp({ setToken, setMessage }) {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -10,13 +11,13 @@ function SignUp({ setToken }) {
     email: '',
     password: '',
   });
-
+  let navigate = useNavigate()
   const showToastMessage = () => {
     toast.success('Sign Up Successful !', {
       position: toast.POSITION.BOTTOM_CENTER
     })
   }
-
+  console.log(formData.username)
   const register = async() => {
     try {
         const response = await fetch('http://localhost:3000/api/users/register', {
@@ -32,7 +33,7 @@ function SignUp({ setToken }) {
             })
         });
         const result = await response.json();
-        setMessage(result.message);
+       
         if(!response.ok) {
           throw(result)
         }
@@ -40,6 +41,7 @@ function SignUp({ setToken }) {
           setToken(result.token)
           localStorage.setItem('token', result.token)}
         showToastMessage()
+        navigate('/Login')
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }
