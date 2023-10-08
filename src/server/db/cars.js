@@ -1,16 +1,17 @@
 const db = require('./client');  
-const createCar = async({ model, brand, year }) => {
+const createCar = async({ model, brand, year, imagePath }) => {
     try {
         const { rows: [car] } = await db.query(`
-            INSERT INTO cars(model, brand, year)
-            VALUES($1, $2, $3)
-            RETURNING *`, [model, brand, year]);
+            INSERT INTO cars(model, brand, year, image_path)
+            VALUES($1, $2, $3, $4)
+            RETURNING *`, [model, brand, year, imagePath]);
 
         return car;
     } catch (err) {
         throw err;
     }
 }
+
 
 const getAllCars = async() => {
     try {

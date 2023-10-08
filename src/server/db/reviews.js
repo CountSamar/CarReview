@@ -64,11 +64,44 @@ const deleteReview = async(id) => {
         throw err;
     }
 }
+const getLatestReviews = async () => {
+    try {
+        const query = `
+            SELECT 
+                r.id, 
+                r.car_id, 
+                r.user_id, 
+                r.rating, 
+                r.comment, 
+                r.date_created, 
+                u.name as user_name,
+                c.imagePath as car_image   // select imagePath column from cars table
+            FROM reviews r
+            JOIN users u ON r.user_id = u.id
+            JOIN cars c ON r.car_id = c.id   // join reviews table with cars table on car_id
+            ORDER BY r.date_created DESC
+            LIMIT 5
+        `;
+
+        const { rows } = await db.query(query);
+        
+        console.log("Fetched rows from DB:", rows);  // Log the result here to verify
+
+        return rows;
+
+    } catch (err) {
+        console.error("Error in getLatestReviews:", err);  // Better error logging
+        throw err;
+    }
+}
+
+
 
 module.exports = {
     createReview,
     getAllReviews,
     getReviewById,
     updateReview,
-    deleteReview
+    deleteReview,
+    getLatestReviews 
 };

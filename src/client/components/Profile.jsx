@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Logout from './Logout';
-import Review from './Review';
-import WriteReview from './WriteReview';
-import Friend from './Friend';
+
 
 const Profile = () => {
     return ( 

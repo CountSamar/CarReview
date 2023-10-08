@@ -1,42 +1,35 @@
-const express = require("express");
+const express = require('express');
 const app = express();
-const PORT = 3000;
+const cors = require('cors');
+const PORT = process.env.PORT || 5001;
 
-const pool = require("../db/client.js");
+const userRoutes = require('./routes/userroutes');
+const carRoutes = require('./routes/carroute');
+const reviewRoutes = require('./routes/reviewroute');
 
-// Route for fetching users
-app.get("/users", async (req, res) => {
-  try {
-    const { rows } = await pool.query("SELECT * FROM users");
-    console.log("Retrieved Users:", rows); // This will print the list of users to the console.
-    res.json(rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
+app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000', // assuming your frontend runs on 3000
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 
-// Route for fetching cars
-app.get("/api/cars", async (req, res) => {
-  try {
-    const { rows } = await pool.query("SELECT * FROM cars");
-    console.log("Retrieved Cars:", rows); // This will print the list of cars to the console.
-    res.json(rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
-app.get("/api/reviews", async (req, res) => {
-  try {
-    const { rows } = await pool.query("SELECT * FROM reviews");
-    console.log("Retrieved Reviews:", rows); // This will print the list of reviews to the console.
-    res.json(rows);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send("Server error");
-  }
-});
+app.use(express.json()); 
+
+// Serve static files from uploads directory
+app.use('/uploads', express.static('uploads'));
+
+
+
+  app.get('/api/test', (req, res) => {
+    console.log("Test endpoint hit!");
+    res.json({ message: 'This is a test message from the server' });
+  });
+
+
+app.use('/users', userRoutes);
+app.use('/api/cars', carRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

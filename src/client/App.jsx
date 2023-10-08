@@ -1,80 +1,35 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Link } from 'react-router-dom'
-import Login from './components/Login';
-import Profile from './components/Profile';
-import Review from './components/Review';
-import SignUp from './components/SignUp';
-import NavBar from './components/NavBar';
-import WriteReview from './components/WriteReview';
-import Logout from './components/Logout';
+import { Routes, Route, Link } from 'react-router-dom';
+
+import NavBar from './components/NavBar'; // Importing NavBar
 import Home from './components/Home';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import Profile from './components/Profile'; 
+import SignUp from './components/SignUp';
+import Login from './components/Login';
 
 
 
 export default function App() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [token, setToken] = useState('')
-  console.log(setEmail)
-  console.log(setPassword)
-  console.log(token)
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState('');
+
   return (
     <>
-    <h1>Our Project</h1>
-    <NavBar />
-    {/* <Login /> */}
-    <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route
-        path="/Profile"
-        element={
-          <Profile 
-            username={username}
-            />
-        }
-      />
-      <Route 
-        path="/Review"
-        element={<Review />}/>  
-      <Route
-        path='/Login'
-        element={
-          <Login 
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            token={token}
-            setToken={setToken}
-            />
-          }
-        />
-
-      <Route 
-        path='/register'
-        element={
-          <SignUp 
-            email={email}
-            setEmail={setEmail}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-            token={token}
-            setToken={setToken}
-            />
-          }
-      />
-    </Routes>
-    <ToastContainer />
-   </>
+      <h1>Car Review</h1>
+      <NavBar /> {/* Displaying NavBar at the top */}
+      
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/signup" element={<SignUp />} />
+        <Route path="/login" element={<Login />} />
+        
+        {/* ... any other routes you may have ... */}
+      </Routes>
+    </>
   );
 }
-
 

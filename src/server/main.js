@@ -1,5 +1,6 @@
 require('dotenv').config()
-const usersRouter = require('./api/users');
+const userRoutes = require('./api/routes/userroutes');
+
 
 const express = require('express');
 const router = require('vite-express');
