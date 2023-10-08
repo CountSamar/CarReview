@@ -9,12 +9,18 @@ import LikeButton from './components/LikeButton';
 import WriteReview from './components/WriteReview';
 import Logout from './components/Logout';
 import Home from './components/Home';
+<<<<<<< HEAD
 import SendMessage from './components/SendMessage';
 import ReceiveMessage from './components/ReceiveMessage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+=======
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+>>>>>>> c6fc5467083144f1e26fb6464c6f71bbd95eef0f
 
 
 export default function App() {
