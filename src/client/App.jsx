@@ -5,6 +5,7 @@ import Profile from './components/Profile';
 import Review from './components/Review';
 import SignUp from './components/SignUp';
 import NavBar from './components/NavBar';
+import LikeButton from './components/LikeButton';
 import WriteReview from './components/WriteReview';
 import Logout from './components/Logout';
 import Home from './components/Home';
@@ -12,6 +13,8 @@ import SendMessage from './components/SendMessage';
 import ReceiveMessage from './components/ReceiveMessage';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 
 
 export default function App() {
@@ -28,6 +31,7 @@ export default function App() {
     <>
     <h1>Our Project</h1>
     <NavBar />
+    <LikeButton />
     {/* <Login /> */}
     <Routes>
       <Route path="/" element={<Home />}/>
