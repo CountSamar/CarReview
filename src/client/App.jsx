@@ -3,6 +3,7 @@ import { Routes, Route, Link } from 'react-router-dom'
 import Login from './components/Login';
 import Profile from './components/Profile';
 import Review from './components/Review';
+import SearchBar from './components/SearchBar'
 import SignUp from './components/SignUp';
 import NavBar from './components/NavBar';
 import LikeButton from './components/LikeButton';
@@ -31,7 +32,8 @@ export default function App() {
     <NavBar />
     <div id='card'>
     <LikeButton />
-    <Review />
+    <SearchBar />
+  
     </div>
     {/* <Login /> */}
     <Routes>
