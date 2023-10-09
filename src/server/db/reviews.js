@@ -69,28 +69,30 @@ const getLatestReviews = async () => {
         const query = `
             SELECT 
                 r.id, 
-                r.car_id, 
-                r.user_id, 
                 r.rating, 
                 r.comment, 
                 r.date_created, 
                 u.name as user_name,
-                c.imagePath as car_image   // select imagePath column from cars table
+                c.model,
+                c.brand,
+                c.year,
+                c.image_path as car_image
+
             FROM reviews r
             JOIN users u ON r.user_id = u.id
-            JOIN cars c ON r.car_id = c.id   // join reviews table with cars table on car_id
+            JOIN cars c ON r.car_id = c.id   
             ORDER BY r.date_created DESC
             LIMIT 5
         `;
 
         const { rows } = await db.query(query);
         
-        console.log("Fetched rows from DB:", rows);  // Log the result here to verify
+        console.log("Fetched rows from DB:", rows); 
 
         return rows;
 
     } catch (err) {
-        console.error("Error in getLatestReviews:", err);  // Better error logging
+        console.error("Error in getLatestReviews:", err); 
         throw err;
     }
 }

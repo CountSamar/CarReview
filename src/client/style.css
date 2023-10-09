@@ -38,3 +38,31 @@
   font-size: 16px; /* Set the font size for review content */
 }
 
+/* Example CSS for customizing toast messages */
+.custom-toast-container .Toastify__toast {
+  background-color: #333; /* Background color of the toast message */
+  color: #fff; /* Text color */
+  border-radius: 4px; /* Rounded corners */
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* Box shadow for the toast */
+  font-size: 16px; /* Text size */
+}
+
+.custom-toast-container .Toastify__toast--success {
+  background-color: #55b406; /* Background color for success toast messages */
+}
+
+.custom-toast-container .Toastify__toast--error {
+  background-color: #f44336; /* Background color for error toast messages */
+}
+
+/* Adjust the size of the checkmark icon */
+.custom-toast-container .Toastify__toast-body::before {
+  font-size: 1px; /* Example: Increase the checkmark size */
+}
+
+/* Positioning of toast messages */
+.custom-toast-container .Toastify__toast-container {
+  width: 1px; /* Width of the toast container */
+}
+
+/* You can add more custom styles as needed */

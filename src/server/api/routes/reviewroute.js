@@ -52,7 +52,7 @@ router.post('/car/:carId', async (req, res, next) => {
             carId: req.params.carId,
             reviewText: req.body.reviewText,
             reviewerName: req.body.reviewerName
-            // ... other fields ...
+           
         });
         res.status(201).json({ success: true, data: newReview });
     } catch (err) {

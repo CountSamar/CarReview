@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const upload = require('./multer')
-const pool = require('../../db/client');  // Adjust the path based on where `client.js` is relative to `carroute.js`
+const pool = require('../../db/client');  
 
 const {
     getAllCars,
@@ -39,19 +39,20 @@ router.get('/:carId', async (req, res, next) => {
 // Add a new car
 router.post('/', upload.single('carImage'), async (req, res, next) => {
     try {
-        console.log(req.body); 
         const carData = req.body;
-        console.log(req.file)
+        
         if (req.file) {
             carData.imagePath = req.file.path;  // Add the file path to the carData before saving
         }
 
         const newCar = await createCar(carData);
+        
         res.status(201).json({ success: true, data: newCar });
     } catch (err) {
         next(err);
     }
 });
+
 
 
 // Update car details

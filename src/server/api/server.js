@@ -7,9 +7,10 @@ const userRoutes = require('./routes/userroutes');
 const carRoutes = require('./routes/carroute');
 const reviewRoutes = require('./routes/reviewroute');
 
-app.use(cors());
+
+
 app.use(cors({
-  origin: 'http://localhost:3000', // assuming your frontend runs on 3000
+  origin: 'http://localhost:3000',  
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
@@ -27,9 +28,11 @@ app.use('/uploads', express.static('uploads'));
   });
 
 
-app.use('/users', userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/cars', carRoutes);
 app.use('/api/reviews', reviewRoutes);
+
+
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

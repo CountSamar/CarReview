@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 
+const customToastContainerStyle = {
+  
+  
+};
 const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
  
   const [message, setMessage] = useState('');
@@ -24,7 +28,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
 
   const login = async() => {
     try {
-        const response = await fetch('http://localhost:3000/api/users/login', {
+        const response = await fetch('http://localhost:5001/api/users/login', {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
@@ -82,7 +86,15 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         <button type='submit'>Login</button>
       </form>
       <p>{message}</p>
+      <ToastContainer
+  position="bottom-center"
+  className="custom-toast-container"
+  style={customToastContainerStyle} 
+/>
+
+
     </div>
+
   );
 };
 

@@ -8,7 +8,7 @@ const NavBar = () => {
                 
 
                 <div>
-                    <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/'>Profile</Link>
+                    <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/'>Home</Link>
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/signup">SignUp</Link>
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/login'>Login</Link>
                     

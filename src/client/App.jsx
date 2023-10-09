@@ -24,8 +24,32 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/profile" element={<Profile />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/login" element={<Login />} />
+        <Route 
+          path="/signup" 
+          element={
+            <SignUp 
+              email={email} 
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              username={username}
+              setUsername={setUsername}
+              token={token}
+              setToken={setToken}
+            />} 
+        />
+        <Route 
+          path="/login" 
+          element={
+            <Login 
+              email={email} 
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              token={token}
+              setToken={setToken}
+            />} 
+        />
         
         {/* ... any other routes you may have ... */}
       </Routes>
