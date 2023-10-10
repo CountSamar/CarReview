@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Link } from 'react-router-dom'
+import './style.css'
 import Login from './components/Login';
 import Profile from './components/Profile';
 import Review from './components/Review';
@@ -33,6 +34,7 @@ export default function App() {
     <div id='card'>
     <LikeButton />
     <SearchBar />
+    <WriteReview />
   
     </div>
     {/* <Login /> */}
