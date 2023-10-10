@@ -1,5 +1,6 @@
 import React from 'react'
 import LikeButton from './LikeButton'
+import StarRating from './StarRating'
 
 
 export default function ReviewCard({ review }) {
@@ -10,6 +11,7 @@ export default function ReviewCard({ review }) {
             <h3>Vehicle Type: {review.vehicle_type}</h3>
             <img src={review.image} alt={review.vehicle_type} />
             <LikeButton />
+            <StarRating />
         </div>
     )
 }
