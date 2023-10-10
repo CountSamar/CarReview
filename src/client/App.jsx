@@ -35,6 +35,7 @@ export default function App() {
     <LikeButton />
     <SearchBar />
     <WriteReview />
+    <Review />
   
     </div>
     {/* <Login /> */}
