@@ -59,9 +59,11 @@
 
 
 
-.box {
+.box-container {
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
   width: 400px;
   margin: 0 auto;
   padding: 20px;
@@ -69,9 +71,12 @@
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  margin-left: auto;
+  box-shadow: 0px 0px 18px -6px rgba(20, 20, 20, 0.8);
 }
 
+.box {
+  padding: 15px;
+}
 .scroll-item {
   margin-bottom: 10px;
 }
