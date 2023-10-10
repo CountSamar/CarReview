@@ -12,7 +12,7 @@ const NavBar = () => {
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/Register">SignUp</Link>
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/login'>Login</Link>
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/review/new">Write A Review</Link>
-                    <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/reviews">Reviews</Link>
+                    <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/review">Reviews</Link>
                     <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/logout'>Logout</Link>
 
                 </div>
