@@ -1,102 +1,102 @@
-const dotenv = require('dotenv');
-dotenv.config();
-
-const express = require('express');
+const db = require('./client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const SALT_COUNT = 8;
+const JWT_SECRET = process.env.JWT_SECRET; 
+const generateToken = (user) => {
+    return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+}
 
-const usersRouter = express.Router();
+const createUser = async({ name = 'first last', email, password, username }) => {
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
+    try {
+        const { rows: [user] } = await db.query(`
+        INSERT INTO users(name, email, username, password)
+        VALUES($1, $2, $3, $4)
+        ON CONFLICT (email) DO NOTHING
+        RETURNING *`, [name, email, username, hashedPassword]);
 
-const {
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+const validateUser = async (email, password) => {
+    if (!email || !password) {
+        return null;
+    }
+
+    try {
+        const user = await getUserByEmail(email); // Fetch user by email from the database
+        if (!user) return null;
+
+        const hashedPassword = user.password; // Get the stored hashed password
+        const passwordsMatch = await bcrypt.compare(password, hashedPassword); // Compare the given password with the hashed one
+
+        if (!passwordsMatch) return null;
+        
+        delete user.password; // Don't send the hashed password to the client
+        return user; // Return the user if email and password match
+    } catch (err) {
+        throw err;
+    }
+};
+
+const getAllUsers = async() => {
+    try {
+        const { rows } = await db.query(`
+        SELECT * 
+        FROM users`);
+
+        return rows;
+    } catch (err) {
+        throw err;
+    }
+}
+
+const getUser = async({ email, password }) => {
+    if (!email || !password) {
+        return null;
+    }
+    try {
+        const user = await getUserByEmail(email);
+        if (!user) return null;
+
+        const hashedPassword = user.password;
+        const passwordsMatch = await bcrypt.compare(password, hashedPassword);
+
+        if (!passwordsMatch) return null;
+
+        const token = generateToken(user);
+        delete user.password;
+
+        return { user, token };
+    } catch (err) {
+        throw err;
+    }
+}
+
+const getUserByEmail = async(email) => {
+    try {
+        const { rows: [user] } = await db.query(`
+        SELECT * 
+        FROM users
+        WHERE email=$1;`, [email]);
+
+        if (!user) {
+            return null;
+        }
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
+
+module.exports = {
     createUser,
     getUser,
     getUserByEmail,
-    getAllUsers
-} = require('../db');
-
-
-
-usersRouter.get('/', async( req, res, next) => {
-    try {
-        const users = await getAllUsers();
-        res.send({
-            users
-        });
-    } catch ({ name, message }) {
-        next({ name, message });
-    }
-});
-
-usersRouter.post('/login', async (req, res, next) => {
-    const { email, password } = req.body;
-
-    if (!email || !password) {
-        return next({
-            name: 'MissingCredentialsError',
-            message: 'Please supply both an email and password'
-        });
-    }
-
-    try {
-        const user = await getUserByEmail(email);
-        if (user && await bcrypt.compare(password, user.password_hash)) {
-            const token = jwt.sign({
-                id: user.id,
-                email
-            }, process.env.JWT_SECRET, {
-                expiresIn: '1w'
-            });
-
-            res.send({
-                message: 'Login successful!',
-                token
-            });
-        } else {
-            next({
-                name: 'IncorrectCredentialsError',
-                message: 'Username or password is incorrect'
-            });
-        }
-    } catch (error) {
-        next(error);
-    }
-});
-
-usersRouter.post('/register', async (req, res, next) => {
-    const { name, email, password } = req.body;
-
-    try {
-        const _user = await getUserByEmail(email);
-
-        if (_user) {
-            return next({
-                name: 'UserExistsError',
-                message: 'A user with that email already exists'
-            });
-        }
-
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await createUser({
-            name,
-            email,
-            password: hashedPassword
-        });
-
-        const token = jwt.sign({
-            id: user.id,
-            email
-        }, process.env.JWT_SECRET, {
-            expiresIn: '1w'
-        });
-
-        res.send({
-            message: 'Sign up successful!',
-            token
-        });
-    } catch ({ name, message }) {
-        next({ name, message });
-    }
-});
-
-module.exports = usersRouter;
+    getAllUsers,
+    validateUser
+};
