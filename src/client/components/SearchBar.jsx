@@ -8,7 +8,7 @@ const SearchBar = ({ Review }) => {
    setSearchTerm(e.target.value);
     };
     const handleSubmit = (e) => {
-        const resultsArray = Review.filter(review => review.title.includes(e.target.value) || review.body.includes(e.target.value))
+        const resultsArray = Review.filter(review => review.cars.includes(e.target.value) || review.body.includes(e.target.value))
         console.log('Search term:', searchTerm)
     }
   return (
