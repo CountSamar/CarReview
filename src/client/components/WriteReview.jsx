@@ -54,7 +54,8 @@ const WriteReview = () => {
 
     return (
     <>
-         <div className='box'>
+         <div className='box-container'>
+            <div className='box'>
                 <div className='scroll-item'>
                     <h3>Select a car Make:</h3>
                     <select value={selectMake} onChange={(e) => handleSelect(e.target.value, setSelectMake)}>
@@ -108,6 +109,7 @@ const WriteReview = () => {
                 </div>
 
             <button onClick={handleSubmit}>Submit Review</button>
+            </div>
             </div>
       </>
     );
