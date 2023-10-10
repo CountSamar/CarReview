@@ -1,11 +1,25 @@
 const db = require('./client');
 
-const createReview = async({ car_id, user_id, rating, comment }) => {
+// Helper function to get user_id from username
+const getUserIdFromUsername = async (username) => {
+    const { rows: [user] } = await db.query(`
+        SELECT id FROM users WHERE username = $1
+    `, [username]);
+
+    if (!user) {
+        throw new Error('User not found');
+    }
+
+    return user.id;
+};
+const createReview = async({ username, carModel, carBrand, carYear, comment, imgPath, rating }) => {
     try {
+        console.log('Image path received:', imgPath);
+
         const { rows: [review] } = await db.query(`
-            INSERT INTO reviews(car_id, user_id, rating, comment)
-            VALUES($1, $2, $3, $4)
-            RETURNING *`, [car_id, user_id, rating, comment]);
+            INSERT INTO reviews(username, car_model, car_brand, car_year, comment, imgpath, rating)
+            VALUES($1, $2, $3, $4, $5, $6, $7)
+            RETURNING *`, [username, carModel, carBrand, carYear, comment, imgPath, rating]);
 
         return review;
     } catch (err) {
@@ -13,12 +27,15 @@ const createReview = async({ car_id, user_id, rating, comment }) => {
     }
 }
 
+
+
 const getAllReviews = async() => {
     try {
         const { rows } = await db.query(`
-            SELECT * 
-            FROM reviews`);
-
+            SELECT reviews.*, users.username
+            FROM reviews
+            JOIN users ON reviews.user_id = users.id
+        `);
         return rows;
     } catch (err) {
         throw err;
@@ -28,9 +45,11 @@ const getAllReviews = async() => {
 const getReviewById = async(id) => {
     try {
         const { rows: [ review ] } = await db.query(`
-            SELECT * 
+            SELECT reviews.*, users.username
             FROM reviews
-            WHERE id=$1;`, [ id ]);
+            JOIN users ON reviews.user_id = users.id
+            WHERE reviews.id=$1;
+        `, [ id ]);
 
         if(!review) {
             return;
@@ -64,6 +83,7 @@ const deleteReview = async(id) => {
         throw err;
     }
 }
+
 const getLatestReviews = async () => {
     try {
         const query = `
@@ -77,7 +97,6 @@ const getLatestReviews = async () => {
                 c.brand,
                 c.year,
                 c.image_path as car_image
-
             FROM reviews r
             JOIN users u ON r.user_id = u.id
             JOIN cars c ON r.car_id = c.id   
@@ -87,17 +106,12 @@ const getLatestReviews = async () => {
 
         const { rows } = await db.query(query);
         
-        console.log("Fetched rows from DB:", rows); 
-
         return rows;
-
     } catch (err) {
         console.error("Error in getLatestReviews:", err); 
         throw err;
     }
 }
-
-
 
 module.exports = {
     createReview,

@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+
+
 
 const customToastContainerStyle = {
   
   
 };
-const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
+const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLoggedIn, setUsername, setUserId }) => {
+  const navigate = useNavigate();
  
   const [message, setMessage] = useState('');
   console.log(setPassword)
@@ -46,9 +50,14 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         if (result.token) {
           setToken(result.token)
           localStorage.setItem('token', result.token)
+          setUsername(result.username);
+          setUserId(result.userId);
+
+          setIsLoggedIn(true)
         }
         console.log(result.token)
         showToastMessage()
+        navigate('/profile');
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }
