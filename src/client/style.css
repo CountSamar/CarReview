@@ -104,5 +104,35 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #f5f7f9;
+}
+
+
+.star-rating {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.star-container {
+  display: flex;
+  justify-content: space-between;
+  width: 200px;
+}
+
+.star-rating button {
+  font-size: 40px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0;
+  padding: 1px;
+}
+
+.star-rating button.on {
+  color: rgb(235, 14, 202);
+}
+
+.star-rating button.off {
+  color: #ccc;
 }
