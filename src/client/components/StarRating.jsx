@@ -25,3 +25,48 @@ const StarRating = () => {
 };
 
 export default StarRating;
+// import React, { useState } from 'react';
+
+// const StarRating = () => {
+//   const [rating, setRating] = useState(0);
+
+//   const handleClick = (star) => {
+//     setRating(star);
+//   };
+
+//   const renderStars = () => {
+//     const stars = [];
+//     for (let i = 1; i <= 5; i++) {
+//       const starClass = i <= rating ? 'filled' : 'empty';
+//       stars.push(
+//         <i
+//           key={i}
+//           onClick={() => handleClick(i)}
+//           className={`star ${starClass}`}
+//         />
+//       );
+//     }
+//     return stars;
+//   };
+
+//   return (
+//     <div className="star-rating">
+//       {renderStars()}
+//     </div>
+//   );
+// };
+
+// export default StarRating;
+
+
+
+
+
+
+
+
+
+
+
+
+
