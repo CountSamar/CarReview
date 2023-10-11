@@ -22,7 +22,7 @@
 }
 
 .review {
-  border: 1px solid #ccc; /* Add a border to each review */
+  border: 1px solid #fcfffc; /* Add a border to each review */
   padding: 16px; /* Add padding to separate reviews */
   margin: 16px; /* Add margin to space out reviews */
   width: 80%; /* Adjust the width as needed */
