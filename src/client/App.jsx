@@ -15,6 +15,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
+import StarRating from './components/StarRating';
 
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
     <SearchBar />
     <WriteReview />
     <Review />
+    <StarRating />
   
     </div>
     {/* <Login /> */}
