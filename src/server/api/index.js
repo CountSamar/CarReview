@@ -32,11 +32,8 @@ apiRouter.use(async (req, res, next) => {
   }
 });
 
-const usersRouter = require('./users');
-apiRouter.use('/users', usersRouter);
 
-const friendsRouter = require('./friends');
-apiRouter.use('/friends', friendsRouter);
+
 
 apiRouter.use((err, req, res, next) => {
     res.status(500).send(err)

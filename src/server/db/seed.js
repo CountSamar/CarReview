@@ -177,17 +177,26 @@ const users = [
     username: "ajohn",
   },
 ];
+const imagePaths = {
+  "Model 3": "uploads/1696817981885-tesla model 3.jpeg",
+  "Mustang": "uploads/1696820948754-fordmustang.jpeg",
+  "A4": "uploads/audi.jpeg",
+  "Camry": "uploads/camry.jpeg",
+  "E-Class": "uploads/benz.jpeg",
+  "WRX": "uploads/subaru.jpeg",
+  "Taycan": "uploads/porsche.jpeg",
+  "Bolt EV": "uploads/bolt.jpeg",
+};
+
 const cars = [
-  { model: "Model 3", brand: "Tesla", year: 2023 },
-  { model: "Mustang", brand: "Ford", year: 2023 },
-  { model: "Civic", brand: "Honda", year: 2023 },
-  { model: "3 Series", brand: "BMW", year: 2023 },
-  { model: "A4", brand: "Audi", year: 2023 },
-  { model: "Camry", brand: "Toyota", year: 2023 },
-  { model: "E-Class", brand: "Mercedes-Benz", year: 2023 },
-  { model: "WRX", brand: "Subaru", year: 2023 },
-  { model: "Taycan", brand: "Porsche", year: 2023 },
-  { model: "Bolt EV", brand: "Chevrolet", year: 2023 },
+  { model: "Model 3", brand: "Tesla", year: 2023, image_path:"uploads/1696817981885-tesla model 3.jpeg" },
+  { model: "Mustang", brand: "Ford", year: 2023, image_path:"uploads/1696820948754-fordmustang.jpeg" },
+  { model: "A4", brand: "Audi", year: 2023, image_path:"/uploads/audi.jpeg"},
+  { model: "Camry", brand: "Toyota", year: 2023, image_path:"uploads/camry.jpeg"},
+  { model: "E-Class", brand: "Mercedes-Benz", year: 2023,image_path:"uploads/benz.jpeg" },
+  { model: "WRX", brand: "Subaru", year: 2023, image_path:"uploads/subaru.jpeg" },
+  { model: "Taycan", brand: "Porsche", year: 2023, image_path:"uploads/porsche.jpeg" },
+  { model: "Bolt EV", brand: "Chevrolet", year: 2023, image_path:"uploads/bolt.jpeg" },
 ];
 const reviews = [
   {
@@ -265,8 +274,8 @@ const reviews = [
 const insertCar = async (car) => {
   try {
     const result = await db.query(
-      "INSERT INTO cars(model, brand, year) VALUES($1, $2, $3) RETURNING id",
-      [car.model, car.brand, car.year]
+      "INSERT INTO cars(model, brand, year, image_path) VALUES($1, $2, $3, $4) RETURNING id",
+      [car.model, car.brand, car.year, imagePaths[car.model]]
     );
     return result.rows[0].id;
   } catch (error) {
@@ -274,16 +283,18 @@ const insertCar = async (car) => {
     return null;
   }
 };
+
 const createReview = async (review) => {
   try {
     await db.query(
-      "INSERT INTO reviews(car_id, user_id, rating, comment) VALUES($1, $2, $3, $4)",
+      "INSERT INTO reviews(car_id, user_id, rating, comment, date_created) VALUES($1, $2, $3, $4, NOW())",
       [review.car_id, review.user_id, review.rating, review.comment]
     );
   } catch (error) {
     console.error("Error inserting review:", error);
   }
 };
+
 const insertReviews = async () => {
   try {
     for (const review of reviews) {
@@ -317,9 +328,9 @@ const insertReviews = async () => {
 
 const dropTables = async () => {
   try {
-    await db.query(`DROP TABLE IF EXISTS reviews;`);
-    await db.query(`DROP TABLE IF EXISTS cars;`);
-    await db.query(`DROP TABLE IF EXISTS users;`);
+    await db.query(`DROP TABLE IF EXISTS reviews CASCADE;`);
+    await db.query(`DROP TABLE IF EXISTS cars CASCADE;`);
+    await db.query(`DROP TABLE IF EXISTS users CASCADE;`);
   } catch (err) {
     throw err;
   }
@@ -346,12 +357,14 @@ const createCarsTable = async () => {
         id SERIAL PRIMARY KEY,
         model VARCHAR(255) NOT NULL,
         brand VARCHAR(255) NOT NULL,
-        year INT NOT NULL
+        year INT NOT NULL,
+        image_path VARCHAR(255) 
       )`);
   } catch (err) {
     throw err;
   }
 };
+
 
 const createReviewsTable = async () => {
   try {
@@ -361,13 +374,14 @@ const createReviewsTable = async () => {
         car_id INTEGER REFERENCES cars(id),
         user_id INTEGER REFERENCES users(id),
         rating DECIMAL(3,2) NOT NULL,
-
-        comment TEXT
+        comment TEXT,
+        date_created TIMESTAMPTZ DEFAULT NOW()
       )`);
   } catch (err) {
     throw err;
   }
 };
+
 
 const insertUsers = async () => {
   try {
@@ -419,3 +433,5 @@ const seedDatabase = async () => {
 seedDatabase().catch((err) => {
   console.error("Failed to seed database:", err);
 });
+
+

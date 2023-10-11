@@ -17,78 +17,81 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import StarRating from './components/StarRating';
 
+function PrivateRoute({ isLoggedIn }) {
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+}
 
 export default function App() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [token, setToken] = useState('')
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(""); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState("");
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
 
-  console.log(email)
-  console.log(password)
-  console.log(token)
   return (
     <>
-    <h1>Our Project</h1>
-    <NavBar />
-    <div id='card'>
-    <LikeButton />
-    <SearchBar />
-    <WriteReview />
-    <Review />
-    <StarRating />
-  
-    </div>
-    {/* <Login /> */}
-    <Routes>
-      <Route path="/" element={<Home />}/>
-      <Route
-        path="/Profile"
-        element={
-          <Profile 
-            username={username}
-            />
-        }
+      <h1>Car Review</h1>
+      {showLogoutMessage && <p>Successfully logged out!</p>}
+      <NavBar
+        setToken={setToken}
+        setIsLoggedIn={setIsLoggedIn}
+        isLoggedIn={isLoggedIn}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        token={token}
+        setShowLogoutMessage={setShowLogoutMessage}
       />
-      <Route 
-        path="/Review"
-        element={<Review />}/>  
-      <Route
-        path='/Login'
-        element={
-          <Login 
-            isLoggedIn={isLoggedIn}
-            setIsLoggedIn={setIsLoggedIn}
-            email={email}
-            setEmail={setEmail}
-            password={password}
-            setPassword={setPassword}
-            token={token}
-            setToken={setToken}
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
+          <Route
+            index
+            element={<Profile
+             
+              username={username}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setShowLogoutMessage={setShowLogoutMessage}
+            />}
+          />
+        </Route>
+        <Route
+          path="/signup"
+          element={
+            <SignUp
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              username={username}
+              setUsername={setUsername}
+              token={token}
+              setToken={setToken}
             />
           }
         />
-
-      <Route 
-        path='/register'
-        element={
-          <SignUp 
-            email={email}
-            setEmail={setEmail}
-            username={username}
-            setUsername={setUsername}
-            password={password}
-            setPassword={setPassword}
-            token={token}
-            setToken={setToken}
+        <Route
+          path="/login"
+          element={
+            <Login
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              token={token}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setUsername={setUsername}
+              setUserId={setUserId}
             />
           }
-      />
-    </Routes>
-    <ToastContainer />
-   </>
+        />
+      </Routes>
+    </>
   );
 }
-
-

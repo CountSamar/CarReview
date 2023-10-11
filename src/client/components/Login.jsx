@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
+
+
+const customToastContainerStyle = {
+  
+  
+};
+const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLoggedIn, setUsername, setUserId }) => {
+  const navigate = useNavigate();
  
   const [message, setMessage] = useState('');
   let navigate = useNavigate()
@@ -25,7 +33,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
 
   const login = async() => {
     try {
-        const response = await fetch('http://localhost:3000/api/users/login', {
+        const response = await fetch('http://localhost:5001/api/users/login', {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
@@ -44,9 +52,14 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         if (result.token) {
           setToken(result.token)
           localStorage.setItem('token', result.token)
+          setUsername(result.username);
+          setUserId(result.userId);
+
+          setIsLoggedIn(true)
         }
         console.log(result.token)
         showToastMessage()
+        navigate('/profile');
         navigate('/profile')
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
@@ -85,7 +98,15 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
         <button type='submit'>Login</button>
       </form>
       <p>{message}</p>
+      <ToastContainer
+  position="bottom-center"
+  className="custom-toast-container"
+  style={customToastContainerStyle} 
+/>
+
+
     </div>
+
   );
 };
 
