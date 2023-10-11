@@ -1,10 +1,16 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'
 import { ToastContainer, toast } from 'react-toastify';
+import jwt_decode from "jwt-decode";
 
-const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
- 
+const Login = () => {
+  const navigate = useNavigate()
+
   const [message, setMessage] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [token, setToken] = useState("")
+
   console.log(setPassword)
   console.log(setEmail)
 
@@ -22,31 +28,35 @@ const Login = ({email, setEmail, password, setPassword, token, setToken}) => {
     })
   }
 
-  const login = async() => {
+  const login = async () => {
     try {
-        const response = await fetch('http://localhost:3000/api/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json'
-            }, 
-            body: JSON.stringify({
-                email,
-                password
-            })
-        });
-        const result = await response.json();
-        setMessage(result.message);
-        if(!response.ok) {
-          throw(result)
-        }
-        if (result.token) {
-          setToken(result.token)
-          localStorage.setItem('token', result.token)
-        }
-        console.log(result.token)
-        showToastMessage()
+      const response = await fetch('http://localhost:3000/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      });
+      const result = await response.json();
+      setMessage(result.message);
+      if (!response.ok) {
+        throw (result)
+      }
+      if (result.token) {
+        console.log(result.token);
+        console.log(jwt_decode(result.token), "decrypted")
+        setToken(result.token)
+        localStorage.setItem('token', result.token)
+        navigate("/reviews")
+
+      }
+      console.log(result.token)
+      showToastMessage()
     } catch (err) {
-        console.error(`${err.name}: ${err.message}`);
+      console.error(`${err.name}: ${err.message}`);
     }
   }
 

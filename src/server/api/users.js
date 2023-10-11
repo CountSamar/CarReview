@@ -11,8 +11,8 @@ const usersRouter = express.Router();
 const {
     createUser,
     getUser,
-    getUserByEmail,
-    getAllUsers
+    getAllUsers,
+    getUserByEmail
 } = require('../db');
 
 
@@ -39,11 +39,13 @@ usersRouter.post('/login', async (req, res, next) => {
     }
 
     try {
-        const user = await getUserByEmail(email);
-        if (user && await bcrypt.compare(password, user.password_hash)) {
+        const user = await getUser({email, password});
+        console.log(user, "user in api")
+        if (user && await bcrypt.compare(password, user.password)) {
             const token = jwt.sign({
                 id: user.id,
-                email
+                email,
+                role: user.role
             }, process.env.JWT_SECRET, {
                 expiresIn: '1w'
             });
@@ -64,7 +66,7 @@ usersRouter.post('/login', async (req, res, next) => {
 });
 
 usersRouter.post('/register', async (req, res, next) => {
-    const { name, email, username, password } = req.body;
+    const { name, email, username, password, role } = req.body;
 
     try {
         const _user = await getUserByEmail(email);
@@ -82,7 +84,8 @@ usersRouter.post('/register', async (req, res, next) => {
             email,
             // password: hashedPassword 
             password,
-            username
+            username,
+            role
         });
 
         const token = jwt.sign({

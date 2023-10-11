@@ -1,4 +1,6 @@
 module.exports = {
     ...require('./users'), 
-    ...require('./friends')
+    ...require('./friends'),
+    ...require('./car')
+
 }

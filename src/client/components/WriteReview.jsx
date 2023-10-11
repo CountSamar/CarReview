@@ -17,8 +17,7 @@ const BASE_URL = "http://localhost:3000/api"
 export default function CreateReview() {
     const [review, setReview] = useState({
         cartitle: "",
-        rating: "",
-        description: "",
+        comment: "",
     })
 
     const [token, setToken] = useState(sessionStorage.getItem("token"))
@@ -33,15 +32,9 @@ export default function CreateReview() {
                 })
                 break;
 
-            case "description":
+            case "comment":
                 setReview((prev) => {
-                    return { ...prev, description: e.target.value }
-                })
-                break;
-
-            case "rating":
-                setReview((prev) => {
-                    return { ...prev, rating: e.target.value }
+                    return { ...prev, comment: e.target.value }
                 })
                 break;
 
@@ -66,8 +59,7 @@ export default function CreateReview() {
                     body: JSON.stringify({
                         post: {
                             cartitle: review.cartitle,
-                            rating: review.rating,
-                            description: review.description,
+                            comment: review.comment,
                         }
                     })
                 });
@@ -75,8 +67,7 @@ export default function CreateReview() {
                 console.log(result);
                 setReview({
                     cartitle: "",
-                    rating: "",
-                    description: "",
+                    comment: "",
                 })
                 return result
             } catch (err) {
@@ -91,8 +82,8 @@ export default function CreateReview() {
         return (
             <div>Write A Review
                 <form onSubmit={handleSubmit}>
-                    <input onChange={handleChange} type="text" name="title" id="title" value={post.title} placeholder="CarTitle" />
-                    <textarea onChange={handleChange} name="description" id="description" value={post.description} placeholder="Description" rows={4} cols={50}></textarea>
+                    <input onChange={handleChange} type="text" name="title" id="title" value={post.title} placeholder="Car Title" />
+                    <textarea onChange={handleChange} name="description" id="description" value={post.description} placeholder="Comment" rows={4} cols={50}></textarea>
                     <button type="submit">Submit</button>
                 </form>
             </div>
@@ -100,7 +91,7 @@ export default function CreateReview() {
     } else
         return (
             <div>
-                <h3></h3>
+                <h3>No Review</h3>
             </div>
         )
 

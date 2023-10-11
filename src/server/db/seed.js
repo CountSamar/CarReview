@@ -7,174 +7,203 @@ const users = [
     email: "emily@example.com",
     password: "securepass",
     username: "emilyjohn",
+    role: "admin"
   },
   {
     name: "Liu Wei",
     email: "liu@example.com",
     password: "strongpass",
     username: "liwei",
+    role: "contributor"
   },
   {
     name: "Isabella García",
     email: "bella@example.com",
     password: "pass1234",
     username: "isabellagar",
+    role: "contributor"
   },
   {
     name: "Mohammed Ahmed",
     email: "mohammed@example.com",
     password: "mysecretpassword",
     username: "floatlikeabee",
+    role: "contributor"
   },
   {
     name: "John Smith",
     email: "john@example.com",
     password: "password123",
     username: "jsmith",
+    role: "contributor"
   },
   {
     name: "Jane Doe",
     email: "jane@example.com",
     password: "janepassword",
     username: "jdoe",
+    role: "contributor"
   },
   {
     name: "Robert Brown",
     email: "robert@example.com",
     password: "robertpass",
     username: "rbrown",
+    role: "contributor"
   },
   {
     name: "Linda White",
     email: "linda@example.com",
     password: "lindapassword",
     username: "lwhite",
+    role: "contributor"
   },
   {
     name: "Michael Green",
     email: "michael@example.com",
     password: "michaelpass",
     username: "mgreen",
+    role: "contributor"
   },
   {
     name: "Jennifer Blue",
     email: "jennifer@example.com",
     password: "jenniferpass",
     username: "jblue",
+    role: "contributor"
   },
   {
     name: "Carlos Mendoza",
     email: "carlos@example.com",
     password: "carlospass",
     username: "carlosmend",
+    role: "contributor"
   },
   {
     name: "Sophia Turner",
     email: "sophia@example.com",
     password: "sophiasecret",
     username: "sophturn",
+    role: "contributor"
   },
   {
     name: "Raj Kapoor",
     email: "raj@example.com",
     password: "rajpassword",
     username: "rajkap",
+    role: "contributor"
   },
   {
     name: "Emma Watson",
     email: "emma@example.com",
     password: "emmasecure",
     username: "emmawat",
+    role: "contributor"
   },
   {
     name: "Lucas Perez",
     email: "lucas@example.com",
     password: "lucaspw",
     username: "lucasp",
+    role: "contributor"
   },
   {
     name: "Olivia Martinez",
     email: "olivia@example.com",
     password: "oliviapw",
     username: "oliviam",
+    role: "contributor"
   },
   {
     name: "Benjamin Clark",
     email: "benjamin@example.com",
     password: "benjaminpass",
     username: "benclark",
+    role: "contributor"
   },
   {
     name: "Ella Fitzgerald",
     email: "ella@example.com",
     password: "ellapassword",
     username: "ellafitz",
+    role: "contributor"
   },
   {
     name: "Mason Turner",
     email: "mason@example.com",
     password: "masonpass",
     username: "masont",
+    role: "contributor"
   },
   {
     name: "Ava Gardner",
     email: "ava@example.com",
     password: "avasecret",
     username: "avag",
+    role: "contributor"
   },
   {
     name: "Jacob White",
     email: "jacob@example.com",
     password: "jacobpw",
     username: "jacobw",
+    role: "contributor"
   },
   {
     name: "Mia Wallace",
     email: "mia@example.com",
     password: "miasecret",
     username: "miaw",
+    role: "contributor"
   },
   {
     name: "Alexander Hamilton",
     email: "alex@example.com",
     password: "alexpass",
     username: "alexham",
+    role: "contributor"
   },
   {
     name: "Amelia Pond",
     email: "amelia@example.com",
     password: "ameliapass",
     username: "ameliap",
+    role: "contributor"
   },
   {
     name: "Daniel Smith",
     email: "daniel@example.com",
     password: "danielpw",
     username: "daniels",
+    role: "contributor"
   },
   {
     name: "Grace Hart",
     email: "grace@example.com",
     password: "gracesecure",
     username: "graceh",
+    role: "contributor"
   },
   {
     name: "Samuel Adams",
     email: "samuel@example.com",
     password: "samuelpass",
     username: "samadams",
+    role: "contributor"
   },
   {
     name: "Chloe Stevens",
     email: "chloe@example.com",
     password: "chloesecret",
     username: "chloes",
+    role: "contributor"
   },
   {
     name: "Alex Johnson",
     email: "alexj@example.com",
     password: "ajsecret",
     username: "ajohn",
+    role: "admin"
   },
 ];
 const cars = [
@@ -333,7 +362,8 @@ const createTables = async () => {
         name VARCHAR(255) DEFAULT 'name',
         email VARCHAR(255) UNIQUE NOT NULL,
         username VARCHAR(255) NOT NULL,
-        password VARCHAR(255) NOT NULL
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL
       )`);
   } catch (err) {
     throw err;
@@ -377,6 +407,7 @@ const insertUsers = async () => {
         email: user.email,
         username: user.username,
         password: user.password,
+        role: user.role
       });
 
       // Check the return value to log the outcome
