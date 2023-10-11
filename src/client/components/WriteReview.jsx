@@ -42,13 +42,33 @@ const WriteReview = () => {
   };
 
   const handleSubmit = () => {
-    // Handle the submission of review data (image, text, etc.)
-    console.log('Submit Review:', {
-      selectMake,
-      selectModel,
-      selectYear,
-      reviewText,
-      image
+    const reviewData = {
+      car_id: selectedCarId, // Replace with the actual car_id you want to associate the review with
+      user_id: selectedUserId, // Replace with the actual user_id
+      rating: selectedRating, // Replace with the actual rating
+      comment: reviewText // Replace with the actual review text
+    };
+  
+    fetch('http://localhost:3000/api/reviews/new', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(reviewData)
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Failed to save review.');
+      }
+      return response.json();
+    })
+    .then(data => {
+      console.log('Review saved successfully:', data);
+      // Optionally, you can redirect or show a success message here
+    })
+    .catch(error => {
+      console.error('Error saving review:', error);
+      // Handle the error, show an error message, etc.
     });
   };
 
