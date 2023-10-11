@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('./multer')
+const upload = require('../multer')
 
 
 const {
@@ -48,17 +48,19 @@ router.get('/:reviewId', async (req, res, next) => {
 // Create review endpoint
 router.post('/create', upload.single('imgpath'), async (req, res) => {
     console.log("Received data from frontend:", req.body);
+    console.log("File Data:", req.file);
+    console.log("Form Data:", req.body);
 
     // Extract data from the body and the file path from multer's file object
-    const { username, carModel, carBrand, carYear, comment, rating } = req.body;
+    const { user_name, carModel, carBrand, carYear, comment, rating } = req.body;
     const imgPath = req.file ? req.file.path : null;
 
-    if (!username || !carModel || !carBrand || !carYear || !comment || !imgPath || rating === undefined) {
+    if (!user_name || !carModel || !carBrand || !carYear || !comment || !imgPath || rating === undefined) {
         return res.status(400).json({ success: false, message: 'All fields including image and rating are required.' });
     }
 
     try {
-        const review = await createReview({ username, carModel, carBrand, carYear, comment, imgPath, rating });
+        const review = await createReview({ username: user_name, carModel, carBrand, carYear, comment, imgPath, rating });
         res.json({ success: true, review });
     } catch (err) {
         console.error("Error while creating review:", err);

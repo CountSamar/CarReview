@@ -27,13 +27,13 @@ const createReview = async ({
   rating,
 }) => {
   try {
-    console.log("Image path received:", imgPath);
+ 
 
     const {
       rows: [review],
     } = await db.query(
       `
-            INSERT INTO reviews(username, car_model, car_brand, car_year, comment, imgpath, rating)
+            INSERT INTO reviews(user_name, car_model, car_brand, car_year, comment, imgpath, rating)
             VALUES($1, $2, $3, $4, $5, $6, $7)
             RETURNING *`,
       [username, carModel, carBrand, carYear, comment, imgPath, rating]

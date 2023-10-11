@@ -2,29 +2,35 @@ import React, { useState } from "react";
 import Logout from "./Logout";
 
 const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) => {
-    const [reviewText, setReviewText] = useState("");
-    const [carModel, setCarModel] = useState("");
-    const [carBrand, setCarBrand] = useState("");
-    const [carYear, setCarYear] = useState("");
-    const [imgFile, setImgFile] = useState(null);
+    const [formData, setFormData] = useState({
+        reviewText: "",
+        carModel: "",
+        carBrand: "",
+        carYear: "",
+        rating: "0",
+        imgFile: null
+    });
     const [reviews, setReviews] = useState([]);
     const [message, setMessage] = useState(null);
-    const [rating, setRating] = useState(0);
 
-    const handleReviewChange = (e) => {
-        setReviewText(e.target.value);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
     const handleFileChange = (e) => {
-        setImgFile(e.target.files[0]);
-    };
-
-    const handleRatingChange = (e) => {
-        setRating(parseInt(e.target.value, 10));
+        setFormData(prevState => ({
+            ...prevState,
+            imgFile: e.target.files[0]
+        }));
     };
 
     const submitReview = async () => {
         setMessage(null);
+        const { reviewText, carModel, carBrand, carYear, imgFile, rating } = formData;
 
         if (
             reviewText.trim() &&
@@ -32,18 +38,18 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
             carBrand.trim() &&
             carYear.trim() &&
             imgFile &&
-            rating >= 1 &&
-            rating <= 5
+            parseInt(rating) >= 1 &&
+            parseInt(rating) <= 5
         ) {
             try {
-                const formData = new FormData();
-                formData.append('username', username);
-                formData.append('carModel', carModel);
-                formData.append('carBrand', carBrand);
-                formData.append('carYear', carYear);
-                formData.append('comment', reviewText);
-                formData.append('imgpath', imgFile);
-                formData.append('rating', rating);
+                const formSubmission = new FormData();
+                formSubmission.append('user_name', username);
+                formSubmission.append('carModel', carModel);
+                formSubmission.append('carBrand', carBrand);
+                formSubmission.append('carYear', carYear);
+                formSubmission.append('comment', reviewText);
+                formSubmission.append('imgpath', imgFile);
+                formSubmission.append('rating', rating);
 
                 const response = await fetch("http://localhost:5001/api/reviews/create", {
                     method: "POST",
@@ -52,13 +58,20 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
 
                 const data = await response.json();
 
+                if (!response.ok) {
+                    throw new Error(data.message || "Error submitting the review");
+                }
+
                 if (data.success) {
-                    setReviews((prevReviews) => [...prevReviews, reviewText]);
-                    setReviewText("");
-                    setCarModel("");
-                    setCarBrand("");
-                    setCarYear("");
-                    setRating(0);
+                    setReviews(prevReviews => [...prevReviews, reviewText]);
+                    setFormData({
+                        reviewText: "",
+                        carModel: "",
+                        carBrand: "",
+                        carYear: "",
+                        rating: "0",
+                        imgFile: null
+                    });
                     setMessage("Review submitted successfully!");
                 } else {
                     setMessage(data.message || "Error submitting the review");
@@ -85,47 +98,70 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
 
             <h2>Write a Review</h2>
 
-            <input
-                type="text"
-                value={carModel}
-                onChange={(e) => setCarModel(e.target.value)}
-                placeholder="Enter car model"
-            />
+            <label>
+                Car Model:
+                <input
+                    type="text"
+                    name="carModel"
+                    value={formData.carModel}
+                    onChange={handleChange}
+                    placeholder="Enter car model"
+                />
+            </label>
+            
+            <label>
+                Car Brand:
+                <input
+                    type="text"
+                    name="carBrand"
+                    value={formData.carBrand}
+                    onChange={handleChange}
+                    placeholder="Enter car brand"
+                />
+            </label>
 
-            <input
-                type="text"
-                value={carBrand}
-                onChange={(e) => setCarBrand(e.target.value)}
-                placeholder="Enter car brand"
-            />
+            <label>
+                Car Year:
+                <input
+                    type="number"
+                    name="carYear"
+                    value={formData.carYear}
+                    onChange={handleChange}
+                    placeholder="Enter car year"
+                />
+            </label>
 
-            <input
-                type="number"
-                value={carYear}
-                onChange={(e) => setCarYear(e.target.value)}
-                placeholder="Enter car year"
-            />
+            <label>
+                Review:
+                <textarea
+                    name="reviewText"
+                    value={formData.reviewText}
+                    onChange={handleChange}
+                    placeholder="Write your review here..."
+                    rows="10"
+                    cols="50"
+                />
+            </label>
 
-            <textarea
-                value={reviewText}
-                onChange={handleReviewChange}
-                placeholder="Write your review here..."
-                rows="10"
-                cols="50"
-            />
-
-            <input type="file" onChange={handleFileChange} />
+            <label>
+                Upload Image:
+                <input type="file" name="imgFile" onChange={handleFileChange} />
+            </label>
 
             <br />
 
             {/* Add a rating input */}
-            <select value={rating} onChange={handleRatingChange}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+            <label>
+                Rating:
+                <select name="rating" value={formData.rating} onChange={handleChange}>
+                    <option value="0">Select a rating</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </label>
 
             <br />
 
