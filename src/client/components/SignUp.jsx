@@ -37,7 +37,7 @@ function SignUp({ setToken }) {
                     username: formData.username
                 })
             });
-
+          
             const result = await response.json();
 
             if(!response.ok) {
