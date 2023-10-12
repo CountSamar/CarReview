@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || 4000;
 
 const userRoutes = require('./routes/userroutes');
 const carRoutes = require('./routes/carroute');
@@ -10,7 +10,7 @@ const reviewRoutes = require('./routes/reviewroute');
 
 
 app.use(cors({
-  origin: 'http://localhost:5001',  
+  origin: 'http://localhost:3000',  
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
