@@ -17,8 +17,8 @@
 
 .latest-reviews {
   display: flex;
-  flex-direction: column; /* Display reviews in a column */
-  align-items: center; /* Center align reviews horizontally */
+  flex-direction: column; 
+  align-items: center; 
 }
 
 .review {
@@ -27,42 +27,41 @@
   margin: 16px; /* Add margin to space out reviews */
   width: 80%; /* Adjust the width as needed */
   max-width: 600px; /* Set a maximum width to prevent reviews from becoming too wide */
-  background-color: #f9f9f9; /* Background color for reviews */
+  background-color: #d9d3ed; /* Background color for reviews */
 }
 
 .review h3 {
-  font-size: 18px; /* Set the font size for review titles */
+  font-size: 18px; 
 }
 
 .review p {
-  font-size: 16px; /* Set the font size for review content */
+  font-size: 16px; /
 }
 
-/* Example CSS for customizing toast messages */
+
 .custom-toast-container .Toastify__toast {
-  background-color: #333; /* Background color of the toast message */
-  color: #fff; /* Text color */
-  border-radius: 4px; /* Rounded corners */
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); /* Box shadow for the toast */
-  font-size: 16px; /* Text size */
+  background-color: #333; 
+  color: #fff; 
+  border-radius: 4px; 
+  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); 
+  font-size: 16px; 
 }
 
 .custom-toast-container .Toastify__toast--success {
-  background-color: #55b406; /* Background color for success toast messages */
+  background-color: #55b406; 
 }
 
 .custom-toast-container .Toastify__toast--error {
-  background-color: #f44336; /* Background color for error toast messages */
+  background-color: #f44336; 
 }
 
-/* Adjust the size of the checkmark icon */
+
 .custom-toast-container .Toastify__toast-body::before {
-  font-size: 1px; /* Example: Increase the checkmark size */
+  font-size: 1px; 
 }
 
-/* Positioning of toast messages */
+
 .custom-toast-container .Toastify__toast-container {
-  width: 1px; /* Width of the toast container */
+  width: 1px; 
 }
 
-/* You can add more custom styles as needed */

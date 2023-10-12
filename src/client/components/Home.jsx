@@ -42,7 +42,7 @@ const Home = () => {
               <p>Reviewed by: {review.user_name}</p>
               
               <p>Car Model: {review.car_model}</p>
-              <p>Car Brand: {review.car_brand}</p>
+              <p>Car Make: {review.car_brand}</p>
               <p>Car Year: {review.car_year}</p>
               <img
                 src={
