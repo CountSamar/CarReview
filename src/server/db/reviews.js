@@ -1,124 +1,157 @@
-const db = require('./client');
+const db = require("./client");
 
-// Helper function to get user_id from username
-const getUserIdFromUsername = async (username) => {
-    const { rows: [user] } = await db.query(`
-        SELECT id FROM users WHERE username = $1
-    `, [username]);
-
-    if (!user) {
-        throw new Error('User not found');
-    }
-
-    return user.id;
-};
-const createReview = async({ username, carModel, carBrand, carYear, comment, imgPath, rating }) => {
-    try {
-        console.log('Image path received:', imgPath);
-
-        const { rows: [review] } = await db.query(`
-            INSERT INTO reviews(username, car_model, car_brand, car_year, comment, imgpath, rating)
+const createReview = async ({
+  username,
+  carModel,
+  carBrand,
+  carYear,
+  comment,
+  imgPath,
+  rating,
+}) => {
+  try {
+    const {
+      rows: [review],
+    } = await db.query(
+      `
+            INSERT INTO reviews(user_name, car_model, car_brand, car_year, comment, imgpath, rating)
             VALUES($1, $2, $3, $4, $5, $6, $7)
-            RETURNING *`, [username, carModel, carBrand, carYear, comment, imgPath, rating]);
+            RETURNING *`,
+      [username, carModel, carBrand, carYear, comment, imgPath, rating]
+    );
 
-        return review;
-    } catch (err) {
-        throw err;
-    }
-}
+    return review;
+  } catch (err) {
+    throw err;
+  }
+};
+const getAllReviews = async () => {
+  try {
+    const { rows } = await db.query(`
+        SELECT 
+          rating, 
+          comment, 
+          date_created, 
+          imgpath, 
+          user_name, 
+          car_model,  
+          car_brand,  
+          car_year    
+        FROM reviews
+      `);
 
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
 
+const getReviewsByUsername = async (username) => {
+  try {
+    const { rows } = await db.query(
+      `
+        SELECT * FROM reviews
+        WHERE user_name = $1
+      `,
+      [username]
+    );
 
-const getAllReviews = async() => {
-    try {
-        const { rows } = await db.query(`
-            SELECT reviews.*, users.username
-            FROM reviews
-            JOIN users ON reviews.user_id = users.id
-        `);
-        return rows;
-    } catch (err) {
-        throw err;
-    }
-}
-
-const getReviewById = async(id) => {
-    try {
-        const { rows: [ review ] } = await db.query(`
-            SELECT reviews.*, users.username
-            FROM reviews
-            JOIN users ON reviews.user_id = users.id
-            WHERE reviews.id=$1;
-        `, [ id ]);
-
-        if(!review) {
-            return;
-        }
-        return review;
-    } catch (err) {
-        throw err;
-    }
-}
-
-const updateReview = async(id, { car_id, user_id, rating, comment }) => {
-    try {
-        const { rows: [review] } = await db.query(`
-            UPDATE reviews
-            SET car_id = $2, user_id = $3, rating = $4, comment = $5
-            WHERE id = $1
-            RETURNING *`, [id, car_id, user_id, rating, comment]);
-
-        return review;
-    } catch (err) {
-        throw err;
-    }
-}
-
-const deleteReview = async(id) => {
-    try {
-        await db.query(`
-            DELETE FROM reviews
-            WHERE id=$1;`, [ id ]);
-    } catch (err) {
-        throw err;
-    }
-}
-
-const getLatestReviews = async () => {
-    try {
-        const query = `
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+const getLatestReviews = async (limit = 10) => {
+  try {
+    const query = `
             SELECT 
-                r.id, 
-                r.rating, 
-                r.comment, 
-                r.date_created, 
-                u.name as user_name,
-                c.model,
-                c.brand,
-                c.year,
-                c.image_path as car_image
-            FROM reviews r
-            JOIN users u ON r.user_id = u.id
-            JOIN cars c ON r.car_id = c.id   
-            ORDER BY r.date_created DESC
-            LIMIT 5
+                id,
+                rating,
+                comment,
+                date_created,
+                imgpath,
+                user_name,
+                car_model,
+                car_brand,
+                car_year
+            FROM reviews
+            ORDER BY date_created DESC
+            LIMIT $1;  
         `;
 
-        const { rows } = await db.query(query);
-        
-        return rows;
-    } catch (err) {
-        console.error("Error in getLatestReviews:", err); 
-        throw err;
-    }
-}
+    const { rows } = await db.query(query, [limit]); // pass the limit
 
-module.exports = {
-    createReview,
-    getAllReviews,
-    getReviewById,
-    updateReview,
-    deleteReview,
-    getLatestReviews 
+    return rows;
+  } catch (err) {
+    console.error("Error in getLatestReviews:", err);
+    throw err;
+  }
 };
 
+
+const deleteReview = async (id) => {
+  try {
+    const { rowCount } = await db.query(
+      `DELETE FROM reviews WHERE id = $1 RETURNING *`,
+      [id]
+    );
+
+    // Check if any row was deleted
+    if (rowCount === 0) {
+      throw new Error("Review not found");
+    }
+  } catch (err) {
+    console.error("Error in deleteReview:", err);
+    throw err;
+  }
+};
+const updateReview = async (data) => {
+  console.log('Updating review with data:', data);
+
+  if (!data.id) {
+      throw new Error("The 'id' field must be provided to update a review.");
+  }
+
+  const fields = ['comment', 'rating', 'car_model', 'car_brand', 'car_year'];
+  const setClauses = [];
+  const values = [data.id];
+
+  fields.forEach((field, index) => {
+      if (data[field]) {
+          setClauses.push(`${field} = $${index + 2}`);  // +2 because id will be $1
+          values.push(data[field]);
+      }
+  });
+
+  if (setClauses.length === 0) {
+      throw new Error("No valid fields provided for update.");
+  }
+
+  const queryString = `
+      UPDATE reviews 
+      SET ${setClauses.join(', ')}
+      WHERE id = $1
+      RETURNING *;
+  `;
+
+  try {
+      const {
+          rows: [review],
+      } = await db.query(queryString, values);
+      return review;
+  } catch (err) {
+      throw err;
+  }
+};
+
+
+
+module.exports = {
+  createReview,
+  getAllReviews,
+  deleteReview,
+  updateReview,
+
+  getLatestReviews,
+  getReviewsByUsername,
+};

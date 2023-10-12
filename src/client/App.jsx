@@ -47,11 +47,8 @@ export default function App() {
       <SearchBar />
 
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route
-          path="/profile"
-          element={<PrivateRoute isLoggedIn={isLoggedIn} />}
-        >
+      <Route path="/" element={<Home username= {username} />} />
+        <Route path="/profile" element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
           <Route
             index
             element={
