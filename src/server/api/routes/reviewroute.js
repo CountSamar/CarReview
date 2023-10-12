@@ -15,6 +15,7 @@ const {
 // Fetch all reviews
 router.get('/', async (req, res, next) => {
     try {
+        console.log(req)
         const reviews = await getAllReviews();
         res.json({ success: true, data: reviews });
     } catch (err) {
