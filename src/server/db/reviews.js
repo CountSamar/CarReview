@@ -156,6 +156,22 @@ const getLatestReviews = async () => {
   }
 };
 
+const getReviewsByUsername = async (username) => {
+  try {
+    const { rows } = await db.query(
+      `
+        SELECT * FROM reviews
+        WHERE user_name = $1
+      `,
+      [username]
+    );
+
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   createReview,
   getAllReviews,
@@ -163,5 +179,6 @@ module.exports = {
   updateReview,
   deleteReview,
   getLatestReviews,
-  getAdminAllReviews
+  getAdminAllReviews,
+  getReviewsByUsername
 };

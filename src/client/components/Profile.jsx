@@ -1,183 +1,469 @@
 import React, { useState, useEffect } from "react";
 import Logout from "./Logout";
 import jwt_decode from "jwt-decode";
-import { Base64 } from 'js-base64';
 
-const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) => {
-    const [reviewText, setReviewText] = useState("");
-    const [carModel, setCarModel] = useState("");
-    const [carBrand, setCarBrand] = useState("");
-    const [carYear, setCarYear] = useState("");
-    const [imgFile, setImgFile] = useState(null);
-    const [reviews, setReviews] = useState([]);
-    const [message, setMessage] = useState(null);
-    const [rating, setRating] = useState(0);
+const Profile = ({
+  username,
+  setToken,
+  setIsLoggedIn,
+  setShowLogoutMessage,
+}) => {
+  const [formData, setFormData] = useState({
+    reviewText: "",
+    carModel: "",
+    carBrand: "",
+    carYear: "",
+    rating: "0",
+    imgFile: null,
+  });
+  const [editFormData, setEditFormData] = useState({
+    reviewText: "",
+    carModel: "",
+    carBrand: "",
+    carYear: "",
+    rating: "0",
+    imgFile: null,
+  });
+  const [reviews, setReviews] = useState([]);
+  const [message, setMessage] = useState(null);
+  const [editingReview, setEditingReview] = useState(null);
+  const [allUsers, setAllUsers] = useState([])
 
-    const fetchReviews = async (role, id) => {
-        if (role === "admin") {
-            const response = await fetch("/api/reviews/admin", {
-                method: "GET",
-            });
-            const data = await response.json();
-            setReviews(data)
-        } else {
-            const response = await fetch(`/api/reviews/${id}`, {
-                method: "GET",
-            });
-            const data = await response.json();
-            setReviews(data)
+  useEffect(() => {
+    const fetchReviews = async () => {
+      console.log(username, "username")
+      const mytoken = localStorage.getItem("token")
+      const decodedtoken = jwt_decode(mytoken)
+      console.log(decodedtoken, "DECODED")
+      const tokenrole = decodedtoken.role
+
+      if (tokenrole === "admin") {
+        console.log("IN THE ADMIN")
+        try {
+          const response = await fetch(
+            `/api/reviews/admin/`
+          );
+          const data = await response.json();
+
+          if (!response.ok) {
+            const errorMessage =
+              data && data.message ? data.message : "Error fetching reviews";
+            throw new Error(errorMessage);
+          }
+
+          setReviews(data.data);
+        } catch (error) {
+          console.error("Error fetching user's reviews:", error);
+          setMessage("Error fetching your reviews. Please try again.");
         }
+      } else {
+        console.log("NOT IN ADMIN")
+        try {
+          const response = await fetch(
+            `/api/reviews/user/${username}`
+          );
+          const data = await response.json();
+
+          if (!response.ok) {
+            const errorMessage =
+              data && data.message ? data.message : "Error fetching reviews";
+            throw new Error(errorMessage);
+          }
+
+          setReviews(data);
+        } catch (error) {
+          console.error("Error fetching user's reviews:", error);
+          setMessage("Error fetching your reviews. Please try again.");
+        }
+      }
+    };
+
+    fetchReviews();
+  }, [username]);
+
+  useEffect(() => {
+    const fetchAllUsers = async(role) => {
+      if(role === "admin") {
+        const response = await fetch ("/api/users", {
+          method: "GET"
+        });
+        const results = await response.json();
+        console.log(results, "results")
+        setAllUsers(results.data)
+      }
     }
 
-    useEffect(() => {
-        // console.log(Base64.btoa(localStorage.getItem("token")))
-        let tok = Base64.btoa(localStorage.getItem("token"))
-        console.log(tok, "tok")
-        // const mytokenId = jwt_decode(localStorage.getItem("token").id)
-        // const mytokenrole = jwt_decode(localStorage.getItem("token").role)
+    const mytoken = localStorage.getItem("token")
+      const decodedtoken = jwt_decode(mytoken)
+      console.log(decodedtoken, "DECODED")
+      const tokenrole = decodedtoken.role
 
-        // fetchReviews(mytokenrole, mytokenId)
+   fetchAllUsers(tokenrole);
+   
+  }, [])
+  
 
-    }, [])
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-    const handleReviewChange = (e) => {
-        setReviewText(e.target.value);
-    };
+  const handleFileChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      imgFile: e.target.files[0],
+    }));
+  };
 
-    const handleFileChange = (e) => {
-        setImgFile(e.target.files[0]);
-    };
+  const submitReview = async () => {
+    setMessage(null);
+    const { reviewText, carModel, carBrand, carYear, imgFile, rating } =
+      formData;
 
-    const handleRatingChange = (e) => {
-        setRating(parseInt(e.target.value, 10));
-    };
+    if (
+      reviewText.trim() &&
+      carModel.trim() &&
+      carBrand.trim() &&
+      carYear.trim() &&
+      imgFile &&
+      parseInt(rating) >= 1 &&
+      parseInt(rating) <= 5
+    ) {
+      try {
+        const formSubmission = new FormData();
+        formSubmission.append("user_name", username);
+        formSubmission.append("carModel", carModel);
+        formSubmission.append("carBrand", carBrand);
+        formSubmission.append("carYear", carYear);
+        formSubmission.append("comment", reviewText);
+        formSubmission.append("imgpath", imgFile);
+        formSubmission.append("rating", rating);
 
-    const submitReview = async () => {
-        setMessage(null);
+        const response = await fetch(
+          "/api/reviews/create",
+          {
+            method: "POST",
+            body: formSubmission,
+          }
+        );
 
-        if (
-            reviewText.trim() &&
-            carModel.trim() &&
-            carBrand.trim() &&
-            carYear.trim() &&
-            imgFile &&
-            rating >= 1 &&
-            rating <= 5
-        ) {
-            try {
-                const formData = new FormData();
-                formData.append('username', username);
-                formData.append('carModel', carModel);
-                formData.append('carBrand', carBrand);
-                formData.append('carYear', carYear);
-                formData.append('comment', reviewText);
-                formData.append('imgpath', imgFile);
-                formData.append('rating', rating);
+        const data = await response.json();
 
-                const response = await fetch("/api/reviews/create", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    setReviews((prevReviews) => [...prevReviews, reviewText]);
-                    setReviewText("");
-                    setCarModel("");
-                    setCarBrand("");
-                    setCarYear("");
-                    setRating(0);
-                    setMessage("Review submitted successfully!");
-                } else {
-                    setMessage(data.message || "Error submitting the review");
-                }
-            } catch (error) {
-                console.error("There was an issue saving the review:", error);
-                setMessage("There was an error. Please try again.");
-            }
-        } else {
-            setMessage("Please fill in all fields, upload an image, and provide a valid rating (1-5).");
+        if (!response.ok) {
+          throw new Error(data.message || "Error submitting the review");
         }
+
+        if (data.success) {
+          setReviews((prevReviews) => [...prevReviews, reviewText]);
+          setFormData({
+            reviewText: "",
+            carModel: "",
+            carBrand: "",
+            carYear: "",
+            rating: "0",
+            imgFile: null,
+          });
+          setMessage("Review submitted successfully!");
+        } else {
+          setMessage(data.message || "Error submitting the review");
+        }
+      } catch (error) {
+        console.error("There was an issue saving the review:", error);
+        setMessage("There was an error. Please try again.");
+      }
+    } else {
+      setMessage(
+        "Please fill in all fields, upload an image, and provide a valid rating (1-5)."
+      );
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch("/api/reviews/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id }),  // Note: we're sending the ID now
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Error deleting the review");
+      }
+
+      setMessage("Review deleted successfully!");
+      setReviews((prevReviews) =>
+        prevReviews.filter((review) => review.id !== id)  // filter by ID
+      );
+    } catch (error) {
+      console.error("There was an issue deleting the review:", error);
+      setMessage("There was an error. Please try again.");
+    }
+  };
+  const handleUpdate = async (reviewId) => {
+    console.log("State or Prop ID:", reviewId);
+    console.log("Edit Form Data:", editFormData);
+
+    const patchData = {
+      id: reviewId,
+      car_model: editFormData.carModel,
+      car_brand: editFormData.carBrand,
+      car_year: editFormData.carYear,
+      comment: editFormData.reviewText,
+      rating: editFormData.rating,
     };
 
-    return (
-        <div style={{ marginTop: "2rem" }}>
-            <h1>Profile</h1>
-            <p>Welcome, {username}!</p>
+    try {
+      const response = await fetch(
+        `/api/reviews/update/${reviewId}`,
+        {
+          method: "PATCH", // Change to PATCH
+          headers: {
+            "Content-Type": "application/json", // Specify JSON content type
+          },
+          body: JSON.stringify(patchData), // Send data as JSON
+        }
+      );
 
-            <Logout
-                setToken={setToken}
-                setIsLoggedIn={setIsLoggedIn}
-                setShowLogoutMessage={setShowLogoutMessage}
-            />
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
 
-            <h2>Write a Review</h2>
+      let data;
+      if (
+        response.status !== 204 &&
+        response.headers.get("content-length") > 0
+      ) {
+        data = await response.json();
+        if (data.success) {
+          setReviews((prevReviews) =>
+            prevReviews.map((r) => (r.id === reviewId ? data.review : r))
+          );
+          setEditingReview(null);
+          setMessage("Review updated successfully!");
+        } else {
+          setMessage(data.message || "Error updating the review");
+        }
+      }
+    } catch (error) {
+      console.error("Error updating review:", error);
+      setMessage("Error updating the review: " + error.message);
+    }
+  };
 
-            <input
-                type="text"
-                value={carModel}
-                onChange={(e) => setCarModel(e.target.value)}
-                placeholder="Enter car model"
-            />
 
-            <input
-                type="text"
-                value={carBrand}
-                onChange={(e) => setCarBrand(e.target.value)}
-                placeholder="Enter car brand"
-            />
 
-            <input
-                type="number"
-                value={carYear}
-                onChange={(e) => setCarYear(e.target.value)}
-                placeholder="Enter car year"
-            />
+  return (
+    <div style={{ marginTop: "2rem" }}>
+      <h1>Profile</h1>
+      <p>Welcome, {username}!</p>
 
-            <textarea
-                value={reviewText}
-                onChange={handleReviewChange}
-                placeholder="Write your review here..."
-                rows="10"
-                cols="50"
-            />
+      <Logout
+        setToken={setToken}
+        setIsLoggedIn={setIsLoggedIn}
+        setShowLogoutMessage={setShowLogoutMessage}
+      />
 
-            <input type="file" onChange={handleFileChange} />
+      <h2>Write a Review</h2>
 
-            <br />
+      <label>
+        Car Model:
+        <input
+          type="text"
+          name="carModel"
+          value={formData.carModel}
+          onChange={handleChange}
+          placeholder="Enter car model"
+        />
+      </label>
 
-            {/* Add a rating input */}
-            <select value={rating} onChange={handleRatingChange}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+      <label>
+        Car Brand:
+        <input
+          type="text"
+          name="carBrand"
+          value={formData.carBrand}
+          onChange={handleChange}
+          placeholder="Enter car brand"
+        />
+      </label>
 
-            <br />
+      <label>
+        Car Year:
+        <input
+          type="number"
+          name="carYear"
+          value={formData.carYear}
+          onChange={handleChange}
+          placeholder="Enter car year"
+        />
+      </label>
 
-            <button onClick={submitReview}>
-                Submit Review
-            </button>
+      <label>
+        Review:
+        <textarea
+          name="reviewText"
+          value={formData.reviewText}
+          onChange={handleChange}
+          placeholder="Write your review here..."
+          rows="10"
+          cols="50"
+        />
+      </label>
 
-            {message && <p>{message}</p>}
+      <label>
+        Upload Image:
+        <input type="file" name="imgFile" onChange={handleFileChange} />
+      </label>
 
-            <h2>Your Reviews</h2>
-            <ul>
-                {reviews.length > 0 && reviews.map((rev, index) => (
-                    <li key={index}>{rev.comment}</li>
-                ))}
-            </ul>
-        </div>
-    );
+      <br />
+
+      <label>
+        Rating:
+        <select name="rating" value={formData.rating} onChange={handleChange}>
+          <option value="0">Select a rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+
+      <br />
+
+      <button onClick={submitReview}>Submit Review</button>
+
+      {message && <p>{message}</p>}
+
+      <h2>Your Reviews</h2>
+      <ul>
+        {reviews.map((review) => (
+          <li className="review" key={review.id}>
+            {editingReview === review.id ? (
+              <div>
+
+                <label>
+                  Car Model:
+                  <input
+                    type="text"
+                    name="carModel"
+                    value={editFormData.carModel}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Car Brand:
+                  <input
+                    type="text"
+                    name="carBrand"
+                    value={editFormData.carBrand}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Car Year:
+                  <input
+                    type="number"
+                    name="carYear"
+                    value={editFormData.carYear}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Review:
+                  <textarea
+                    name="reviewText"
+                    value={editFormData.reviewText}
+                    onChange={handleEditChange}
+                  />
+                </label>
+                <label>
+                  Rating:
+                  <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                  </select>
+                </label>
+                <button onClick={() => handleUpdate(review.id)}>
+                  Update Review
+                </button>
+                <button onClick={() => setEditingReview(null)}>
+                  Cancel
+                </button>
+              </div>
+            ) : (
+              <div>
+
+                <div>
+                  <strong>Car Model:</strong> {review.car_model}
+                </div>
+                <div>
+                  <strong>Car Brand:</strong> {review.car_brand}
+                </div>
+                <div>
+                  <strong>Car Year:</strong> {review.car_year}
+                </div>
+                <div>
+                  <strong>Rating:</strong> {review.rating}
+                </div>
+                <div>
+                  <strong>Review:</strong> {review.comment}
+                </div>
+                <button onClick={() => handleDelete(review.id)}>
+                  Delete Review
+                </button>
+                <button onClick={() => {
+                  setFormData({
+                    reviewText: review.comment,
+                    carModel: review.car_model,
+                    carBrand: review.car_brand,
+                    carYear: review.car_year.toString(),
+                    rating: review.rating.toString(),
+                    imgFile: null,
+                  });
+                  setEditingReview(review.id);
+                }}>
+                  Edit Review
+                </button>
+                <img
+                  src={`/${review.imgpath}`}
+                  alt={`Image of ${review.car_model}`}
+                />
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      {allUsers.length > 0 && allUsers.map((user) => {
+          return (
+            <div className="mb-4 card p-2 ml-2" style={{width: "18rem"}} key={user.id}>
+              <h5>Name: {user.name}</h5>
+              <h5>Username: {user.username}</h5>
+              <h5>Email: {user.email}</h5>
+              <h5>Role: {user.role}</h5>
+            </div>
+          )
+      })}
+    </div>
+  );
 };
 
 export default Profile;
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbWlseUBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY5NzA4Mjc1NywiZXhwIjoxNjk3Njg3NTU3fQ.olkCq8agMIjQsbwAuzaCsoYLwJfJCd2V1kJjMOXHjko
-
-
-// eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJlbWlseUBleGFtcGxlLmNvbSIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTY5NzA4Mjc1NywiZXhwIjoxNjk3Njg3NTU3fQ.olkCq8agMIjQsbwAuzaCsoYLwJfJCd2V1kJjMOXHjko

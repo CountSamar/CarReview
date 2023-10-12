@@ -3,9 +3,9 @@ import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
 import NavBar from "./components/NavBar";
 import Home from "./components/Home";
-import Profile from "./components/Profile";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
+import Profile from "./components/Profile"
 
 function PrivateRoute({ isLoggedIn }) {
   return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
@@ -15,7 +15,7 @@ export default function App() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [userId, setUserId] = useState(""); 
+  const [userId, setUserId] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [token, setToken] = useState("");
   const [showLogoutMessage, setShowLogoutMessage] = useState(false);
@@ -42,7 +42,6 @@ export default function App() {
           <Route
             index
             element={<Profile
-             
               username={username}
               setToken={setToken}
               setIsLoggedIn={setIsLoggedIn}
@@ -81,6 +80,19 @@ export default function App() {
             />
           }
         />
+        <Route path="/editreview" element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
+          <Route
+            index
+            element={<Profile
+
+              username={username}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setShowLogoutMessage={setShowLogoutMessage}
+            />}
+          />
+        </Route>
+
       </Routes>
     </>
   );

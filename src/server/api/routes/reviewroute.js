@@ -9,24 +9,26 @@ const {
     createReview,
     updateReview,
     deleteReview,
-    getLatestReviews
+    getLatestReviews,
+    getAdminAllReviews,
+    getReviewsByUsername
 } = require('../../db/reviews');
 
 // Fetch all reviews
-router.get('/:id', async (req, res, next) => {
-    try {
-        const reviews = await getAllReviews(res.params.id);
-        res.json({ success: true, data: reviews });
-    } catch (err) {
-        next(err);
-    }
-});
+// router.get('/user/:id', async (req, res, next) => {
+//     try {
+//         const reviews = await getAllReviews(res.params.id);
+//         res.json({ success: true, data: reviews });
+//     } catch (err) {
+//         next(err);
+//     }
+// });
 
 // Fetch Admin All Reviews
 router.get('/admin', async (req, res, next) => {
     try {
         const reviews = await getAdminAllReviews();
-        res.json({ success: true, data: reviews });
+        res.json({ message: "No reviews found", data: reviews });
     } catch (err) {
         next(err);
     }
@@ -108,5 +110,30 @@ router.delete('/:reviewId', async (req, res, next) => {
         next(err);
     }
 });
+
+router.get("/user/:username", async (req, res) => {
+    const username = req.params.username;
+    try {
+      const reviews = await getReviewsByUsername(username);
+      if (reviews && reviews.length > 0) {
+        res.json(reviews);
+      } else {
+        res
+          .status(404)
+          .send({
+            success: false,
+            message: `No reviews found for user ${username}`,
+          });
+      }
+    } catch (error) {
+      console.error("Error fetching reviews for user:", error);
+      res
+        .status(500)
+        .send({
+          success: false,
+          message: `Error fetching reviews for user ${username}. Reason: ${error.message}`,
+        });
+    }
+  });
 
 module.exports = router;

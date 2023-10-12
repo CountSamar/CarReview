@@ -4,7 +4,6 @@ import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 
-
 const customToastContainerStyle = {
   
   
@@ -54,6 +53,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
         if (result.token) {
           setToken(result.token)
           localStorage.setItem('token', result.token)
+          console.log(result, "result")
           setUsername(result.username);
           setUserId(result.userId);
 
