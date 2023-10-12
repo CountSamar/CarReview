@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 5001;
 const userRoutes = require("./routes/userroutes");
 const carRoutes = require("./routes/carroute");
 const reviewRoutes = require("./routes/reviewroute");
+const chatRoutes = require("./routes/chatroute"); // Importing the chat routes
 
 const app = express();
 
@@ -14,7 +15,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Include PATCH here
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -33,6 +34,7 @@ app.get("/api/test", (req, res) => {
 app.use("/api/users", userRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/chats", chatRoutes); // Mounting the chat routes here
 
 // Serve static files from uploads directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));

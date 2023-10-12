@@ -61,11 +61,11 @@ const getReviewsByUsername = async (username) => {
     throw err;
   }
 };
-
-const getLatestReviews = async () => {
+const getLatestReviews = async (limit = 10) => {
   try {
     const query = `
             SELECT 
+                id,
                 rating,
                 comment,
                 date_created,
@@ -76,10 +76,10 @@ const getLatestReviews = async () => {
                 car_year
             FROM reviews
             ORDER BY date_created DESC
-            LIMIT 5;
+            LIMIT $1;  
         `;
 
-    const { rows } = await db.query(query);
+    const { rows } = await db.query(query, [limit]); // pass the limit
 
     return rows;
   } catch (err) {
@@ -87,6 +87,8 @@ const getLatestReviews = async () => {
     throw err;
   }
 };
+
+
 const deleteReview = async (id) => {
   try {
     const { rowCount } = await db.query(

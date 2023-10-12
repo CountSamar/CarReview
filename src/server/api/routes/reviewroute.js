@@ -22,15 +22,17 @@ router.get("/", async (req, res, next) => {
     next(err);
   }
 });
-// Fetch the latest five reviews
+// Fetch the latest 10 reviews
 router.get("/latest", async (req, res, next) => {
   try {
-    const reviews = await getLatestReviews();
+    const limit = req.query.limit || 10; // get the limit from the query or default to 10
+    const reviews = await getLatestReviews(limit); // pass the limit to the function
     res.json({ success: true, data: reviews });
   } catch (err) {
     next(err);
   }
 });
+
 
 router.get("/user/:username", async (req, res) => {
   const username = req.params.username;
