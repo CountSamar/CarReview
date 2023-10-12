@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import image1 from "../assets/image1.jpg";
-import image2 from "../assets/image2.jpg";
-import image3 from "../assets/image3.jpg";
-import image4 from "../assets/image4.jpg";
+// import image1 from "../assets/image1.jpg";
+// import image2 from "../assets/image2.jpg";
+// import image3 from "../assets/image3.jpg";
+// import image4 from "../assets/image4.jpg";
 import ReviewCard from './ReviewCard';
 
 const myreview = [
@@ -11,7 +11,7 @@ const myreview = [
       rating: 3,
       description: "This car is fast and nice",
       vehicle_type: "sedan",
-      image: image1
+      // image: image1
    },
 
    {
@@ -19,7 +19,7 @@ const myreview = [
       rating: 5,
       description: "Very sleek but very expensive",
       vehicle_type: "sports",
-      image: image2
+      // image: image2
    },
 
    {
@@ -27,7 +27,7 @@ const myreview = [
       rating: 1,
       description: "Drives like a big yellow bus",
       vehicle_type: "van",
-      image: image3
+      // image: image3
    },
 
    {
@@ -35,7 +35,7 @@ const myreview = [
       rating: 4,
       description: "Spacious with nice interior",
       vehicle_type: "sedan",
-      image: image4
+      // image: image4
    }
 ]
 
