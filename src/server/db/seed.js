@@ -182,7 +182,7 @@ const users = [
 const cars = [
   { model: "Model 3", brand: "Tesla", year: 2023, image_path:"uploads/1696817981885-tesla model 3.jpeg" },
   { model: "Mustang", brand: "Ford", year: 2023, image_path:"uploads/1696820948754-fordmustang.jpeg" },
-  { model: "A4", brand: "Audi", year: 2023, image_path:"/uploads/audi.jpeg"},
+  { model: "A4", brand: "Audi", year: 2023, image_path:"uploads/audi.jpeg"},
   { model: "Camry", brand: "Toyota", year: 2023, image_path:"uploads/camry.jpeg"},
   { model: "E-Class", brand: "Mercedes-Benz", year: 2023,image_path:"uploads/benz.jpeg" },
   { model: "WRX", brand: "Subaru", year: 2023, image_path:"uploads/subaru.jpeg" },

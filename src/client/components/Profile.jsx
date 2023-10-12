@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import Logout from "./Logout";
 
 const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) => {
@@ -12,6 +12,27 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
     });
     const [reviews, setReviews] = useState([]);
     const [message, setMessage] = useState(null);
+    useEffect(() => {
+        const fetchReviews = async () => {
+            try {
+                const response = await fetch(`http://localhost:5001/api/reviews/user/${username}`);
+                const data = await response.json();
+    
+                if (!response.ok) {
+                    const errorMessage = data && data.message ? data.message : "Error fetching reviews";
+                    throw new Error(errorMessage);
+                }
+    
+                setReviews(data);
+            } catch (error) {
+                console.error("Error fetching user's reviews:", error);
+                setMessage("Error fetching your reviews. Please try again.");
+            }
+        };
+    
+        fetchReviews();
+    }, [username]);
+    
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -53,7 +74,7 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
 
                 const response = await fetch("http://localhost:5001/api/reviews/create", {
                     method: "POST",
-                    body: formData,
+                    body: formSubmission,
                 });
 
                 const data = await response.json();
@@ -84,7 +105,29 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
             setMessage("Please fill in all fields, upload an image, and provide a valid rating (1-5).");
         }
     };
+    const handleDelete = async (date_created) => {
+        try {
+            const response = await fetch('http://localhost:5001/api/reviews/delete', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, date_created })
+            });
 
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Error deleting the review");
+            }
+
+            setMessage("Review deleted successfully!");
+            setReviews(prevReviews => prevReviews.filter(review => review.date_created !== date_created));
+        } catch (error) {
+            console.error("There was an issue deleting the review:", error);
+            setMessage("There was an error. Please try again.");
+        }
+    };
     return (
         <div style={{ marginTop: "2rem" }}>
             <h1>Profile</h1>
@@ -150,7 +193,7 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
 
             <br />
 
-            {/* Add a rating input */}
+            
             <label>
                 Rating:
                 <select name="rating" value={formData.rating} onChange={handleChange}>
@@ -173,8 +216,27 @@ const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) =>
 
             <h2>Your Reviews</h2>
             <ul>
-                {reviews.map((rev, index) => (
-                    <li key={index}>{rev}</li>
+                {reviews.map((review,index) => (
+                    <li className= "review" key={index}>
+                        <div>
+                            <strong>Car Model:</strong> {review.car_model}
+                        </div>
+                        <div>
+                            <strong>Car Brand:</strong> {review.car_brand}
+                        </div>
+                        <div>
+                            <strong>Car Year:</strong> {review.car_year}
+                        </div>
+                        <div>
+                            <strong>Rating:</strong> {review.rating}
+                        </div>
+                        <div>
+                            <strong>Review:</strong> {review.comment}
+                        </div>
+                        <button onClick={() => handleDelete(review.date_created)}>Delete Review</button>
+                        <img src={`http://localhost:5001/${review.imgpath}`} alt={`Image of ${review.car_model}`} />
+
+                    </li>
                 ))}
             </ul>
         </div>

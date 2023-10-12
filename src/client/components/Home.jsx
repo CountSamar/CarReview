@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { format } from "date-fns"; // Import the date-fns library
 
 const Home = () => {
   const [latestReviews, setLatestReviews] = useState([]);
@@ -10,7 +11,17 @@ const Home = () => {
         const response = await fetch("http://localhost:5001/api/reviews/latest");
         if (!response.ok) throw new Error("Failed to fetch latest reviews");
         const data = await response.json();
-        setLatestReviews(data.data);
+
+        // Format dates here before setting state
+        const formattedReviews = data.data.map((review) => ({
+          ...review,
+          // Assuming review.date_created is in ISO 8601 format, you can format it like this:
+          date_created: review.date_created
+            ? format(new Date(review.date_created), "MM/dd/yyyy hh:mm:ss a")
+            : null,
+        }));
+
+        setLatestReviews(formattedReviews);
       } catch (error) {
         setError(error.message);
       }
@@ -25,21 +36,23 @@ const Home = () => {
     <>
       <section className="latest-reviews">
         {Array.isArray(latestReviews) &&
-          latestReviews.map((review) => (
-            <div className="review" key={review.id}>
-              <h1>Brand: {review.brand}</h1>
-              <h2>Model: {review.model}</h2>
+          latestReviews.map((review, index) => (
+            <div className="review" key={index}>
+              <h1>Rating: {review.rating} out of 5</h1>
               <p>Reviewed by: {review.user_name}</p>
+              
+              <p>Car Model: {review.car_model}</p>
+              <p>Car Brand: {review.car_brand}</p>
+              <p>Car Year: {review.car_year}</p>
               <img
                 src={
-                  review.car_image
-                    ? `http://localhost:5001/${review.car_image}`
+                  review.imgpath
+                    ? `http://localhost:5001/${review.imgpath}`
                     : "src/server/api/uploads/1696817981885-tesla model 3.jpeg"
                 }
                 alt="Car"
               />
-              <p>Rating: {review.rating} out of 5</p>
-              <blockquote>{review.comment}</blockquote>
+              <p>{review.comment}</p>
             </div>
           ))}
       </section>
