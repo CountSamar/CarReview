@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const path = require("path"); 
+const path = require("path");
 
 const PORT = process.env.PORT || 5001;
 
@@ -14,7 +14,7 @@ const app = express();
 app.use(
   cors({
     origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"], // Include PATCH here
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
@@ -36,7 +36,6 @@ app.use("/api/reviews", reviewRoutes);
 
 // Serve static files from uploads directory
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
- // 
 
 // Error handler (this is a basic example)
 app.use((err, req, res, next) => {

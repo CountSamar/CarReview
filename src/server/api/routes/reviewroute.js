@@ -137,27 +137,28 @@ router.delete('/delete', async (req, res) => {
       });
   }
 });
-app.put('/api/reviews/update', async (req, res) => {
-  const {
-    id,
-    comment,
-    rating,
-    carModel,
-    carBrand,
-    carYear
-  } = req.body;
+
+
+
+router.patch('/update/:id', async (req, res) => {
+  const { id } = req.params;
+  const { comment, rating, carModel, carBrand, carYear } = req.body;
 
   try {
     const updatedReview = await updateReview({
       id,
       comment,
       rating,
-      car_model: carModel,  
+      car_model: carModel,
       car_brand: carBrand,
-      car_year: carYear
+      car_year: carYear,
     });
 
-    res.json(updatedReview);
+    if (updatedReview) {
+      res.status(200).json({ success: true, review: updatedReview });
+    } else {
+      res.status(404).json({ message: 'Review not found.' });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Failed to update review.' });

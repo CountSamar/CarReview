@@ -103,29 +103,45 @@ const deleteReview = async (id) => {
     throw err;
   }
 };
-const updateReview = async ({ id, comment, rating, car_model, car_brand, car_year }) => {
+const updateReview = async (data) => {
+  console.log('Updating review with data:', data);
+
+  if (!data.id) {
+      throw new Error("The 'id' field must be provided to update a review.");
+  }
+
+  const fields = ['comment', 'rating', 'car_model', 'car_brand', 'car_year'];
+  const setClauses = [];
+  const values = [data.id];
+
+  fields.forEach((field, index) => {
+      if (data[field]) {
+          setClauses.push(`${field} = $${index + 2}`);  // +2 because id will be $1
+          values.push(data[field]);
+      }
+  });
+
+  if (setClauses.length === 0) {
+      throw new Error("No valid fields provided for update.");
+  }
+
+  const queryString = `
+      UPDATE reviews 
+      SET ${setClauses.join(', ')}
+      WHERE id = $1
+      RETURNING *;
+  `;
+
   try {
-    const {
-      rows: [review],
-    } = await db.query(
-      `
-          UPDATE reviews 
-          SET 
-              comment = $2, 
-              rating = $3, 
-              car_model = $4, 
-              car_brand = $5, 
-              car_year = $6
-          WHERE id = $1
-          RETURNING *
-          `,
-      [id, comment, rating, car_model, car_brand, car_year]
-    );
-    return review;
+      const {
+          rows: [review],
+      } = await db.query(queryString, values);
+      return review;
   } catch (err) {
-    throw err;
+      throw err;
   }
 };
+
 
 
 module.exports = {

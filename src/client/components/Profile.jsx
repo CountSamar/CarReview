@@ -15,6 +15,14 @@ const Profile = ({
     rating: "0",
     imgFile: null,
   });
+  const [editFormData, setEditFormData] = useState({
+    reviewText: "",
+    carModel: "",
+    carBrand: "",
+    carYear: "",
+    rating: "0",
+    imgFile: null,
+  });
   const [reviews, setReviews] = useState([]);
   const [message, setMessage] = useState(null);
   const [editingReview, setEditingReview] = useState(null);
@@ -51,6 +59,14 @@ const Profile = ({
     }));
   };
 
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
   const handleFileChange = (e) => {
     setFormData((prevState) => ({
       ...prevState,
@@ -75,9 +91,9 @@ const Profile = ({
       try {
         const formSubmission = new FormData();
         formSubmission.append("user_name", username);
-        formSubmission.append("car_model", carModel);
-        formSubmission.append("car_brand", carBrand);
-        formSubmission.append("car_year", carYear);
+        formSubmission.append("carModel", carModel);
+        formSubmission.append("carBrand", carBrand);
+        formSubmission.append("carYear", carYear);
         formSubmission.append("comment", reviewText);
         formSubmission.append("imgpath", imgFile);
         formSubmission.append("rating", rating);
@@ -145,32 +161,58 @@ const Profile = ({
         setMessage("There was an error. Please try again.");
     }
 };
-const handleUpdate = async (id) => {
-    const formSubmission = new FormData();
-    formSubmission.append("id", id);
-    formSubmission.append("car_model", formData.carModel);
-    formSubmission.append("car_brand", formData.carBrand);
-    formSubmission.append("car_year", formData.carYear);
-    formSubmission.append("comment", formData.reviewText);
-    if (formData.imgFile) formSubmission.append("imgpath", formData.imgFile);
-    formSubmission.append("rating", formData.rating);
+const handleUpdate = async (reviewId) => {
+  console.log("State or Prop ID:", reviewId);
+  console.log("Edit Form Data:", editFormData);
 
-    const response = await fetch("http://localhost:5001/api/reviews/update", {
-      method: "PUT",
-      body: formSubmission,
-    });
-
-    const data = await response.json();
-    if (data.success) {
-      setReviews((prevReviews) =>
-        prevReviews.map((r) => (r.id === id ? data.review : r))
-      );
-      setEditingReview(null);
-      setMessage("Review updated successfully!");
-    } else {
-      setMessage(data.message || "Error updating the review");
-    }
+  const patchData = {
+    id: reviewId,
+    car_model: editFormData.carModel,
+    car_brand: editFormData.carBrand,
+    car_year: editFormData.carYear,
+    comment: editFormData.reviewText,
+    rating: editFormData.rating,
   };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5001/api/reviews/update/${reviewId}`,
+      {
+        method: "PATCH", // Change to PATCH
+        headers: {
+          "Content-Type": "application/json", // Specify JSON content type
+        },
+        body: JSON.stringify(patchData), // Send data as JSON
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    let data;
+    if (
+      response.status !== 204 &&
+      response.headers.get("content-length") > 0
+    ) {
+      data = await response.json();
+      if (data.success) {
+        setReviews((prevReviews) =>
+          prevReviews.map((r) => (r.id === reviewId ? data.review : r))
+        );
+        setEditingReview(null);
+        setMessage("Review updated successfully!");
+      } else {
+        setMessage(data.message || "Error updating the review");
+      }
+    }
+  } catch (error) {
+    console.error("Error updating review:", error);
+    setMessage("Error updating the review: " + error.message);
+  }
+};
+
+
 
   return (
     <div style={{ marginTop: "2rem" }}>
@@ -261,14 +303,14 @@ const handleUpdate = async (id) => {
     <li className="review" key={review.id}>
       {editingReview === review.id ? (
         <div>
-          {/* This form is displayed if the user wants to edit the review */}
+         
           <label>
             Car Model:
             <input
               type="text"
               name="carModel"
-              value={formData.carModel}
-              onChange={handleChange}
+              value={editFormData.carModel}
+              onChange={handleEditChange}
             />
           </label>
           <label>
@@ -276,8 +318,8 @@ const handleUpdate = async (id) => {
             <input
               type="text"
               name="carBrand"
-              value={formData.carBrand}
-              onChange={handleChange}
+              value={editFormData.carBrand}
+              onChange={handleEditChange}
             />
           </label>
           <label>
@@ -285,21 +327,21 @@ const handleUpdate = async (id) => {
             <input
               type="number"
               name="carYear"
-              value={formData.carYear}
-              onChange={handleChange}
+              value={editFormData.carYear}
+              onChange={handleEditChange}
             />
           </label>
           <label>
             Review:
             <textarea
               name="reviewText"
-              value={formData.reviewText}
-              onChange={handleChange}
+              value={editFormData.reviewText}
+              onChange={handleEditChange}
             />
           </label>
           <label>
             Rating:
-            <select name="rating" value={formData.rating} onChange={handleChange}>
+            <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -316,7 +358,7 @@ const handleUpdate = async (id) => {
         </div>
       ) : (
         <div>
-          {/* This is the default view of the review */}
+         
           <div>
             <strong>Car Model:</strong> {review.car_model}
           </div>
