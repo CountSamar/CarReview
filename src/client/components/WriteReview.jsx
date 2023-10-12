@@ -43,10 +43,10 @@ const WriteReview = () => {
 
   const handleSubmit = () => {
     const reviewData = {
-      car_id: selectedCarId, // Replace with the actual car_id you want to associate the review with
-      user_id: selectedUserId, // Replace with the actual user_id
-      rating: selectedRating, // Replace with the actual rating
-      comment: reviewText // Replace with the actual review text
+      car_id: selectedCarId, 
+      user_id: selectedUserId, 
+      rating: selectedRating, 
+      comment: reviewText 
     };
   
     fetch('http://localhost:3000/api/reviews/new', {
