@@ -26,8 +26,8 @@ const createReview = async ({
   }
 };
 const getAllReviews = async () => {
-    try {
-      const { rows } = await db.query(`
+  try {
+    const { rows } = await db.query(`
         SELECT 
           rating, 
           comment, 
@@ -39,13 +39,12 @@ const getAllReviews = async () => {
           car_year    
         FROM reviews
       `);
-  
-      return rows;
-    } catch (err) {
-      throw err;
-    }
-  };
-  
+
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
 
 const getReviewsByUsername = async (username) => {
   try {
@@ -64,8 +63,8 @@ const getReviewsByUsername = async (username) => {
 };
 
 const getLatestReviews = async () => {
-    try {
-        const query = `
+  try {
+    const query = `
             SELECT 
                 rating,
                 comment,
@@ -80,29 +79,49 @@ const getLatestReviews = async () => {
             LIMIT 5;
         `;
 
-        const { rows } = await db.query(query);
+    const { rows } = await db.query(query);
 
-        return rows;
-    } catch (err) {
-        console.error("Error in getLatestReviews:", err);
-        throw err;
-    }
+    return rows;
+  } catch (err) {
+    console.error("Error in getLatestReviews:", err);
+    throw err;
+  }
 };
-const deleteReview = async (username, date_created) => {
+const deleteReview = async (id) => {
   try {
     const { rowCount } = await db.query(
-      `
-        DELETE FROM reviews
-        WHERE user_name = $1 AND date_created = $2
-      `,
-      [username, date_created]
+      `DELETE FROM reviews WHERE id = $1 RETURNING *`,
+      [id]
     );
 
+    // Check if any row was deleted
     if (rowCount === 0) {
-      throw new Error('Review not found');
+      throw new Error("Review not found");
     }
-
-    return true;
+  } catch (err) {
+    console.error("Error in deleteReview:", err);
+    throw err;
+  }
+};
+const updateReview = async ({ id, comment, rating, car_model, car_brand, car_year }) => {
+  try {
+    const {
+      rows: [review],
+    } = await db.query(
+      `
+          UPDATE reviews 
+          SET 
+              comment = $2, 
+              rating = $3, 
+              car_model = $4, 
+              car_brand = $5, 
+              car_year = $6
+          WHERE id = $1
+          RETURNING *
+          `,
+      [id, comment, rating, car_model, car_brand, car_year]
+    );
+    return review;
   } catch (err) {
     throw err;
   }
@@ -113,6 +132,7 @@ module.exports = {
   createReview,
   getAllReviews,
   deleteReview,
+  updateReview,
 
   getLatestReviews,
   getReviewsByUsername,

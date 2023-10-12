@@ -7,6 +7,7 @@ const {
   deleteReview,
 
   createReview,
+  updateReview,
 
   getLatestReviews,
   getReviewsByUsername,
@@ -106,17 +107,63 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
 });
 router.delete('/delete', async (req, res) => {
   try {
-      const { username, date_created } = req.body;
+      const { id } = req.body;
 
-      // Basic validation can be added for username and date_created
+      // Update the deleteReview function to accept the id.
+      const deletedCount = await deleteReview(id);
 
-      await deleteReview(username, date_created);
+      // If no reviews were deleted, assume it wasn't found
+      if (deletedCount === 0) {
+          return res.status(404).json({
+              success: false,
+              error: {
+                  code: "REVIEW_NOT_FOUND",
+                  message: `Review with ID '${id}' not found.`
+              }
+          });
+      }
       
       res.json({ success: true, message: "Review deleted successfully!" });
   } catch (err) {
-      res.status(500).json({ success: false, message: err.message });
+      console.error("Error while deleting review:", err); // Log the error for debugging purposes
+
+      // Send a general internal server error message
+      res.status(500).json({
+          success: false,
+          error: {
+              code: "INTERNAL_SERVER_ERROR",
+              message: "An internal error occurred. Please try again later."
+          }
+      });
   }
 });
+app.put('/api/reviews/update', async (req, res) => {
+  const {
+    id,
+    comment,
+    rating,
+    carModel,
+    carBrand,
+    carYear
+  } = req.body;
+
+  try {
+    const updatedReview = await updateReview({
+      id,
+      comment,
+      rating,
+      car_model: carModel,  
+      car_brand: carBrand,
+      car_year: carYear
+    });
+
+    res.json(updatedReview);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Failed to update review.' });
+  }
+});
+
 
 
 module.exports = router;
