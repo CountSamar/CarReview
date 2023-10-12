@@ -10,7 +10,7 @@ const reviewRoutes = require('./routes/reviewroute');
 
 
 app.use(cors({
-  origin: 'http://localhost:3000',  
+  origin: 'http://localhost:5001',  
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
