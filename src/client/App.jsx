@@ -37,7 +37,7 @@ export default function App() {
       />
 
       <Routes>
-        <Route path="/" element={<Home />} />
+      <Route path="/" element={<Home username= {username} />} />
         <Route path="/profile" element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
           <Route
             index

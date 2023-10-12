@@ -1,148 +1,406 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logout from "./Logout";
 
-const Profile = ({ username, setToken, setIsLoggedIn, setShowLogoutMessage }) => {
-    const [reviewText, setReviewText] = useState("");
-    const [carModel, setCarModel] = useState("");
-    const [carBrand, setCarBrand] = useState("");
-    const [carYear, setCarYear] = useState("");
-    const [imgFile, setImgFile] = useState(null);
-    const [reviews, setReviews] = useState([]);
-    const [message, setMessage] = useState(null);
-    const [rating, setRating] = useState(0);
+const Profile = ({
+  username,
+  setToken,
+  setIsLoggedIn,
+  setShowLogoutMessage,
+}) => {
+  const [formData, setFormData] = useState({
+    reviewText: "",
+    carModel: "",
+    carBrand: "",
+    carYear: "",
+    rating: "0",
+    imgFile: null,
+  });
+  const [editFormData, setEditFormData] = useState({
+    reviewText: "",
+    carModel: "",
+    carBrand: "",
+    carYear: "",
+    rating: "0",
+    imgFile: null,
+  });
+  const [reviews, setReviews] = useState([]);
+  const [message, setMessage] = useState(null);
+  const [editingReview, setEditingReview] = useState(null);
 
-    const handleReviewChange = (e) => {
-        setReviewText(e.target.value);
-    };
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:5001/api/reviews/user/${username}`
+        );
+        const data = await response.json();
 
-    const handleFileChange = (e) => {
-        setImgFile(e.target.files[0]);
-    };
-
-    const handleRatingChange = (e) => {
-        setRating(parseInt(e.target.value, 10));
-    };
-
-    const submitReview = async () => {
-        setMessage(null);
-
-        if (
-            reviewText.trim() &&
-            carModel.trim() &&
-            carBrand.trim() &&
-            carYear.trim() &&
-            imgFile &&
-            rating >= 1 &&
-            rating <= 5
-        ) {
-            try {
-                const formData = new FormData();
-                formData.append('username', username);
-                formData.append('carModel', carModel);
-                formData.append('carBrand', carBrand);
-                formData.append('carYear', carYear);
-                formData.append('comment', reviewText);
-                formData.append('imgpath', imgFile);
-                formData.append('rating', rating);
-
-                const response = await fetch("http://localhost:5001/api/reviews/create", {
-                    method: "POST",
-                    body: formData,
-                });
-
-                const data = await response.json();
-
-                if (data.success) {
-                    setReviews((prevReviews) => [...prevReviews, reviewText]);
-                    setReviewText("");
-                    setCarModel("");
-                    setCarBrand("");
-                    setCarYear("");
-                    setRating(0);
-                    setMessage("Review submitted successfully!");
-                } else {
-                    setMessage(data.message || "Error submitting the review");
-                }
-            } catch (error) {
-                console.error("There was an issue saving the review:", error);
-                setMessage("There was an error. Please try again.");
-            }
-        } else {
-            setMessage("Please fill in all fields, upload an image, and provide a valid rating (1-5).");
+        if (!response.ok) {
+          const errorMessage =
+            data && data.message ? data.message : "Error fetching reviews";
+          throw new Error(errorMessage);
         }
+
+        setReviews(data);
+      } catch (error) {
+        console.error("Error fetching user's reviews:", error);
+        setMessage("Error fetching your reviews. Please try again.");
+      }
     };
 
-    return (
-        <div style={{ marginTop: "2rem" }}>
-            <h1>Profile</h1>
-            <p>Welcome, {username}!</p>
+    fetchReviews();
+  }, [username]);
 
-            <Logout
-                setToken={setToken}
-                setIsLoggedIn={setIsLoggedIn}
-                setShowLogoutMessage={setShowLogoutMessage}
-            />
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-            <h2>Write a Review</h2>
+  const handleEditChange = (e) => {
+    const { name, value } = e.target;
+    setEditFormData((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
-            <input
-                type="text"
-                value={carModel}
-                onChange={(e) => setCarModel(e.target.value)}
-                placeholder="Enter car model"
-            />
+  const handleFileChange = (e) => {
+    setFormData((prevState) => ({
+      ...prevState,
+      imgFile: e.target.files[0],
+    }));
+  };
 
-            <input
-                type="text"
-                value={carBrand}
-                onChange={(e) => setCarBrand(e.target.value)}
-                placeholder="Enter car brand"
-            />
+  const submitReview = async () => {
+    setMessage(null);
+    const { reviewText, carModel, carBrand, carYear, imgFile, rating } =
+      formData;
 
-            <input
-                type="number"
-                value={carYear}
-                onChange={(e) => setCarYear(e.target.value)}
-                placeholder="Enter car year"
-            />
+    if (
+      reviewText.trim() &&
+      carModel.trim() &&
+      carBrand.trim() &&
+      carYear.trim() &&
+      imgFile &&
+      parseInt(rating) >= 1 &&
+      parseInt(rating) <= 5
+    ) {
+      try {
+        const formSubmission = new FormData();
+        formSubmission.append("user_name", username);
+        formSubmission.append("carModel", carModel);
+        formSubmission.append("carBrand", carBrand);
+        formSubmission.append("carYear", carYear);
+        formSubmission.append("comment", reviewText);
+        formSubmission.append("imgpath", imgFile);
+        formSubmission.append("rating", rating);
 
-            <textarea
-                value={reviewText}
-                onChange={handleReviewChange}
-                placeholder="Write your review here..."
-                rows="10"
-                cols="50"
-            />
+        const response = await fetch(
+          "http://localhost:5001/api/reviews/create",
+          {
+            method: "POST",
+            body: formSubmission,
+          }
+        );
 
-            <input type="file" onChange={handleFileChange} />
+        const data = await response.json();
 
-            <br />
+        if (!response.ok) {
+          throw new Error(data.message || "Error submitting the review");
+        }
 
-            {/* Add a rating input */}
-            <select value={rating} onChange={handleRatingChange}>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-            </select>
+        if (data.success) {
+          setReviews((prevReviews) => [...prevReviews, reviewText]);
+          setFormData({
+            reviewText: "",
+            carModel: "",
+            carBrand: "",
+            carYear: "",
+            rating: "0",
+            imgFile: null,
+          });
+          setMessage("Review submitted successfully!");
+        } else {
+          setMessage(data.message || "Error submitting the review");
+        }
+      } catch (error) {
+        console.error("There was an issue saving the review:", error);
+        setMessage("There was an error. Please try again.");
+      }
+    } else {
+      setMessage(
+        "Please fill in all fields, upload an image, and provide a valid rating (1-5)."
+      );
+    }
+  };
+  const handleDelete = async (id) => {
+    try {
+        const response = await fetch("http://localhost:5001/api/reviews/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id }),  // Note: we're sending the ID now
+        });
 
-            <br />
+        const data = await response.json();
 
-            <button onClick={submitReview}>
-                Submit Review
-            </button>
+        if (!response.ok) {
+            throw new Error(data.message || "Error deleting the review");
+        }
 
-            {message && <p>{message}</p>}
+        setMessage("Review deleted successfully!");
+        setReviews((prevReviews) =>
+            prevReviews.filter((review) => review.id !== id)  // filter by ID
+        );
+    } catch (error) {
+        console.error("There was an issue deleting the review:", error);
+        setMessage("There was an error. Please try again.");
+    }
+};
+const handleUpdate = async (reviewId) => {
+  console.log("State or Prop ID:", reviewId);
+  console.log("Edit Form Data:", editFormData);
 
-            <h2>Your Reviews</h2>
-            <ul>
-                {reviews.map((rev, index) => (
-                    <li key={index}>{rev}</li>
-                ))}
-            </ul>
-        </div>
+  const patchData = {
+    id: reviewId,
+    car_model: editFormData.carModel,
+    car_brand: editFormData.carBrand,
+    car_year: editFormData.carYear,
+    comment: editFormData.reviewText,
+    rating: editFormData.rating,
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5001/api/reviews/update/${reviewId}`,
+      {
+        method: "PATCH", // Change to PATCH
+        headers: {
+          "Content-Type": "application/json", // Specify JSON content type
+        },
+        body: JSON.stringify(patchData), // Send data as JSON
+      }
     );
+
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+
+    let data;
+    if (
+      response.status !== 204 &&
+      response.headers.get("content-length") > 0
+    ) {
+      data = await response.json();
+      if (data.success) {
+        setReviews((prevReviews) =>
+          prevReviews.map((r) => (r.id === reviewId ? data.review : r))
+        );
+        setEditingReview(null);
+        setMessage("Review updated successfully!");
+      } else {
+        setMessage(data.message || "Error updating the review");
+      }
+    }
+  } catch (error) {
+    console.error("Error updating review:", error);
+    setMessage("Error updating the review: " + error.message);
+  }
+};
+
+
+
+  return (
+    <div style={{ marginTop: "2rem" }}>
+      <h1>Profile</h1>
+      <p>Welcome, {username}!</p>
+
+      <Logout
+        setToken={setToken}
+        setIsLoggedIn={setIsLoggedIn}
+        setShowLogoutMessage={setShowLogoutMessage}
+      />
+
+      <h2>Write a Review</h2>
+
+      <label>
+        Car Model:
+        <input
+          type="text"
+          name="carModel"
+          value={formData.carModel}
+          onChange={handleChange}
+          placeholder="Enter car model"
+        />
+      </label>
+
+      <label>
+        Car Brand:
+        <input
+          type="text"
+          name="carBrand"
+          value={formData.carBrand}
+          onChange={handleChange}
+          placeholder="Enter car brand"
+        />
+      </label>
+
+      <label>
+        Car Year:
+        <input
+          type="number"
+          name="carYear"
+          value={formData.carYear}
+          onChange={handleChange}
+          placeholder="Enter car year"
+        />
+      </label>
+
+      <label>
+        Review:
+        <textarea
+          name="reviewText"
+          value={formData.reviewText}
+          onChange={handleChange}
+          placeholder="Write your review here..."
+          rows="10"
+          cols="50"
+        />
+      </label>
+
+      <label>
+        Upload Image:
+        <input type="file" name="imgFile" onChange={handleFileChange} />
+      </label>
+
+      <br />
+
+      <label>
+        Rating:
+        <select name="rating" value={formData.rating} onChange={handleChange}>
+          <option value="0">Select a rating</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+        </select>
+      </label>
+
+      <br />
+
+      <button onClick={submitReview}>Submit Review</button>
+
+      {message && <p>{message}</p>}
+
+      <h2>Your Reviews</h2>
+<ul>
+  {reviews.map((review) => (
+    <li className="review" key={review.id}>
+      {editingReview === review.id ? (
+        <div>
+         
+          <label>
+            Car Model:
+            <input
+              type="text"
+              name="carModel"
+              value={editFormData.carModel}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Car Brand:
+            <input
+              type="text"
+              name="carBrand"
+              value={editFormData.carBrand}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Car Year:
+            <input
+              type="number"
+              name="carYear"
+              value={editFormData.carYear}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Review:
+            <textarea
+              name="reviewText"
+              value={editFormData.reviewText}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Rating:
+            <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <button onClick={() => handleUpdate(review.id)}>
+            Update Review
+          </button>
+          <button onClick={() => setEditingReview(null)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div>
+         
+          <div>
+            <strong>Car Model:</strong> {review.car_model}
+          </div>
+          <div>
+            <strong>Car Brand:</strong> {review.car_brand}
+          </div>
+          <div>
+            <strong>Car Year:</strong> {review.car_year}
+          </div>
+          <div>
+            <strong>Rating:</strong> {review.rating}
+          </div>
+          <div>
+            <strong>Review:</strong> {review.comment}
+          </div>
+          <button onClick={() => handleDelete(review.id)}>
+            Delete Review
+          </button>
+          <button onClick={() => {
+            setFormData({
+              reviewText: review.comment,
+              carModel: review.car_model,
+              carBrand: review.car_brand,
+              carYear: review.car_year.toString(),
+              rating: review.rating.toString(),
+              imgFile: null,
+            });
+            setEditingReview(review.id);
+          }}>
+            Edit Review
+          </button>
+          <img
+            src={`http://localhost:5001/${review.imgpath}`}
+            alt={`Image of ${review.car_model}`}
+          />
+        </div>
+      )}
+    </li>
+  ))}
+</ul>
+</div>
+);
 };
 
 export default Profile;
