@@ -66,7 +66,7 @@ usersRouter.post('/login', async (req, res, next) => {
 });
 
 usersRouter.post('/register', async (req, res, next) => {
-    const { name, email, username, password, role } = req.body;
+    const { name, email, username, password, role, profilePicPath } = req.body;
 
     try {
         const _user = await getUserByEmail(email);

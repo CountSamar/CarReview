@@ -38,7 +38,8 @@ const myreview = [
       image: image4
    }
 ]
-
+// http://localhost:3000
+// ${process.env.REACT_APP_SERVER_HOST}
 const Review = () => {
    const [review, setReview] = useState([]);
    useEffect(() => { }, [])
@@ -47,7 +48,7 @@ const Review = () => {
    useEffect(() => {
      async function fetchReview() {
        try {
-         const response = await fetch(`http://localhost:3000/api/reviews/${review.id}`);
+         const response = await fetch(`http://localhost:5001/api/reviews/${review.id}`);
          const result = await response.json();
          // console.log("result", result) ;
          setReview(result.data.review);

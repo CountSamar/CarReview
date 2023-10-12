@@ -35,11 +35,18 @@ apiRouter.use(async (req, res, next) => {
 const usersRouter = require('./users');
 apiRouter.use('/users', usersRouter);
 
+const carsRouter = require('./routes/carroute');
+apiRouter.use('/cars', carsRouter);
+
+const reviewRouter = require('./routes/reviewroute');
+apiRouter.use('/reviews', reviewRouter);
+
 const friendsRouter = require('./friends');
 apiRouter.use('/friends', friendsRouter);
 
 apiRouter.use((err, req, res, next) => {
     res.status(500).send(err)
   })
+
 
 module.exports = apiRouter;

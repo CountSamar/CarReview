@@ -1,5 +1,6 @@
-const db = require('./client')
+const db = require('./client');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const SALT_COUNT = 10;
 
 const createUser = async({ name='first last', email, password, username, role }) => {
@@ -16,9 +17,28 @@ const createUser = async({ name='first last', email, password, username, role })
         throw err;
     }
 }
+const validateUser = async (email, password) => {
+    if (!email || !password) {
+        return null;
+    }
+
+    try {
+        const user = await getUserByEmail(email); // Fetch user by email from the database
+        if (!user) return null;
+
+        const hashedPassword = user.password; // Get the stored hashed password
+        const passwordsMatch = await bcrypt.compare(password, hashedPassword); // Compare the given password with the hashed one
+
+        if (!passwordsMatch) return null;
+        
+        delete user.password; // Don't send the hashed password to the client
+        return user; // Return the user if email and password match
+    } catch (err) {
+        throw err;
+    }
+};
 
 const getAllUsers = async() => {
-    
     try {
         const { rows } = await db.query(`
         SELECT * 
@@ -30,9 +50,9 @@ const getAllUsers = async() => {
     }
 }
 
-const getUser = async({email, password}) => {
-    if(!email || !password) {
-        return;
+const getUser = async({ email, password }) => {
+    if (!email || !password) {
+        return null;
     }
     try {
         const user = await getUserByEmail(email);
@@ -50,13 +70,13 @@ const getUser = async({email, password}) => {
 
 const getUserByEmail = async(email) => {
     try {
-        const { rows: [ user ] } = await db.query(`
+        const { rows: [user] } = await db.query(`
         SELECT * 
         FROM users
-        WHERE email=$1;`, [ email ]);
+        WHERE email=$1;`, [email]);
 
-        if(!user) {
-            return;
+        if (!user) {
+            return null;
         }
         return user;
     } catch (err) {
@@ -68,5 +88,6 @@ module.exports = {
     createUser,
     getUser,
     getUserByEmail,
-    getAllUsers
+    getAllUsers,
+    validateUser
 };

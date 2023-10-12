@@ -1,26 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
+  const navigate = useNavigate();
 
-export default function Logout() {
-    const [token, setToken] = useState(sessionStorage.getItem("token"))
-    const navigate = useNavigate()
-    useEffect(() => {
-        if (token) {
-            sessionStorage.removeItem("token") ;
-            navigate("/login")
-        } else {
-            sessionStorage.removeItem("token") ;
-            navigate("/login")
-        }
-        
-      
-    }, [])
+  const handleLogout = () => {
+    // 1. Remove the token from localStorage
+    localStorage.removeItem('token');
     
+    // 2. Update the application state
+    setToken('');
+    setIsLoggedIn(false);
     
+    // 3. Show the logout message
+    setShowLogoutMessage(true);
+    
+    // 4. Redirect the user to the homepage (or a login page)
+    navigate('/');
+  }
+
   return (
-    <div>
-        <h3>You have successfully logged out!</h3>
-    </div>
-  )
-}
+    <button onClick={handleLogout}>
+      Logout
+    </button>
+  );
+};
+
+export default Logout;

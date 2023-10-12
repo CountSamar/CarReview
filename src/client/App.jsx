@@ -1,43 +1,87 @@
-import { useState, useEffect } from 'react';
-import { Routes, Route, Link } from 'react-router-dom'
-import Login from './components/Login';
-import Profile from './components/Profile';
-import Review from './components/Review';
-import SignUp from './components/SignUp';
-import NavBar from './components/NavBar';
-import WriteReview from './components/WriteReview';
-import Logout from './components/Logout';
-import Home from './components/Home';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useState } from "react";
+import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 
+import NavBar from "./components/NavBar";
+import Home from "./components/Home";
+import Profile from "./components/Profile";
+import SignUp from "./components/SignUp";
+import Login from "./components/Login";
 
+function PrivateRoute({ isLoggedIn }) {
+  return isLoggedIn ? <Outlet /> : <Navigate to="/login" replace />;
+}
 
 export default function App() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [username, setUsername] = useState('')
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [token, setToken] = useState('')
-  console.log(setEmail)
-  console.log(setPassword)
-  console.log(token)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [userId, setUserId] = useState(""); 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [token, setToken] = useState("");
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
+
   return (
     <>
-    <NavBar />
-    <div className=''>
-        <h1>Capstone Project</h1>
-        <Routes>
-          <Route path='/' element={<Profile />} />
-          <Route path='/reviews' element={<Review />} />
-          <Route path='/review/new' element={<WriteReview />} />
-          <Route path='/signup' element={<SignUp />} />
-          <Route path='/login' element={<Login />} />
-          <Route path='/logout' element={<Logout />} />
-        </Routes>
-    </div>
+      <h1>Car Review</h1>
+      {showLogoutMessage && <p>Successfully logged out!</p>}
+      <NavBar
+        setToken={setToken}
+        setIsLoggedIn={setIsLoggedIn}
+        isLoggedIn={isLoggedIn}
+        email={email}
+        setEmail={setEmail}
+        password={password}
+        setPassword={setPassword}
+        token={token}
+        setShowLogoutMessage={setShowLogoutMessage}
+      />
+
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<PrivateRoute isLoggedIn={isLoggedIn} />}>
+          <Route
+            index
+            element={<Profile
+             
+              username={username}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setShowLogoutMessage={setShowLogoutMessage}
+            />}
+          />
+        </Route>
+        <Route
+          path="/signup"
+          element={
+            <SignUp
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              username={username}
+              setUsername={setUsername}
+              token={token}
+              setToken={setToken}
+            />
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <Login
+              email={email}
+              setEmail={setEmail}
+              password={password}
+              setPassword={setPassword}
+              token={token}
+              setToken={setToken}
+              setIsLoggedIn={setIsLoggedIn}
+              setUsername={setUsername}
+              setUserId={setUserId}
+            />
+          }
+        />
+      </Routes>
     </>
   );
 }
-
-

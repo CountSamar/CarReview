@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify';
-import jwt_decode from "jwt-decode";
+import { toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const navigate = useNavigate()
 
-  const [message, setMessage] = useState('');
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [token, setToken] = useState("")
+
+const customToastContainerStyle = {
+  
+  
+};
+const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLoggedIn, setUsername, setUserId }) => {
+  const navigate = useNavigate();
+ 
+  // const [message, setMessage] = useState('');
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+   const [message, setMessage] = useState("")
 
   console.log(setPassword)
   console.log(setEmail)
@@ -30,31 +36,32 @@ const Login = () => {
 
   const login = async () => {
     try {
-      const response = await fetch('http://localhost:3000/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      });
-      const result = await response.json();
-      setMessage(result.message);
-      if (!response.ok) {
-        throw (result)
-      }
-      if (result.token) {
-        console.log(result.token);
-        console.log(jwt_decode(result.token), "decrypted")
-        setToken(result.token)
-        localStorage.setItem('token', result.token)
-        navigate("/reviews")
+        const response = await fetch('/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type' : 'application/json'
+            }, 
+            body: JSON.stringify({
+                email,
+                password
+            })
+        });
+        const result = await response.json();
+        setMessage(result.message);
+        if(!response.ok) {
+          throw(result)
+        }
+        if (result.token) {
+          setToken(result.token)
+          localStorage.setItem('token', result.token)
+          setUsername(result.username);
+          setUserId(result.userId);
 
-      }
-      console.log(result.token)
-      showToastMessage()
+          setIsLoggedIn(true)
+        }
+        console.log(result.token)
+        showToastMessage()
+        navigate('/profile');
     } catch (err) {
       console.error(`${err.name}: ${err.message}`);
     }
@@ -92,7 +99,15 @@ const Login = () => {
         <button type='submit'>Login</button>
       </form>
       <p>{message}</p>
+      <ToastContainer
+  position="bottom-center"
+  className="custom-toast-container"
+  style={customToastContainerStyle} 
+/>
+
+
     </div>
+
   );
 };
 
