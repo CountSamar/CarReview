@@ -4,9 +4,15 @@ const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});
-
-  const isAuthenticated = () => !!localStorage.getItem("token");
-
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
+  const isAuthenticated = () => localStorage.getItem("token");
+  let token = isAuthenticated()
+  // if(token){
+  //   setIsLoggedIn(true)
+  // }
+  
+ 
   const fetchLatestReviews = async () => {
     try {
       const response = await fetch("http://localhost:5001/api/reviews/latest");
@@ -33,6 +39,8 @@ const Home = ({ username }) => {
   };
 
   useEffect(() => {
+    
+    
     fetchLatestReviews();
   }, []);
 
@@ -115,8 +123,10 @@ const Home = ({ username }) => {
                     </div>
                   ))}
 
-                {isAuthenticated() ? (
+                {token && (
                   <>
+                    
+
                     <textarea
                       placeholder="Add a comment..."
                       value={newComments[index] || ""}
@@ -128,13 +138,15 @@ const Home = ({ username }) => {
                       }
                     />
                     <button onClick={() => postComment(index)}>Post</button>
+                   
+      
                   </>
-                ) : (
+                ) }
                   <p>
                     Please <a href="/signup">sign up</a> or{" "}
                     <a href="/login">login</a> to add a comment.
                   </p>
-                )}
+                
               </div>
             </div>
           ))}

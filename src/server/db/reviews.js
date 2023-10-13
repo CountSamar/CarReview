@@ -144,14 +144,24 @@ const updateReview = async (data) => {
   }
 };
 
-
+const getAdminAllReviews = async () => {
+  try {
+    const { rows } = await db.query(`
+            SELECT *
+            FROM reviews
+        `);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
 
 module.exports = {
   createReview,
   getAllReviews,
   deleteReview,
   updateReview,
-
+  getAdminAllReviews,
   getLatestReviews,
   getReviewsByUsername,
 };
