@@ -4,15 +4,16 @@ dotenv.config();
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
+// const { createUser, getUserByEmail, getUser } = require('../db/client.js');
+const db = require('../db/client');
 
 const usersRouter = express.Router();
 
 const {
     createUser,
     getUser,
-    getAllUsers,
-    getUserByEmail
+    getUserByEmail,
+    getAllUsers
 } = require('../db');
 
 
@@ -30,7 +31,7 @@ usersRouter.get('/', async( req, res, next) => {
 
 usersRouter.post('/login', async (req, res, next) => {
     const { email, password } = req.body;
-
+    console.log(password)
     if (!email || !password) {
         return next({
             name: 'MissingCredentialsError',

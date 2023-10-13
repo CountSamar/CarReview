@@ -3,6 +3,10 @@ import image1 from "../assets/image1.jpg";
 import image2 from "../assets/image2.jpg";
 import image3 from "../assets/image3.jpg";
 import image4 from "../assets/image4.jpg";
+// import image1 from "../assets/image1.jpg";
+// import image2 from "../assets/image2.jpg";
+// import image3 from "../assets/image3.jpg";
+// import image4 from "../assets/image4.jpg";
 import ReviewCard from './ReviewCard';
 
 const myreview = [
@@ -12,6 +16,7 @@ const myreview = [
       description: "This car is fast and nice",
       vehicle_type: "sedan",
       image: image1
+      // image: image1
    },
 
    {
@@ -20,6 +25,7 @@ const myreview = [
       description: "Very sleek but very expensive",
       vehicle_type: "sports",
       image: image2
+      // image: image2
    },
 
    {
@@ -28,6 +34,7 @@ const myreview = [
       description: "Drives like a big yellow bus",
       vehicle_type: "van",
       image: image3
+      // image: image3
    },
 
    {
@@ -40,6 +47,9 @@ const myreview = [
 ]
 // http://localhost:3000
 // ${process.env.REACT_APP_SERVER_HOST}
+      // image: image4
+
+
 const Review = () => {
    const [review, setReview] = useState([]);
    useEffect(() => { }, [])
@@ -48,7 +58,8 @@ const Review = () => {
    useEffect(() => {
      async function fetchReview() {
        try {
-         const response = await fetch(`http://localhost:5001/api/reviews/${review.id}`);
+         // const response = await fetch(`http://localhost:5001/api/reviews/${review.id}`);
+         const response = await fetch('http://localhost:3000/api/reviews');
          const result = await response.json();
          // console.log("result", result) ;
          setReview(result.data.review);
