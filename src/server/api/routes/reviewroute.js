@@ -8,11 +8,20 @@ const {
 
   createReview,
   updateReview,
-
+getAdminAllReviews,
   getLatestReviews,
   getReviewsByUsername,
 } = require("../../db/reviews");
 
+// Fetch Admin All Reviews
+router.get('/admin', async (req, res, next) => {
+  try {
+      const reviews = await getAdminAllReviews();
+      res.json({ message: "No reviews found", data: reviews });
+  } catch (err) {
+      next(err);
+  }
+});
 // Fetch all reviews
 router.get("/", async (req, res, next) => {
   try {
