@@ -10,11 +10,10 @@ const customToastContainerStyle = {
   
 };
 const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLoggedIn, setUsername, setUserId }) => {
-  const navigate = useNavigate();
- 
   const [message, setMessage] = useState('');
-  console.log(setPassword)
-  console.log(setEmail)
+  let navigate = useNavigate()
+  // console.log(setPassword)
+  // console.log(setEmail)
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -43,6 +42,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
             })
         });
         const result = await response.json();
+        console.log(result)
         setMessage(result.message);
         if(!response.ok) {
           throw(result)
@@ -57,7 +57,8 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
         }
         console.log(result.token)
         showToastMessage()
-        navigate('/profile');
+       
+        navigate('/profile')
     } catch (err) {
         console.error(`${err.name}: ${err.message}`);
     }

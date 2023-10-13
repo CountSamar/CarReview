@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
@@ -88,7 +88,8 @@ const Home = ({ username }) => {
     }
   };
 
-  if (error) return <p>Error: {error}</p>;
+  // console.log(error)
+  // if (error) return <p>Error: {error}</p>;
 
   return (
     <>
