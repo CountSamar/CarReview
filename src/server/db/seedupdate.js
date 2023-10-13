@@ -206,17 +206,17 @@ const users = [
     role: "admin"
   },
 ];
-
-
 const cars = [
-  { model: "Model 3", brand: "Tesla", year: 2023, image_path:"uploads/1696817981885-tesla model 3.jpeg" },
-  { model: "Mustang", brand: "Ford", year: 2023, image_path:"uploads/1696820948754-fordmustang.jpeg" },
-  { model: "A4", brand: "Audi", year: 2023, image_path:"uploads/audi.jpeg"},
-  { model: "Camry", brand: "Toyota", year: 2023, image_path:"uploads/camry.jpeg"},
-  { model: "E-Class", brand: "Mercedes-Benz", year: 2023,image_path:"uploads/benz.jpeg" },
-  { model: "WRX", brand: "Subaru", year: 2023, image_path:"uploads/subaru.jpeg" },
-  { model: "Taycan", brand: "Porsche", year: 2023, image_path:"uploads/porsche.jpeg" },
-  { model: "Bolt EV", brand: "Chevrolet", year: 2023, image_path:"uploads/bolt.jpeg" },
+  { model: "Model 3", brand: "Tesla", year: 2023 },
+  { model: "Mustang", brand: "Ford", year: 2023 },
+  { model: "Civic", brand: "Honda", year: 2023 },
+  { model: "3 Series", brand: "BMW", year: 2023 },
+  { model: "A4", brand: "Audi", year: 2023 },
+  { model: "Camry", brand: "Toyota", year: 2023 },
+  { model: "E-Class", brand: "Mercedes-Benz", year: 2023 },
+  { model: "WRX", brand: "Subaru", year: 2023 },
+  { model: "Taycan", brand: "Porsche", year: 2023 },
+  { model: "Bolt EV", brand: "Chevrolet", year: 2023 },
 ];
 const reviews = [
   {
@@ -291,100 +291,115 @@ const reviews = [
   },
 ];
 
-const tableExists = async (tableName) => {
+const insertCar = async (car) => {
   try {
-    const result = await db.query(`SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = $1);`, [tableName]);
-    return result.rows[0].exists;
+    const result = await db.query(
+      "INSERT INTO cars(model, brand, year) VALUES($1, $2, $3) RETURNING id",
+      [car.model, car.brand, car.year]
+    );
+    return result.rows[0].id;
+  } catch (error) {
+    console.error("Error inserting car:", error);
+    return null;
+  }
+};
+const createReview = async (review) => {
+  try {
+    await db.query(
+      "INSERT INTO reviews(car_id, user_id, rating, comment) VALUES($1, $2, $3, $4)",
+      [review.car_id, review.user_id, review.rating, review.comment]
+    );
+  } catch (error) {
+    console.error("Error inserting review:", error);
+  }
+};
+const insertReviews = async () => {
+  try {
+    for (const review of reviews) {
+      // Fetch carId
+      const carResult = await db.query("SELECT id FROM cars WHERE model=$1", [review.carModel]);
+      
+      // Fetch userId
+      const userResult = await db.query("SELECT id FROM users WHERE name=$1", [review.reviewer]);
+
+      // Check if any of the queries didn't return a result
+      if (!carResult.rows.length || !userResult.rows.length) {
+        console.error(`No car found for model ${review.carModel} or no user found for name ${review.reviewer}`);
+        continue; // Skip this loop iteration
+      }
+
+      // Get carId and userId
+      const carId = carResult.rows[0].id;
+      const userId = userResult.rows[0].id;
+
+      await createReview({
+        car_id: carId,
+        user_id: userId,
+        rating: review.rating,
+        comment: review.comment,
+      });
+    }
+  } catch (error) {
+    console.error("Error inserting reviews:", error);
+  }
+};
+
+const dropTables = async () => {
+  try {
+    await db.query(`DROP TABLE IF EXISTS reviews;`);
+    await db.query(`DROP TABLE IF EXISTS cars;`);
+    await db.query(`DROP TABLE IF EXISTS users;`);
   } catch (err) {
     throw err;
   }
 };
 
-const dataExistsInTable = async (tableName) => {
+const createTables = async () => {
   try {
-    const result = await db.query(`SELECT COUNT(*) FROM ${tableName}`);
-    return parseInt(result.rows[0].count, 10) > 0;
+    await db.query(`
+      CREATE TABLE users(
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) DEFAULT 'name',
+        email VARCHAR(255) UNIQUE NOT NULL,
+        username VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
+        role VARCHAR(50) NOT NULL
+      )`);
   } catch (err) {
-    return false;
+    throw err;
+  }
+};
+const createCarsTable = async () => {
+  try {
+    await db.query(`
+      CREATE TABLE cars(
+        id SERIAL PRIMARY KEY,
+        model VARCHAR(255) NOT NULL,
+        brand VARCHAR(255) NOT NULL,
+        year INT NOT NULL
+      )`);
+  } catch (err) {
+    throw err;
   }
 };
 
-const createTablesIfNotExist = async () => {
-  if (!await tableExists("users")) {
+const createReviewsTable = async () => {
+  try {
     await db.query(`
-      CREATE TABLE users (
+      CREATE TABLE reviews(
         id SERIAL PRIMARY KEY,
-        name VARCHAR(100),
-        email VARCHAR(100) UNIQUE NOT NULL,
-        password VARCHAR(100),
-        username VARCHAR(100)
-      );,
-        role VARCHAR(50) NOT NULL,
-        profilePicPath VARCHAR(350)
-    `);
-  }
-
-  if (!await tableExists("cars")) {
-    await db.query(`
-      CREATE TABLE cars (
-        id SERIAL PRIMARY KEY,
-        model VARCHAR(100) UNIQUE NOT NULL,
-        brand VARCHAR(100),
-        year INTEGER,
-        image_path TEXT
-      );
-    `);
-  }
-
-  if (!await tableExists("reviews")) {
-    await db.query(`
-      CREATE TABLE reviews (
-        id SERIAL PRIMARY KEY,
-        user_id INTEGER REFERENCES users(id),
         car_id INTEGER REFERENCES cars(id),
-        rating DECIMAL CHECK (rating >= 1 AND rating <= 5),
+        user_id INTEGER REFERENCES users(id),
+        rating DECIMAL(3,2) NOT NULL,
+
         comment TEXT
-      );
-    `);
+      )`);
+  } catch (err) {
+    throw err;
   }
 };
 
 const insertUsers = async () => {
-  const promises = users.map(user => {
-    const { name, email, password, username } = user;
-    return db.query("INSERT INTO users (name, email, password, username) VALUES ($1, $2, $3, $4)", [name, email, password, username]);
-  });
-
-  await Promise.all(promises);
-};
-
-const insertCars = async () => {
-  const promises = cars.map(car => {
-    const { model, brand, year, image_path } = car;
-    return db.query("INSERT INTO cars (model, brand, year, image_path) VALUES ($1, $2, $3, $4)", [model, brand, year, image_path]);
-  });
-
-  await Promise.all(promises);
-};
-
-const insertReviews = async () => {
-  const promises = reviews.map(async (review) => {
-    const { carModel, reviewer, rating, comment } = review;
-    const userResult = await db.query("SELECT id FROM users WHERE name = $1", [reviewer]);
-    const carResult = await db.query("SELECT id FROM cars WHERE model = $1", [carModel]);
-
-    if (userResult.rows.length === 0 || carResult.rows.length === 0) {
-      console.error(`No match found for reviewer: ${reviewer} or carModel: ${carModel}`);
-      return;
-    }
-
-    const userId = userResult.rows[0].id;
-    const carId = carResult.rows[0].id;
-
-    return db.query("INSERT INTO reviews (user_id, car_id, rating, comment) VALUES ($1, $2, $3, $4)", [userId, carId, rating, comment]);
-  });
-
-  await Promise.all(promises);
   try {
     for (const user of users) {
       const insertedUser = await createUser({
@@ -411,30 +426,27 @@ const insertReviews = async () => {
     console.error("Error inserting seed data:", error);
   }
 };
-
 const seedDatabase = async () => {
   try {
-    await db.connect();
+    db.connect();
+    await dropTables();
+    await createTables();
+    await createCarsTable();
+    await createReviewsTable();
+    await insertUsers();
 
-    // Using a transaction to ensure data integrity.
-    await db.query("BEGIN");
+    // Insert cars using insertCar function
+    for (const car of cars) {
+      await insertCar(car);
+    }
 
-    await createTablesIfNotExist();
-    if (!await dataExistsInTable("users")) await insertUsers();
-    if (!await dataExistsInTable("cars")) await insertCars();
-    if (!await dataExistsInTable("reviews")) await insertReviews();
-
-    // Committing the transaction.
-    await db.query("COMMIT");
-    
-    console.log("Finished seeding process.");
+    await insertReviews(); // This will insert cars and their associated reviews
   } catch (err) {
-    // In case of errors, rollback the transaction.
-    await db.query("ROLLBACK");
-    console.error("Error during seeding:", err);
+    throw err;
   } finally {
     db.end();
   }
 };
-
-seedDatabase();
+seedDatabase().catch((err) => {
+  console.error("Failed to seed database:", err);
+});

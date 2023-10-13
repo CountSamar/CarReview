@@ -39,6 +39,18 @@ const Home = ({ username }) => {
   };
 
   useEffect(() => {
+    const fetchLatestReviews = async () => {
+      try {
+        const response = await fetch("/api/reviews/latest");
+        if (!response.ok) throw new Error("Failed to fetch latest reviews");
+        const data = await response.json();
+        console.log(data);
+        setLatestReviews(data.data);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
     
     
     fetchLatestReviews();
@@ -105,7 +117,7 @@ const Home = ({ username }) => {
               <img
                 src={
                   review.imgpath
-                    ? `http://localhost:5001/${review.imgpath}`
+                    ? `http://localhost:3000/api/${review.imgpath}`
                     : "src/server/api/uploads/1696817981885-tesla model 3.jpeg"
                 }
                 alt="Car"

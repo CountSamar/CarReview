@@ -25,7 +25,7 @@ const createReview = async ({
     throw err;
   }
 };
-const getAllReviews = async () => {
+const getAllReviews = async (id) => {
   try {
     const { rows } = await db.query(`
         SELECT 
@@ -38,6 +38,19 @@ const getAllReviews = async () => {
           car_brand,  
           car_year    
         FROM reviews
+            WHERE user.id = $1
+        `, [id]);
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
+const getAdminAllReviews = async () => {
+  try {
+    const { rows } = await db.query(`
+            SELECT *
+            FROM reviews
       `);
 
     return rows;
@@ -50,10 +63,12 @@ const getReviewsByUsername = async (username) => {
   try {
     const { rows } = await db.query(
       `
-        SELECT * FROM reviews
-        WHERE user_name = $1
-      `,
-      [username]
+            SELECT reviews.*, users.username
+            FROM reviews
+            JOIN users ON reviews.user_id = users.id
+            WHERE reviews.user_id=$1;
+        `,
+      [id]
     );
 
     return rows;
@@ -156,6 +171,22 @@ const getAdminAllReviews = async () => {
   }
 };
 
+const getReviewsByUsername = async (username) => {
+  try {
+    const { rows } = await db.query(
+      `
+        SELECT * FROM reviews
+        WHERE user_name = $1
+      `,
+      [username]
+    );
+
+    return rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
 module.exports = {
   createReview,
   getAllReviews,
@@ -163,5 +194,7 @@ module.exports = {
   updateReview,
   getAdminAllReviews,
   getLatestReviews,
+  getAdminAllReviews,
+  getReviewsByUsername
   getReviewsByUsername,
 };

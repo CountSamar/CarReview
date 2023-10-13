@@ -4,13 +4,16 @@ import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 
 
-
 const customToastContainerStyle = {
   
   
 };
 const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLoggedIn, setUsername, setUserId }) => {
-  const [message, setMessage] = useState('');
+  // const [message, setMessage] = useState('');
+  // const [email, setEmail] = useState("");
+  // const [password, setPassword] = useState("");
+   const [message, setMessage] = useState("")
+
   let navigate = useNavigate()
   // console.log(setPassword)
   // console.log(setEmail)
@@ -29,9 +32,9 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
     })
   }
 
-  const login = async() => {
+  const login = async () => {
     try {
-        const response = await fetch('http://localhost:5001/api/users/login', {
+        const response = await fetch('/api/users/login', {
             method: 'POST',
             headers: {
                 'Content-Type' : 'application/json'
@@ -50,6 +53,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
         if (result.token) {
           setToken(result.token)
           localStorage.setItem('token', result.token)
+          console.log(result, "result")
           setUsername(result.username);
           setUserId(result.userId);
 
@@ -60,7 +64,7 @@ const Login = ({email, setEmail, password, setPassword, token, setToken, setIsLo
        
         navigate('/profile')
     } catch (err) {
-        console.error(`${err.name}: ${err.message}`);
+      console.error(`${err.name}: ${err.message}`);
     }
   }
 

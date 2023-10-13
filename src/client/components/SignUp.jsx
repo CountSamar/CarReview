@@ -25,7 +25,7 @@ function SignUp({ setToken }) {
 
     const register = async() => {
         try {
-            const response = await fetch('http://localhost:5001/api/users/register', {
+            const response = await fetch('/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json'

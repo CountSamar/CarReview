@@ -1,21 +1,16 @@
 const db = require('./client');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const SALT_COUNT = 10;
 
-const SALT_COUNT = 8;
-const JWT_SECRET = process.env.JWT_SECRET; 
-const generateToken = (user) => {
-    return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
-}
-
-const createUser = async({ name = 'first last', email, password, username }) => {
+const createUser = async({ name='first last', email, password, username, role }) => {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
     try {
-        const { rows: [user] } = await db.query(`
-        INSERT INTO users(name, email, username, password)
-        VALUES($1, $2, $3, $4)
+        const { rows: [user ] } = await db.query(`
+        INSERT INTO users(name, email, username, password, role)
+        VALUES($1, $2, $3, $4, $5)
         ON CONFLICT (email) DO NOTHING
-        RETURNING *`, [name, email, username, hashedPassword]);
+        RETURNING *`, [name, email, username, hashedPassword, role]);
 
         return user;
     } catch (err) {
@@ -61,17 +56,13 @@ const getUser = async({ email, password }) => {
     }
     try {
         const user = await getUserByEmail(email);
-        if (!user) return null;
-
+        console.log(user, "user")
+        if(!user) return;
         const hashedPassword = user.password;
         const passwordsMatch = await bcrypt.compare(password, hashedPassword);
-
-        if (!passwordsMatch) return null;
-
-        const token = generateToken(user);
-        delete user.password;
-
-        return { user, token };
+        if(!passwordsMatch) return;
+        // delete user.password;
+        return user;
     } catch (err) {
         throw err;
     }

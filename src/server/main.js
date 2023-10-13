@@ -17,8 +17,10 @@ db.connect()
 const apiRouter = require('./api');
 app.use('/api', apiRouter);
 
-router.listen(app, 3000, () =>
-  console.log('Server is listening on port 3000...')
+const PORT = 3000;
+
+router.listen(app, process.env.PORT || PORT, () =>
+  console.log(`Server is listening on port ${PORT}...`)
 );
 
 module.exports = router;
