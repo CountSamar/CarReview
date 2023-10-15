@@ -3,15 +3,15 @@ const router = express.Router();
 const upload = require("../multer");
 
 const {
-    getAllReviews,
-    getReviewById,
-    createReview,
-    updateReview,
-    deleteReview,
-    getLatestReviews,
-    getAdminAllReviews,
-    getReviewsByUsername
-} = require('../../db/reviews');
+  getAllReviews,
+  deleteReview,
+
+  createReview,
+  updateReview,
+getAdminAllReviews,
+  getLatestReviews,
+  getReviewsByUsername,
+} = require("../../db/reviews");
 
 // Fetch Admin All Reviews
 router.get('/admin', async (req, res, next) => {
@@ -23,24 +23,6 @@ router.get('/admin', async (req, res, next) => {
   }
 });
 // Fetch all reviews
-// router.get('/user/:id', async (req, res, next) => {
-//     try {
-//         const reviews = await getAllReviews(res.params.id);
-//         res.json({ success: true, data: reviews });
-//     } catch (err) {
-//         next(err);
-//     }
-// });
-
-// Fetch Admin All Reviews
-router.get('/admin', async (req, res, next) => {
-    try {
-        const reviews = await getAdminAllReviews();
-        res.json({ message: "No reviews found", data: reviews });
-    } catch (err) {
-        next(err);
-    }
-  });
 router.get("/", async (req, res, next) => {
   try {
     const reviews = await getAllReviews();
@@ -49,13 +31,11 @@ router.get("/", async (req, res, next) => {
     next(err);
   }
 });
-
 // Fetch the latest 10 reviews
 router.get("/latest", async (req, res, next) => {
   try {
     const limit = req.query.limit || 10; // get the limit from the query or default to 10
     const reviews = await getLatestReviews(limit); // pass the limit to the function
-        console.log(reviews, "reviews");
     res.json({ success: true, data: reviews });
   } catch (err) {
     next(err);
@@ -65,8 +45,12 @@ router.get("/latest", async (req, res, next) => {
 
 router.get("/user/:username", async (req, res) => {
   const username = req.params.username;
+  
+  // Consider adding some basic validation for the username if needed
+  
   try {
     const reviews = await getReviewsByUsername(username);
+    
     if (reviews && reviews.length > 0) {
       res.json(reviews);
     } else {
@@ -74,7 +58,7 @@ router.get("/user/:username", async (req, res) => {
         .status(404)
         .send({
           success: false,
-          message: `No reviews found for user ${username}`,
+          message: `No reviews found for user with the username ${username}`,
         });
     }
   } catch (error) {
@@ -83,10 +67,12 @@ router.get("/user/:username", async (req, res) => {
       .status(500)
       .send({
         success: false,
-        message: `Error fetching reviews for user ${username}. Reason: ${error.message}`,
+        message: `Error fetching reviews for user with the username ${username}. Reason: ${error.message}`,
       });
   }
 });
+
+
 // Create review endpoint
 router.post("/create", upload.single("imgpath"), async (req, res) => {
   console.log("Received data from frontend:", req.body);
@@ -195,31 +181,6 @@ router.patch('/update/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to update review.' });
   }
 });
-
-router.get("/user/:username", async (req, res) => {
-    const username = req.params.username;
-    try {
-      const reviews = await getReviewsByUsername(username);
-      if (reviews && reviews.length > 0) {
-        res.json(reviews);
-      } else {
-        res
-          .status(404)
-          .send({
-            success: false,
-            message: `No reviews found for user ${username}`,
-          });
-      }
-    } catch (error) {
-      console.error("Error fetching reviews for user:", error);
-      res
-        .status(500)
-        .send({
-          success: false,
-          message: `Error fetching reviews for user ${username}. Reason: ${error.message}`,
-        });
-    }
-  });
 
 
 

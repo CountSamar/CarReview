@@ -1,35 +1,45 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';  // <-- import useLocation
 import Logout from './Logout';
+import '../style.css';
 
 const NavBar = ({ 
     setToken, 
     setIsLoggedIn, 
     isLoggedIn,
-    setShowLogoutMessage // 1. Add setShowLogoutMessage to the prop destructuring 
+    setShowLogoutMessage
 }) => {
+    
+    const location = useLocation();  // <-- useLocation hook to get current route
+
+    const renderLoggedOutLinks = () => (
+        <>
+            <Link className="nav-link" to='/login'>Login</Link>
+            {/* Only show Profile link when on the homepage */}
+            {location.pathname === '/' && <Link className="nav-link" to='/profile'>Profile</Link>}
+        </>
+    );
+
+    const renderLoggedInLinks = () => (
+        <>
+            {/* Show Profile link when logged in and on the homepage */}
+            {location.pathname === '/' && <Link className="nav-link" to='/profile'>Profile</Link>}
+            <Logout 
+                setToken={setToken} 
+                setIsLoggedIn={setIsLoggedIn} 
+                setShowLogoutMessage={setShowLogoutMessage} 
+            />
+        </>
+    );
+
     return (
-      <>
         <div className='navbarcontainer'>
-          <div>
-            <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/'>Home</Link>
-            <Link style={{ display: "inline-block", paddingRight: "5px" }} to="/signup">SignUp</Link>
-            { isLoggedIn ? (
-              // 2. Pass setShowLogoutMessage prop to the Logout component
-              <Logout 
-                  setToken={setToken} 
-                  setIsLoggedIn={setIsLoggedIn} 
-                  setShowLogoutMessage={setShowLogoutMessage} 
-              />
-            ) : (
-              <>
-                <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/login'>Login</Link>
-                <Link style={{ display: "inline-block", paddingRight: "5px" }} to='/profile'>Profile</Link>
-              </>
-            )}
-          </div>
+            <div>
+                <Link className="nav-link" to='/'>Home</Link>
+                <Link className="nav-link" to="/signup">SignUp</Link>
+                {isLoggedIn ? renderLoggedInLinks() : renderLoggedOutLinks()}
+            </div>
         </div>
-      </>
     );
 }
 

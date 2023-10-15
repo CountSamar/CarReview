@@ -6,7 +6,7 @@ const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
 
   const handleLogout = () => {
     // 1. Remove the token from localStorage
-    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
     
     // 2. Update the application state
     setToken('');

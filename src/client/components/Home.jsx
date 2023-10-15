@@ -4,15 +4,18 @@ const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  
-  const isAuthenticated = () => localStorage.getItem("token");
-  let token = isAuthenticated()
-  // if(token){
-  //   setIsLoggedIn(true)
-  // }
-  
- 
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [postError, setPostError] = useState(null); // Define postError state
+
+  const isAuthenticated = () => sessionStorage.getItem("token");
+  let token = isAuthenticated();
+
+  useEffect(() => {
+    console.log("useEffect in Home component triggered.");
+    setIsLoggedIn(!!token);
+    fetchLatestReviews();
+  }, [token]);
+
   const fetchLatestReviews = async () => {
     try {
       const response = await fetch("http://localhost:5001/api/reviews/latest");
@@ -37,24 +40,6 @@ const Home = ({ username }) => {
       setError(error.message);
     }
   };
-
-  useEffect(() => {
-    const fetchLatestReviews = async () => {
-      try {
-        const response = await fetch("/api/reviews/latest");
-        if (!response.ok) throw new Error("Failed to fetch latest reviews");
-        const data = await response.json();
-        console.log(data);
-        setLatestReviews(data.data);
-      } catch (error) {
-        setError(error.message);
-      }
-    };
-
-    
-    
-    fetchLatestReviews();
-  }, []);
 
   const postComment = async (reviewIndex) => {
     try {
@@ -87,6 +72,9 @@ const Home = ({ username }) => {
       });
 
       setNewComments((prev) => ({ ...prev, [reviewIndex]: "" }));
+      
+      // Clear the postError state when there's no error
+      setPostError(null);
     } catch (error) {
       if (
         error.message === "Failed to post comment" &&
@@ -96,75 +84,66 @@ const Home = ({ username }) => {
         // Optionally redirect to login or show a message
       }
       console.error("Failed to post comment:", error);
-      setError(error.message);
+      
+      // Set the postError state when there's an error
+      setPostError("Failed to post comment. Please try again later.");
     }
   };
 
-  // console.log(error)
-  // if (error) return <p>Error: {error}</p>;
-
   return (
-    <>
-      <section className="latest-reviews">
-        {Array.isArray(latestReviews) &&
-          latestReviews.map((review, index) => (
-            <div className="review" key={index}>
-              <h1>Rating: {review.rating} out of 5</h1>
-              <p>Reviewed by: {review.user_name}</p>
-              <p>Car Model: {review.car_model}</p>
-              <p>Car Make: {review.car_brand}</p>
-              <p>Car Year: {review.car_year}</p>
-              <img
-                src={
-                  review.imgpath
-                    ? `http://localhost:3000/api/${review.imgpath}`
-                    : "src/server/api/uploads/1696817981885-tesla model 3.jpeg"
-                }
-                alt="Car"
-              />
-              <p>{review.comment}</p>
-
-              <div className="chat-section">
-                <h2>Comments</h2>
-                {review.comments &&
-                  review.comments.map((comment, idx) => (
-                    <div key={idx} className="comment">
-                      <span>
-                        <strong>{comment.user_name}:</strong> {comment.comm}
-                      </span>
-                    </div>
-                  ))}
-
-                {token && (
-                  <>
-                    
-
-                    <textarea
-                      placeholder="Add a comment..."
-                      value={newComments[index] || ""}
-                      onChange={(e) =>
-                        setNewComments((prev) => ({
-                          ...prev,
-                          [index]: e.target.value,
-                        }))
-                      }
-                    />
-                    <button onClick={() => postComment(index)}>Post</button>
-                   
-      
-                  </>
-                ) }
-                  <p>
-                    Please <a href="/signup">sign up</a> or{" "}
-                    <a href="/login">login</a> to add a comment.
-                  </p>
-                
+    <section className="latest-reviews">
+      {latestReviews.map((review, index) => (
+        <div className="review" key={review.id}>
+          <h2>Rating: {review.rating}</h2>
+          <p>Reviewed by: {review.user_name}</p>
+          <p>Car Model: {review.car_model}</p>
+          <p>Car Make: {review.car_brand}</p>
+          <p>Car Year: {review.car_year}</p>
+          <img
+            src={`http://localhost:5001/${review.imgpath}`}
+            alt="Review Image"
+          />
+          <div className="chat-section">
+            <h2>Comments</h2>
+            {review.comments?.map((comment, idx) => (
+              <div key={idx} className="comment">
+                <strong>{comment.user_name}:</strong> {comment.comm}
               </div>
-            </div>
-          ))}
-      </section>
-    </>
-  );
-};
+            ))}
+  {console.log("isLoggedIn:", isLoggedIn)}
+            {!isLoggedIn ? ( // Content for not logged-in users
+              <div className="prompt-login">
+                <p>
+                  Please <a href="/signup">sign up</a> or{" "}
+                  <a href="/login">login</a> to add a comment.
+                </p>
+              </div>
+            ) : (
+              // Content for logged-in users
+              <div className="logged-in-content">
+                {/* Add content for logged-in users here */}
+                <div className="add-comment-section">
+                  <textarea
+                    placeholder="Add a comment..."
+                    value={newComments[index] || ""}
+                    onChange={(e) =>
+                      setNewComments((prev) => ({
+                        ...prev,
+                        [index]: e.target.value,
+                      }))
+                    }
+                  />
+                  <button onClick={() => postComment(index)}>Post</button>
+                </div>
+                {postError && ( // Display postError message when it's defined
+                  <div className="error-message">{postError}</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      ))}
+    </section>
+  );}
 
 export default Home;

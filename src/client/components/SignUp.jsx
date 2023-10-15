@@ -25,7 +25,7 @@ function SignUp({ setToken }) {
 
     const register = async() => {
         try {
-            const response = await fetch('/api/users/register', {
+            const response = await fetch('http://localhost:5001/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json'
@@ -47,7 +47,7 @@ function SignUp({ setToken }) {
             showToastMessage('Sign Up Successful !');
             if (result.token) {
                 setToken(result.token);
-                localStorage.setItem('token', result.token);
+        sessionStorage.setItem('token', result.token);
                 // Resetting form only on successful registration
                 setFormData({
                     firstName: '',

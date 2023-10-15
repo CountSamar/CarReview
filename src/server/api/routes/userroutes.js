@@ -62,16 +62,11 @@ router.post("/login", async (req, res, next) => {
     const { email, password } = req.body;
     const user = await validateUser(email, password);
 
-    console.log(user, "User in Login")
-
     if (user) {
       const payload = {
         userId: user.id, // Assuming validateUser returns an object with an id.
         email: user.email,
-        role: user.role
       };
-
-     
 
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
       res.json({ success: true, token, username: user.username }); // Added username in response

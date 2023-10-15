@@ -41,8 +41,7 @@ apiRouter.use('/cars', carsRouter);
 const reviewRouter = require('./routes/reviewroute');
 apiRouter.use('/reviews', reviewRouter);
 
-const friendsRouter = require('./friends');
-apiRouter.use('/friends', friendsRouter);
+
 
 apiRouter.use((err, req, res, next) => {
     res.status(500).send(err)

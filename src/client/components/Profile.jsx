@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Logout from "./Logout";
-import jwt_decode from "jwt-decode";
 
 const Profile = ({
   username,
@@ -27,81 +26,30 @@ const Profile = ({
   const [reviews, setReviews] = useState([]);
   const [message, setMessage] = useState(null);
   const [editingReview, setEditingReview] = useState(null);
-  const [allUsers, setAllUsers] = useState([])
 
   useEffect(() => {
     const fetchReviews = async () => {
-      console.log(username, "username")
-      const mytoken = localStorage.getItem("token")
-      const decodedtoken = jwt_decode(mytoken)
-      console.log(decodedtoken, "DECODED")
-      const tokenrole = decodedtoken.role
+      try {
+        const response = await fetch(
+          `http://localhost:5001/api/reviews/user/${username}`
+        );
+        const data = await response.json();
 
-      if (tokenrole === "admin") {
-        console.log("IN THE ADMIN")
-        try {
-          const response = await fetch(
-            `/api/reviews/admin/`
-          );
-          const data = await response.json();
-
-          if (!response.ok) {
-            const errorMessage =
-              data && data.message ? data.message : "Error fetching reviews";
-            throw new Error(errorMessage);
-          }
-
-          setReviews(data.data);
-        } catch (error) {
-          console.error("Error fetching user's reviews:", error);
-          setMessage("Error fetching your reviews. Please try again.");
+        if (!response.ok) {
+          const errorMessage =
+            data && data.message ? data.message : "Error fetching reviews";
+          throw new Error(errorMessage);
         }
-      } else {
-        console.log("NOT IN ADMIN")
-        try {
-          const response = await fetch(
-            `/api/reviews/user/${username}`
-          );
-          const data = await response.json();
 
-          if (!response.ok) {
-            const errorMessage =
-              data && data.message ? data.message : "Error fetching reviews";
-            throw new Error(errorMessage);
-          }
-
-          setReviews(data);
-        } catch (error) {
-          console.error("Error fetching user's reviews:", error);
-          setMessage("Error fetching your reviews. Please try again.");
-        }
+        setReviews(data);
+      } catch (error) {
+        console.error("Error fetching user's reviews:", error);
+        setMessage("Error fetching your reviews. Please try again.");
       }
     };
 
     fetchReviews();
   }, [username]);
-
-  useEffect(() => {
-    const fetchAllUsers = async(role) => {
-      if(role === "admin") {
-        const response = await fetch ("/api/users", {
-          method: "GET"
-        });
-        const results = await response.json();
-        console.log(results, "results")
-        setAllUsers(results.data)
-      }
-    }
-
-    const mytoken = localStorage.getItem("token")
-      const decodedtoken = jwt_decode(mytoken)
-      console.log(decodedtoken, "DECODED")
-      const tokenrole = decodedtoken.role
-
-   fetchAllUsers(tokenrole);
-   
-  }, [])
-  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -151,7 +99,7 @@ const Profile = ({
         formSubmission.append("rating", rating);
 
         const response = await fetch(
-          "/api/reviews/create",
+          "http://localhost:5001/api/reviews/create",
           {
             method: "POST",
             body: formSubmission,
@@ -190,79 +138,79 @@ const Profile = ({
   };
   const handleDelete = async (id) => {
     try {
-      const response = await fetch("/api/reviews/delete", {
-        method: "DELETE",
+        const response = await fetch("http://localhost:5001/api/reviews/delete", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ id }),  // Note: we're sending the ID now
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || "Error deleting the review");
+        }
+
+        setMessage("Review deleted successfully!");
+        setReviews((prevReviews) =>
+            prevReviews.filter((review) => review.id !== id)  // filter by ID
+        );
+    } catch (error) {
+        console.error("There was an issue deleting the review:", error);
+        setMessage("There was an error. Please try again.");
+    }
+};
+const handleUpdate = async (reviewId) => {
+  console.log("State or Prop ID:", reviewId);
+  console.log("Edit Form Data:", editFormData);
+
+  const patchData = {
+    id: reviewId,
+    car_model: editFormData.carModel,
+    car_brand: editFormData.carBrand,
+    car_year: editFormData.carYear,
+    comment: editFormData.reviewText,
+    rating: editFormData.rating,
+  };
+
+  try {
+    const response = await fetch(
+      `http://localhost:5001/api/reviews/update/${reviewId}`,
+      {
+        method: "PATCH", // Change to PATCH
         headers: {
-          "Content-Type": "application/json",
+          "Content-Type": "application/json", // Specify JSON content type
         },
-        body: JSON.stringify({ id }),  // Note: we're sending the ID now
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || "Error deleting the review");
+        body: JSON.stringify(patchData), // Send data as JSON
       }
+    );
 
-      setMessage("Review deleted successfully!");
-      setReviews((prevReviews) =>
-        prevReviews.filter((review) => review.id !== id)  // filter by ID
-      );
-    } catch (error) {
-      console.error("There was an issue deleting the review:", error);
-      setMessage("There was an error. Please try again.");
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
-  };
-  const handleUpdate = async (reviewId) => {
-    console.log("State or Prop ID:", reviewId);
-    console.log("Edit Form Data:", editFormData);
 
-    const patchData = {
-      id: reviewId,
-      car_model: editFormData.carModel,
-      car_brand: editFormData.carBrand,
-      car_year: editFormData.carYear,
-      comment: editFormData.reviewText,
-      rating: editFormData.rating,
-    };
-
-    try {
-      const response = await fetch(
-        `/api/reviews/update/${reviewId}`,
-        {
-          method: "PATCH", // Change to PATCH
-          headers: {
-            "Content-Type": "application/json", // Specify JSON content type
-          },
-          body: JSON.stringify(patchData), // Send data as JSON
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+    let data;
+    if (
+      response.status !== 204 &&
+      response.headers.get("content-length") > 0
+    ) {
+      data = await response.json();
+      if (data.success) {
+        setReviews((prevReviews) =>
+          prevReviews.map((r) => (r.id === reviewId ? data.review : r))
+        );
+        setEditingReview(null);
+        setMessage("Review updated successfully!");
+      } else {
+        setMessage(data.message || "Error updating the review");
       }
-
-      let data;
-      if (
-        response.status !== 204 &&
-        response.headers.get("content-length") > 0
-      ) {
-        data = await response.json();
-        if (data.success) {
-          setReviews((prevReviews) =>
-            prevReviews.map((r) => (r.id === reviewId ? data.review : r))
-          );
-          setEditingReview(null);
-          setMessage("Review updated successfully!");
-        } else {
-          setMessage(data.message || "Error updating the review");
-        }
-      }
-    } catch (error) {
-      console.error("Error updating review:", error);
-      setMessage("Error updating the review: " + error.message);
     }
-  };
+  } catch (error) {
+    console.error("Error updating review:", error);
+    setMessage("Error updating the review: " + error.message);
+  }
+};
 
 
 
@@ -350,120 +298,109 @@ const Profile = ({
       {message && <p>{message}</p>}
 
       <h2>Your Reviews</h2>
-      <ul>
-        {reviews.map((review) => (
-          <li className="review" key={review.id}>
-            {editingReview === review.id ? (
-              <div>
-
-                <label>
-                  Car Model:
-                  <input
-                    type="text"
-                    name="carModel"
-                    value={editFormData.carModel}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <label>
-                  Car Brand:
-                  <input
-                    type="text"
-                    name="carBrand"
-                    value={editFormData.carBrand}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <label>
-                  Car Year:
-                  <input
-                    type="number"
-                    name="carYear"
-                    value={editFormData.carYear}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <label>
-                  Review:
-                  <textarea
-                    name="reviewText"
-                    value={editFormData.reviewText}
-                    onChange={handleEditChange}
-                  />
-                </label>
-                <label>
-                  Rating:
-                  <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3">3</option>
-                    <option value="4">4</option>
-                    <option value="5">5</option>
-                  </select>
-                </label>
-                <button onClick={() => handleUpdate(review.id)}>
-                  Update Review
-                </button>
-                <button onClick={() => setEditingReview(null)}>
-                  Cancel
-                </button>
-              </div>
-            ) : (
-              <div>
-
-                <div>
-                  <strong>Car Model:</strong> {review.car_model}
-                </div>
-                <div>
-                  <strong>Car Brand:</strong> {review.car_brand}
-                </div>
-                <div>
-                  <strong>Car Year:</strong> {review.car_year}
-                </div>
-                <div>
-                  <strong>Rating:</strong> {review.rating}
-                </div>
-                <div>
-                  <strong>Review:</strong> {review.comment}
-                </div>
-                <button onClick={() => handleDelete(review.id)}>
-                  Delete Review
-                </button>
-                <button onClick={() => {
-                  setFormData({
-                    reviewText: review.comment,
-                    carModel: review.car_model,
-                    carBrand: review.car_brand,
-                    carYear: review.car_year.toString(),
-                    rating: review.rating.toString(),
-                    imgFile: null,
-                  });
-                  setEditingReview(review.id);
-                }}>
-                  Edit Review
-                </button>
-                <img
-                  src={`/${review.imgpath}`}
-                  alt={`Image of ${review.car_model}`}
-                />
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {allUsers.length > 0 && allUsers.map((user) => {
-          return (
-            <div className="mb-4 card p-2 ml-2" style={{width: "18rem"}} key={user.id}>
-              <h5>Name: {user.name}</h5>
-              <h5>Username: {user.username}</h5>
-              <h5>Email: {user.email}</h5>
-              <h5>Role: {user.role}</h5>
-            </div>
-          )
-      })}
-    </div>
-  );
+<ul>
+  {reviews.map((review) => (
+    <li className="review" key={review.id}>
+      {editingReview === review.id ? (
+        <div>
+         
+          <label>
+            Car Model:
+            <input
+              type="text"
+              name="carModel"
+              value={editFormData.carModel}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Car Brand:
+            <input
+              type="text"
+              name="carBrand"
+              value={editFormData.carBrand}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Car Year:
+            <input
+              type="number"
+              name="carYear"
+              value={editFormData.carYear}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Review:
+            <textarea
+              name="reviewText"
+              value={editFormData.reviewText}
+              onChange={handleEditChange}
+            />
+          </label>
+          <label>
+            Rating:
+            <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </label>
+          <button onClick={() => handleUpdate(review.id)}>
+            Update Review
+          </button>
+          <button onClick={() => setEditingReview(null)}>
+            Cancel
+          </button>
+        </div>
+      ) : (
+        <div>
+         
+          <div>
+            <strong>Car Model:</strong> {review.car_model}
+          </div>
+          <div>
+            <strong>Car Brand:</strong> {review.car_brand}
+          </div>
+          <div>
+            <strong>Car Year:</strong> {review.car_year}
+          </div>
+          <div>
+            <strong>Rating:</strong> {review.rating}
+          </div>
+          <div>
+            <strong>Review:</strong> {review.comment}
+          </div>
+          <button onClick={() => handleDelete(review.id)}>
+            Delete Review
+          </button>
+          <button onClick={() => {
+            setFormData({
+              reviewText: review.comment,
+              carModel: review.car_model,
+              carBrand: review.car_brand,
+              carYear: review.car_year.toString(),
+              rating: review.rating.toString(),
+              imgFile: null,
+            });
+            setEditingReview(review.id);
+          }}>
+            Edit Review
+          </button>
+          <img
+            src={`http://localhost:5001/${review.imgpath}`}
+            alt={`Image of ${review.car_model}`}
+          />
+        </div>
+      )}
+    </li>
+  ))}
+</ul>
+</div>
+);
 };
 
 export default Profile;
