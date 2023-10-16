@@ -157,6 +157,38 @@ const getAdminAllReviews = async () => {
     throw err;
   }
 };
+const searchReviews = async (searchTerm) => {
+  try {
+    const query = `
+      SELECT 
+        id,
+        rating,
+        comment,
+        date_created,
+        imgpath,
+        user_name,
+        car_model,
+        car_brand,
+        car_year
+      FROM reviews
+      WHERE 
+        comment ILIKE $1 OR
+        user_name ILIKE $1 OR
+        car_model ILIKE $1 OR
+        car_brand ILIKE $1 OR
+        car_year::TEXT ILIKE $1
+      ORDER BY date_created DESC;
+    `;
+
+    const value = `%${searchTerm}%`;  // Wrapping the searchTerm with % for wildcard search
+    const { rows } = await db.query(query, [value]);
+    return rows;
+  } catch (err) {
+    console.error("Error in searchReviews:", err);
+    throw err;
+  }
+};
+
 
 module.exports = {
   createReview,
@@ -166,4 +198,5 @@ module.exports = {
   getAdminAllReviews,
   getLatestReviews,
   getReviewsByUsername,
+  searchReviews, 
 };

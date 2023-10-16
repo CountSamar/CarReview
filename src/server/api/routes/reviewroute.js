@@ -11,6 +11,7 @@ const {
 getAdminAllReviews,
   getLatestReviews,
   getReviewsByUsername,
+  searchReviews,
 } = require("../../db/reviews");
 
 // Fetch Admin All Reviews
@@ -182,6 +183,19 @@ router.patch('/update/:id', async (req, res) => {
   }
 });
 
+router.get('/search', async (req, res) => {
+  const searchTerm = req.query.term;
 
+  if (!searchTerm) {
+      return res.status(400).json({ error: "Search term is required." });
+  }
+
+  try {
+      const results = await searchReviews(searchTerm);
+      res.json(results);
+  } catch (err) {
+      res.status(500).json({ error: 'Database error' });
+  }
+});
 
 module.exports = router;

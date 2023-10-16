@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
+import SearchBar from "./SearchBar";
 
 const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [postError, setPostError] = useState(null); // Define postError state
+  const [postError, setPostError] = useState(null); 
+  const [filteredReviews, setFilteredReviews] = useState([]); 
 
   const isAuthenticated = () => sessionStorage.getItem("token");
   let token = isAuthenticated();
@@ -18,9 +20,9 @@ const Home = ({ username }) => {
       const userNameForChat = decodedToken.user_name;
       console.log("Decoded user_name:", userNameForChat);
       setIsLoggedIn(!!token);
-      fetchLatestReviews();
     }
-  }, [token]);
+    fetchLatestReviews();  // This will always fetch the reviews, irrespective of the login status
+}, []);
 
   const fetchLatestReviews = async () => {
     try {
@@ -46,6 +48,21 @@ const Home = ({ username }) => {
       setError(error.message);
     }
   };
+  const handleSearch = async (term) => {
+    console.log("Searching for:", term);
+  
+    try {
+      const response = await fetch(`http://localhost:5001/api/reviews/search?term=${term}`);
+      if (!response.ok) throw new Error("Failed to fetch reviews based on the search term.");
+  
+      const results = await response.json();
+      setFilteredReviews(results);
+    } catch (error) {
+      console.error("Error during search:", error.message);
+      // Optionally, you can set an error state here to notify the user about the error
+    }
+  };
+  
 
   const postComment = async (reviewIndex) => {
     try {
@@ -125,71 +142,59 @@ const Home = ({ username }) => {
     }
   };
   
+  const reviewsToDisplay = filteredReviews.length ? filteredReviews : latestReviews;
+ 
 
-  console.log(latestReviews.map((review) => review.comments));
   return (
     <section className="latest-reviews">
-      {latestReviews.map((review, index) => (
-        <div className="review" key={review.id}>
-          <h2>Rating: {review.rating} out of 5</h2>
-          <p>Review: {review.comment}</p>
-          <p>Reviewed by: {review.user_name}</p>
-          <p>Car Model: {review.car_model}</p>
-          <p>Car Make: {review.car_brand}</p>
-          <p>Car Year: {review.car_year}</p>
-          <img
-            src={`http://localhost:5001/${review.imgpath}`}
-            alt="Review Image"
-          />
-          <div className="chat-section">
-            <h2>Comments</h2>
-            {review.comments?.map((comment, idx) => (
-              <div key={idx} className="comment">
-                <strong>{comment.user_name}:</strong> {comment.comm}
-                {isLoggedIn && comment.user_name === username && (
-                  <button
-                    onClick={() =>
-                      deleteComment(index, comment.chat_id, )
-                    }
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
-            ))}
-            {console.log("isLoggedIn:", isLoggedIn)}
-            {!isLoggedIn ? (
-              <div className="prompt-login">
-                <p>
-                  Please <a href="/signup">sign up</a> or{" "}
-                  <a href="/login">login</a> to add a comment.
-                </p>
-              </div>
-            ) : (
-              // Content for logged-in users
-              <div className="logged-in-content">
-                {/* Add content for logged-in users here */}
-                <div className="add-comment-section">
-                  <textarea
-                    placeholder="Add a comment..."
-                    value={newComments[index] || ""}
-                    onChange={(e) =>
-                      setNewComments((prev) => ({
-                        ...prev,
-                        [index]: e.target.value,
-                      }))
-                    }
-                  />
-                  <button onClick={() => postComment(index)}>Post</button>
+        <SearchBar onSearch={handleSearch} />
+        
+        {filteredReviews.length ? <button onClick={() => setFilteredReviews([])}>Clear Search</button> : null}
+        
+        {/* Displaying the reviews to display (filtered or latest reviews) */}
+        {reviewsToDisplay.map((review, index) => (
+            <div className="review" key={review.id}>
+                <h2>Rating: {review.rating} out of 5</h2>
+                <p>Review: {review.comment}</p>
+                <p>Reviewed by: {review.user_name}</p>
+                <p>Car Model: {review.car_model}</p>
+                <p>Car Make: {review.car_brand}</p>
+                <p>Car Year: {review.car_year}</p>
+                <img src={`http://localhost:5001/${review.imgpath}`} alt="Review Image" />
+                <div className="chat-section">
+                    <h2>Comments</h2>
+                    {review.comments?.map((comment, idx) => (
+                        <div key={idx} className="comment">
+                            <strong>{comment.user_name}:</strong> {comment.comm}
+                            {isLoggedIn && comment.user_name === username && (
+                                <button onClick={() => deleteComment(index, comment.chat_id)}>
+                                    Delete
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                    {!isLoggedIn ? (
+                        <div className="prompt-login">
+                            <p>Please <a href="/signup">sign up</a> or <a href="/login">login</a> to add a comment.</p>
+                        </div>
+                    ) : (
+                        <div className="logged-in-content">
+                            <div className="add-comment-section">
+                                <textarea
+                                    placeholder="Add a comment..."
+                                    value={newComments[index] || ""}
+                                    onChange={(e) => setNewComments((prev) => ({...prev, [index]: e.target.value}))}
+                                />
+                                <button onClick={() => postComment(index)}>Post</button>
+                            </div>
+                            {postError && (
+                                <div className="error-message">{postError}</div>
+                            )}
+                        </div>
+                    )}
                 </div>
-                {postError && ( // Display postError message when it's defined
-                  <div className="error-message">{postError}</div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-      ))}
+            </div>
+        ))}
     </section>
   );
 };

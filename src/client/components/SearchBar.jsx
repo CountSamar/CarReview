@@ -1,35 +1,27 @@
-// import React, { useState } from 'react';
-// import { useNavigate } from 'react-router-dom';
+// SearchBar.jsx
 
-// const SearchBar = () => {
-//   const [searchTerm, setSearchTerm] = useState('');
-//   let navigate = useNavigate()
+import React, { useState } from "react";
 
-//       const handleInputChange = (e) => {
-//       setSearchTerm(e.target.value);
-//       };
-  
-//   //this should run on submit -> navigates to the search results page with the search term as a param
-//   const handleSubmit = (e) => {
-//     console.log("Search term:", searchTerm);
-//     console.log(resultsArray);
-//     //this is setting the param below : ?searchTerm=" + searchTerm
-//     navigate("/search-results?searchTerm=" + searchTerm);
-//     // const resultsArray = Review.filter(review => review.cars.includes(e.target.value) || review.body.includes(e.target.value))
-//   }
-//   return (
-//     <form onSubmit={handleSubmit}>
-//     <input
-//       type="text"
-//       placeholder="Search reviews..."
-//       value={searchTerm}
-//       onChange={handleInputChange}
-//     />
-//     <button type="submit" className="search_button" onClick={(e)=>handleSubmit(e)} >
-//       Search
-//     </button>
-//   </form>
-//   );
-// };
+const SearchBar = ({ onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState("");
 
-// export default SearchBar;
+  const handleSearchClick = () => {
+    if (onSearch) {
+      onSearch(searchTerm);
+    }
+  };
+
+  return (
+    <div className="search-bar">
+      <input
+        type="text"
+        placeholder="Search for reviews..."
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+      />
+      <button onClick={handleSearchClick}>Search</button>
+    </div>
+  );
+};
+
+export default SearchBar;
