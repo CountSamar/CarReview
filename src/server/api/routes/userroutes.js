@@ -64,12 +64,13 @@ router.post("/login", async (req, res, next) => {
 
     if (user) {
       const payload = {
-        userId: user.id, // Assuming validateUser returns an object with an id.
+        userId: user.id,
         email: user.email,
+        user_name: user.username, // Include the user_name in the payload
       };
 
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
-      res.json({ success: true, token, username: user.username }); // Added username in response
+      res.json({ success: true, token, username: user.username });
     } else {
       res.status(401).json({ success: false, message: "Invalid credentials" });
     }
@@ -77,6 +78,7 @@ router.post("/login", async (req, res, next) => {
     next(err);
   }
 });
+
 
 // Update user details
 router.put(

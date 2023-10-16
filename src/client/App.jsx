@@ -1,13 +1,13 @@
-import { useState } from 'react';
-import { Routes, Route, Outlet, Navigate } from 'react-router-dom';
-import './style.css';
-import Login from './components/Login';
-import Profile from './components/Profile';
-import SignUp from './components/SignUp';
-import NavBar from './components/NavBar';
-import Logout from './components/Logout';
-import Home from './components/Home';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState } from "react";
+import { Routes, Route, Outlet, Navigate } from "react-router-dom";
+import "./style.css";
+import Login from "./components/Login";
+import Profile from "./components/Profile";
+import SignUp from "./components/SignUp";
+import NavBar from "./components/NavBar";
+import Logout from "./components/Logout";
+import Home from "./components/Home";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function App() {
   const [email, setEmail] = useState("");
@@ -85,4 +85,3 @@ export default function App() {
     </>
   );
 }
-

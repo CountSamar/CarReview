@@ -5,8 +5,9 @@ const jwt = require('jsonwebtoken');
 const SALT_COUNT = 8;
 const JWT_SECRET = process.env.JWT_SECRET; 
 const generateToken = (user) => {
-    return jwt.sign({ id: user.id, email: user.email, username: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign({ id: user.id, email: user.email, user_name: user.username }, JWT_SECRET, { expiresIn: '1h' });
 }
+
 
 const createUser = async({ name = 'first last', email, password, username }) => {
     const hashedPassword = await bcrypt.hash(password, SALT_COUNT);

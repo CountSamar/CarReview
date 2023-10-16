@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import jwt_decode from "jwt-decode";
 
 const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
@@ -11,9 +12,14 @@ const Home = ({ username }) => {
   let token = isAuthenticated();
 
   useEffect(() => {
-    console.log("useEffect in Home component triggered.");
-    setIsLoggedIn(!!token);
-    fetchLatestReviews();
+    const token = sessionStorage.getItem("token");
+    if (token) {
+      const decodedToken = jwt_decode(token);
+      const userNameForChat = decodedToken.user_name;
+      console.log("Decoded user_name:", userNameForChat);
+      setIsLoggedIn(!!token);
+      fetchLatestReviews();
+    }
   }, [token]);
 
   const fetchLatestReviews = async () => {
@@ -51,7 +57,7 @@ const Home = ({ username }) => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           reviewId: review.id,
@@ -72,7 +78,7 @@ const Home = ({ username }) => {
       });
 
       setNewComments((prev) => ({ ...prev, [reviewIndex]: "" }));
-      
+
       // Clear the postError state when there's no error
       setPostError(null);
     } catch (error) {
@@ -84,17 +90,49 @@ const Home = ({ username }) => {
         // Optionally redirect to login or show a message
       }
       console.error("Failed to post comment:", error);
-      
+
       // Set the postError state when there's an error
       setPostError("Failed to post comment. Please try again later.");
     }
   };
 
+  const deleteComment = async (reviewIndex, chat_id) => {
+    let response;  // Declare the response variable here
+    try {
+      console.log("Deleting chat with ID:", chat_id);
+      const token = sessionStorage.getItem("token");
+      console.log("Token:", token);
+      response = await fetch(`http://localhost:5001/api/chats/delete/${chat_id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      });
+  
+      if (!response.ok) throw new Error("Failed to delete comment");
+  
+      setLatestReviews(prev => {
+        const updatedReviews = [...prev];
+        updatedReviews[reviewIndex].comments = updatedReviews[reviewIndex].comments.filter(comment => comment.chat_id !== chat_id);
+        return updatedReviews;
+      });
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
+      if (response) {  // Now response is accessible here
+        console.error("Response status:", response.status);
+        console.error("Response text:", await response.text());
+      }
+    }
+  };
+  
+
+  console.log(latestReviews.map((review) => review.comments));
   return (
     <section className="latest-reviews">
       {latestReviews.map((review, index) => (
         <div className="review" key={review.id}>
-          <h2>Rating: {review.rating}</h2>
+          <h2>Rating: {review.rating} out of 5</h2>
+          <p>Review: {review.comment}</p>
           <p>Reviewed by: {review.user_name}</p>
           <p>Car Model: {review.car_model}</p>
           <p>Car Make: {review.car_brand}</p>
@@ -108,10 +146,19 @@ const Home = ({ username }) => {
             {review.comments?.map((comment, idx) => (
               <div key={idx} className="comment">
                 <strong>{comment.user_name}:</strong> {comment.comm}
+                {isLoggedIn && comment.user_name === username && (
+                  <button
+                    onClick={() =>
+                      deleteComment(index, comment.chat_id, )
+                    }
+                  >
+                    Delete
+                  </button>
+                )}
               </div>
             ))}
-  {console.log("isLoggedIn:", isLoggedIn)}
-            {!isLoggedIn ? ( // Content for not logged-in users
+            {console.log("isLoggedIn:", isLoggedIn)}
+            {!isLoggedIn ? (
               <div className="prompt-login">
                 <p>
                   Please <a href="/signup">sign up</a> or{" "}
@@ -144,6 +191,7 @@ const Home = ({ username }) => {
         </div>
       ))}
     </section>
-  );}
+  );
+};
 
 export default Home;
