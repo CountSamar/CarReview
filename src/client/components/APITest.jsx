@@ -3,6 +3,9 @@ import React, { useState, useEffect } from 'react';
 function APITest() {
     const [data, setData] = useState({ loading: true, message: null, error: null });
 
+    // Define the base URL for the API
+    const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001';
+
     useEffect(() => {
         console.log('useEffect triggered. Starting data fetch...');
         fetchData();
@@ -11,7 +14,7 @@ function APITest() {
     const fetchData = async () => {
         try {
             console.log('Starting fetch operation...');
-            const response = await fetch('http://localhost:5001/api/test');
+            const response = await fetch(`${API_BASE_URL}/api/test`);
             console.log('Received response:', response);
             
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);

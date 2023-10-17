@@ -1,5 +1,5 @@
 require('dotenv').config();
-console.log("JWT_SECRET:", process.env.JWT_SECRET);  // For debugging
+console.log("JWT_SECRET:", process.env.JWT_SECRET);  // For debugging. Ensure this is removed or commented out for production deployments.
 
 const express = require("express");
 const cors = require("cors");
@@ -12,12 +12,21 @@ const carRoutes = require("./routes/carroute");
 const reviewRoutes = require("./routes/reviewroute");
 const chatRoutes = require("./routes/chatroute");
 
-
 const app = express();
+
+// List of allowed origins for CORS.
+const allowedOrigins = ["http://localhost:3000", "https://carreviewweb.onrender.com"];
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: function(origin, callback) {
+      if (!origin) return callback(null, true);  // Allow requests with no origin like mobile apps or curl requests.
+      if (allowedOrigins.indexOf(origin) === -1) {
+        const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
+        return callback(new Error(msg), false);
+      }
+      return callback(null, true);
+    },
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
@@ -36,7 +45,6 @@ app.use("/api/cars", carRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/chats", chatRoutes);
 
-
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use((err, req, res, next) => {
@@ -47,3 +55,4 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
