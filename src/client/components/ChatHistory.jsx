@@ -8,8 +8,8 @@ const ChatHistory = () => {
   const [chats, setChats] = useState([]);
 
   useEffect(() => {
-    // Define the API endpoint URL using the userName
-    const apiUrl = `http://localhost:5001/api/chats/${userName}`;
+    // Define the API endpoint URL using the userName and the environment variable
+    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/chats/${userName}`;
     console.log('API URL:', apiUrl);
 
     fetch(apiUrl)
@@ -45,5 +45,3 @@ const ChatHistory = () => {
 };
 
 export default ChatHistory;
-
-

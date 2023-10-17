@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 
 import Logout from "./Logout";
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const Profile = ({
   username,
@@ -33,7 +34,7 @@ const Profile = ({
     const fetchReviews = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5001/api/reviews/user/${username}`
+          `${BACKEND_URL}/api/reviews/user/${username}`
         );
         const data = await response.json();
 
@@ -100,7 +101,7 @@ const Profile = ({
         formSubmission.append("rating", rating);
   
         const response = await fetch(
-          "http://localhost:5001/api/reviews/create",
+          `${BACKEND_URL}/api/reviews/create`,
           {
             method: "POST",
             body: formSubmission,
@@ -143,7 +144,7 @@ const Profile = ({
   
   const handleDelete = async (id) => {
     try {
-        const response = await fetch("http://localhost:5001/api/reviews/delete", {
+        const response = await fetch(`${BACKEND_URL}/api/reviews/delete`, {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
@@ -181,7 +182,7 @@ const handleUpdate = async (reviewId) => {
 
   try {
     const response = await fetch(
-      `http://localhost:5001/api/reviews/update/${reviewId}`,
+      `${BACKEND_URL}/api/reviews/update/${reviewId}`,
       {
         method: "PATCH", // Change to PATCH
         headers: {
