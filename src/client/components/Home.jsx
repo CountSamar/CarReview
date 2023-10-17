@@ -37,7 +37,7 @@ const Home = ({ username }) => {
       const formattedReviews = await Promise.all(
         data.data.map(async (review) => {
           const chatResponse = await fetch(
-            `http://localhost:5001/api/chats/for-review/${review.id}`
+            `${backendUrl}/api/chats/for-review/${review.id}`
           );
           const chats = await chatResponse.json();
           return {
