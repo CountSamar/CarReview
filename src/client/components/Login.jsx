@@ -3,6 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+const backendUrl = "https://carreviewweb.onrender.com";
 
 const customToastContainerStyle = {
   // Your custom styles here
@@ -19,7 +20,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
 
   const login = async () => {
     try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/login`, {
+        const response = await fetch(`${backendUrl}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         showToastMessage();
 
         // Check user role
-        const roleResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/check-role`, {
+        const roleResponse = await fetch(`${backendUrl}}/api/users/check-role`, {
             headers: {
                 Authorization: `Bearer ${result.token}`,
             },
