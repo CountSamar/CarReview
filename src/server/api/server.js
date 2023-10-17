@@ -5,7 +5,7 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const PORT = process.env.PORT || 5001;
+const API_BASE_URL = process.env.API_BASE_URL || 'http://localhost:5001';
 
 const userRoutes = require("./routes/userroutes");
 const carRoutes = require("./routes/carroute");
@@ -53,6 +53,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Server is running on ${API_BASE_URL}`);
 });
 
