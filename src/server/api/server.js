@@ -1,11 +1,9 @@
-
-console.log("JWT_SECRET:", process.env.JWT_SECRET);  // For debugging. Ensure this is removed or commented out for production deployments.
-
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
 const API_BASE_URL = 'https://carreviewweb.onrender.com'; 
+const PORT = process.env.PORT || 3000;  // Define the PORT constant here.
 
 const userRoutes = require("./routes/userroutes");
 const carRoutes = require("./routes/carroute");
@@ -53,6 +51,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on ${API_BASE_URL}`);
+  console.log(`Server is running on ${API_BASE_URL}:${PORT}`);
 });
 
