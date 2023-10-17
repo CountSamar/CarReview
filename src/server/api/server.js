@@ -12,6 +12,7 @@ const carRoutes = require("./routes/carroute");
 const reviewRoutes = require("./routes/reviewroute");
 const chatRoutes = require("./routes/chatroute");
 
+
 const app = express();
 
 app.use(
@@ -34,6 +35,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/chats", chatRoutes);
+
 
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 

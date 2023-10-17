@@ -8,19 +8,29 @@ const {
 
   createReview,
   updateReview,
-getAdminAllReviews,
+  getAdminAllReviews,
   getLatestReviews,
+  getFilteredAdminReviews,
   getReviewsByUsername,
   searchReviews,
 } = require("../../db/reviews");
 
 // Fetch Admin All Reviews
-router.get('/admin', async (req, res, next) => {
+router.get("/admin", async (req, res, next) => {
   try {
-      const reviews = await getAdminAllReviews();
-      res.json({ message: "No reviews found", data: reviews });
+    const reviews = await getAdminAllReviews();
+    res.json({ message: "No reviews found", data: reviews });
   } catch (err) {
-      next(err);
+    next(err);
+  }
+});
+router.get("/admin/filtered", async (req, res, next) => {
+  try {
+    const { carModel, carYear, carBrand } = req.query;
+    const reviews = await getFilteredAdminReviews(carModel, carYear, carBrand);
+    res.json({ message: "No reviews found", data: reviews });
+  } catch (err) {
+    next(err);
   }
 });
 // Fetch all reviews
@@ -43,36 +53,30 @@ router.get("/latest", async (req, res, next) => {
   }
 });
 
-
 router.get("/user/:username", async (req, res) => {
   const username = req.params.username;
-  
+
   // Consider adding some basic validation for the username if needed
-  
+
   try {
     const reviews = await getReviewsByUsername(username);
-    
+
     if (reviews && reviews.length > 0) {
       res.json(reviews);
     } else {
-      res
-        .status(404)
-        .send({
-          success: false,
-          message: `No reviews found for user with the username ${username}`,
-        });
+      res.status(404).send({
+        success: false,
+        message: `No reviews found for user with the username ${username}`,
+      });
     }
   } catch (error) {
     console.error("Error fetching reviews for user:", error);
-    res
-      .status(500)
-      .send({
-        success: false,
-        message: `Error fetching reviews for user with the username ${username}. Reason: ${error.message}`,
-      });
+    res.status(500).send({
+      success: false,
+      message: `Error fetching reviews for user with the username ${username}. Reason: ${error.message}`,
+    });
   }
 });
-
 
 // Create review endpoint
 router.post("/create", upload.single("imgpath"), async (req, res) => {
@@ -93,12 +97,10 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
     !imgPath ||
     rating === undefined
   ) {
-    return res
-      .status(400)
-      .json({
-        success: false,
-        message: "All fields including image and rating are required.",
-      });
+    return res.status(400).json({
+      success: false,
+      message: "All fields including image and rating are required.",
+    });
   }
 
   try {
@@ -114,51 +116,47 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
     res.json({ success: true, review });
   } catch (err) {
     console.error("Error while creating review:", err);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to create review",
-        error: err.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to create review",
+      error: err.message,
+    });
   }
 });
-router.delete('/delete', async (req, res) => {
+router.delete("/delete", async (req, res) => {
   try {
-      const { id } = req.body;
+    const { id } = req.body;
 
-      // Update the deleteReview function to accept the id.
-      const deletedCount = await deleteReview(id);
+    // Update the deleteReview function to accept the id.
+    const deletedCount = await deleteReview(id);
 
-      // If no reviews were deleted, assume it wasn't found
-      if (deletedCount === 0) {
-          return res.status(404).json({
-              success: false,
-              error: {
-                  code: "REVIEW_NOT_FOUND",
-                  message: `Review with ID '${id}' not found.`
-              }
-          });
-      }
-      
-      res.json({ success: true, message: "Review deleted successfully!" });
-  } catch (err) {
-      console.error("Error while deleting review:", err); // Log the error for debugging purposes
-
-      // Send a general internal server error message
-      res.status(500).json({
-          success: false,
-          error: {
-              code: "INTERNAL_SERVER_ERROR",
-              message: "An internal error occurred. Please try again later."
-          }
+    // If no reviews were deleted, assume it wasn't found
+    if (deletedCount === 0) {
+      return res.status(404).json({
+        success: false,
+        error: {
+          code: "REVIEW_NOT_FOUND",
+          message: `Review with ID '${id}' not found.`,
+        },
       });
+    }
+
+    res.json({ success: true, message: "Review deleted successfully!" });
+  } catch (err) {
+    console.error("Error while deleting review:", err); // Log the error for debugging purposes
+
+    // Send a general internal server error message
+    res.status(500).json({
+      success: false,
+      error: {
+        code: "INTERNAL_SERVER_ERROR",
+        message: "An internal error occurred. Please try again later.",
+      },
+    });
   }
 });
 
-
-
-router.patch('/update/:id', async (req, res) => {
+router.patch("/update/:id", async (req, res) => {
   const { id } = req.params;
   const { comment, rating, carModel, carBrand, carYear } = req.body;
 
@@ -175,26 +173,26 @@ router.patch('/update/:id', async (req, res) => {
     if (updatedReview) {
       res.status(200).json({ success: true, review: updatedReview });
     } else {
-      res.status(404).json({ message: 'Review not found.' });
+      res.status(404).json({ message: "Review not found." });
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Failed to update review.' });
+    res.status(500).json({ message: "Failed to update review." });
   }
 });
 
-router.get('/search', async (req, res) => {
+router.get("/search", async (req, res) => {
   const searchTerm = req.query.term;
 
   if (!searchTerm) {
-      return res.status(400).json({ error: "Search term is required." });
+    return res.status(400).json({ error: "Search term is required." });
   }
 
   try {
-      const results = await searchReviews(searchTerm);
-      res.json(results);
+    const results = await searchReviews(searchTerm);
+    res.json(results);
   } catch (err) {
-      res.status(500).json({ error: 'Database error' });
+    res.status(500).json({ error: "Database error" });
   }
 });
 

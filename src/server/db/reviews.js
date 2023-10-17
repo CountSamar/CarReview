@@ -25,23 +25,84 @@ const createReview = async ({
     throw err;
   }
 };
-const getAllReviews = async () => {
+const getAllReviews = async (carModel, carYear, carBrand) => {
   try {
-    const { rows } = await db.query(`
-        SELECT 
-          rating, 
-          comment, 
-          date_created, 
-          imgpath, 
-          user_name, 
-          car_model,  
-          car_brand,  
-          car_year    
-        FROM reviews
-      `);
+    // Construct the base query
+    let query = `
+      SELECT 
+        rating, 
+        comment, 
+        date_created, 
+        imgpath, 
+        user_name, 
+        car_model,  
+        car_brand,  
+        car_year    
+      FROM reviews
+    `;
+
+    const queryParams = [];
+
+    // Add WHERE clauses for filtering based on provided parameters
+    if (carModel) {
+      query += ` WHERE car_model = $1`;
+      queryParams.push(carModel);
+    }
+
+    if (carYear) {
+      if (queryParams.length > 0) {
+        query += ` AND car_year = $${queryParams.length + 1}`;
+      } else {
+        query += ` WHERE car_year = $1`;
+      }
+      queryParams.push(carYear);
+    }
+
+    if (carBrand) {
+      if (queryParams.length > 0) {
+        query += ` AND car_brand = $${queryParams.length + 1}`;
+      } else {
+        query += ` WHERE car_brand = $1`;
+      }
+      queryParams.push(carBrand);
+    }
+
+    const { rows } = await db.query(query, queryParams);
 
     return rows;
   } catch (err) {
+    throw err;
+  }
+};
+
+const getFilteredAdminReviews = async (carModel, carYear, carBrand) => {
+  try {
+    // Define the base query
+    const query = `
+      SELECT
+        id,
+        rating,
+        comment,
+        date_created,
+        imgpath,
+        user_name,
+        car_model,
+        car_brand,
+        car_year
+      FROM reviews
+      WHERE
+        ($1::text IS NULL OR car_model = $1::text)
+        AND ($2::text IS NULL OR car_year = $2::text)
+        AND ($3::text IS NULL OR car_brand = $3::text)
+      ORDER BY date_created DESC;
+    `;
+
+    // Execute the query with the provided filtering criteria
+    const { rows } = await db.query(query, [carModel, carYear, carBrand]);
+
+    return rows;
+  } catch (err) {
+    console.error("Error in getFilteredAdminReviews:", err);
     throw err;
   }
 };
@@ -199,4 +260,5 @@ module.exports = {
   getLatestReviews,
   getReviewsByUsername,
   searchReviews, 
+  getFilteredAdminReviews,
 };
