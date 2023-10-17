@@ -65,13 +65,88 @@ const Home = ({ username }) => {
     }
   };
 
+
   const postComment = async (reviewIndex) => {
-    // ... (your existing postComment code)
+    try {
+      const review = latestReviews[reviewIndex];
+      const commentText = newComments[reviewIndex];
+      if (!commentText) return;
+
+      const response = await fetch(`http://localhost:5001/api/chats/add`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          reviewId: review.id,
+          userName: username, // Use the username from your context
+          commentText,
+        }),
+      });
+
+      if (!response.ok) throw new Error("Failed to post comment");
+
+      const newComment = await response.json();
+      setLatestReviews((prev) => {
+        const newReviews = [...prev];
+        if (!newReviews[reviewIndex].comments)
+          newReviews[reviewIndex].comments = [];
+        newReviews[reviewIndex].comments.push(newComment);
+        return newReviews;
+      });
+
+      setNewComments((prev) => ({ ...prev, [reviewIndex]: "" }));
+
+      // Clear the postError state when there's no error
+      setPostError(null);
+    } catch (error) {
+      if (
+        error.message === "Failed to post comment" &&
+        error.response.status === 401
+      ) {
+        localStorage.removeItem("token");
+        // Optionally redirect to login or show a message
+      }
+      console.error("Failed to post comment:", error);
+
+      // Set the postError state when there's an error
+      setPostError("Failed to post comment. Please try again later.");
+    }
   };
 
+
   const deleteComment = async (reviewIndex, chat_id) => {
-    // ... (your existing deleteComment code)
+    let response;  // Declare the response variable here
+    try {
+      console.log("Deleting chat with ID:", chat_id);
+      const token = sessionStorage.getItem("token");
+      console.log("Token:", token);
+      response = await fetch(`http://localhost:5001/api/chats/delete/${chat_id}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("Failed to delete comment");
+
+      setLatestReviews(prev => {
+        const updatedReviews = [...prev];
+        updatedReviews[reviewIndex].comments = updatedReviews[reviewIndex].comments.filter(comment => comment.chat_id !== chat_id);
+        return updatedReviews;
+      });
+    } catch (error) {
+      console.error("Failed to delete comment:", error);
+      if (response) {  // Now response is accessible here
+        console.error("Response status:", response.status);
+        console.error("Response text:", await response.text());
+      }
+    }
   };
+
+
+  console.log(latestReviews.map((review) => review.comments));
 
   const reviewsToDisplay = filteredReviews.length ? filteredReviews : latestReviews;
 
@@ -79,7 +154,7 @@ const Home = ({ username }) => {
     <section className="latest-reviews">
       <SearchBar onSearch={handleSearch} />
 
-      {/* Add a link to the ChatHistory component */}
+     
       <Link to={`/chat-history/${username}`}>Comment History</Link>
 
 
@@ -139,3 +214,4 @@ const Home = ({ username }) => {
 };
 
 export default Home;
+
