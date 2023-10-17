@@ -76,9 +76,8 @@ const Profile = ({
 
   const submitReview = async () => {
     setMessage(null);
-    const { reviewText, carModel, carBrand, carYear, imgFile, rating } =
-      formData;
-
+    const { reviewText, carModel, carBrand, carYear, imgFile, rating } = formData;
+  
     if (
       reviewText.trim() &&
       carModel.trim() &&
@@ -97,7 +96,7 @@ const Profile = ({
         formSubmission.append("comment", reviewText);
         formSubmission.append("imgpath", imgFile);
         formSubmission.append("rating", rating);
-
+  
         const response = await fetch(
           "http://localhost:5001/api/reviews/create",
           {
@@ -105,15 +104,18 @@ const Profile = ({
             body: formSubmission,
           }
         );
-
+  
         const data = await response.json();
-
+  
         if (!response.ok) {
           throw new Error(data.message || "Error submitting the review");
         }
-
+  
         if (data.success) {
-          setReviews((prevReviews) => [...prevReviews, reviewText]);
+          // Assuming that the `data` object contains the review that was just created,
+          // including its ID and image path, we can add this to our current reviews.
+          setReviews((prevReviews) => [...prevReviews, data.review]);
+  
           setFormData({
             reviewText: "",
             carModel: "",
@@ -136,6 +138,7 @@ const Profile = ({
       );
     }
   };
+  
   const handleDelete = async (id) => {
     try {
         const response = await fetch("http://localhost:5001/api/reviews/delete", {

@@ -5,7 +5,7 @@ const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // 1. Remove the token from localStorage
+    // 1. Remove the token from sessionStorage
     sessionStorage.removeItem('token');
     
     // 2. Update the application state
@@ -16,7 +16,10 @@ const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
     setShowLogoutMessage(true);
     
     // 4. Redirect the user to the homepage (or a login page)
-    navigate('/');
+    navigate('/', { replace: true });
+
+    // Force a hard reload to ensure all components reinitialize
+    window.location.reload();
   }
 
   return (
@@ -27,3 +30,4 @@ const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
 };
 
 export default Logout;
+
