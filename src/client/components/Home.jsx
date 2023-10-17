@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom';
 import SearchBar from "./SearchBar";
+const backendUrl = "https://carreviewweb.onrender.com";
 
 const Home = ({ username }) => {
-  const backendUrl = process.env.REACT_APP_API_BASE_URL;
+ 
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});

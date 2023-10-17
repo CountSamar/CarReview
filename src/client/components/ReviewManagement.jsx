@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const ReviewManagement = () => {
   const [reviews, setReviews] = useState([]);
