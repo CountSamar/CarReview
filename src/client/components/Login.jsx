@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import jwt_decode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -11,53 +12,61 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // Define the isAuthenticated function
-  const isAuthenticated = () => {
-    return sessionStorage.getItem('token') !== null;
-  };
+  const handleEmailChange = (e) => setEmail(e.target.value);
+  const handlePasswordChange = (e) => setPassword(e.target.value);
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e) => {
-    setPassword(e.target.value);
-  };
-
-  const showToastMessage = () => {
-    toast.success('Login Successful!', {
-      position: toast.POSITION.BOTTOM_CENTER,
-    });
-  };
+  const showToastMessage = () => toast.success('Login Successful!', { position: toast.POSITION.BOTTOM_CENTER });
 
   const login = async () => {
     try {
-      const response = await fetch('http://localhost:5001/api/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
-      });
-      const result = await response.json();
-      setMessage(result.message);
-      if (!response.ok) {
-        throw result;
-      }
-      if (result.token) {
+        const response = await fetch('http://localhost:5001/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email,
+                password,
+            }),
+        });
+        
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw result;
+        }
+
+        const decodedToken = jwt_decode(result.token);
+
         setToken(result.token);
         sessionStorage.setItem('token', result.token);
-        setUsername(result.username);
-        setUserId(result.userId);
+        setUsername(decodedToken.user_name);  // Assuming this is how you stored username in JWT
+        setUserId(decodedToken.id);  // Assuming this is how you stored user id in JWT
         setIsLoggedIn(true);
-      }
-      showToastMessage();
-      navigate('/profile');
+        showToastMessage();
+
+        // Check user role
+        const roleResponse = await fetch('http://localhost:5001/api/users/check-role', {
+            headers: {
+                Authorization: `Bearer ${result.token}`,
+            },
+        });
+
+        if (!roleResponse.ok) {
+            throw new Error('Role check failed');
+        }
+
+        const { isAdmin } = await roleResponse.json();
+
+        if (isAdmin) {
+            navigate('/admin');
+        } else {
+            navigate('/profile');
+        }
+
     } catch (err) {
-      console.error(`${err.name}: ${err.message}`);
+        setMessage(err.message);
+        console.error(`Login error: ${err.message}`);
     }
   };
 

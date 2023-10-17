@@ -10,6 +10,8 @@ const {
   getUserByEmail,
   getAllUsers,
   validateUser,
+  checkUserRole,
+  updateUserRole,
 } = require("../../db/users");
 
 const JWT_SECRET = process.env.JWT_SECRET || "YOUR_FALLBACK_SECRET";
@@ -23,6 +25,15 @@ router.get("/", async (req, res, next) => {
   }
 });
 
+router.get("/check-role", async (req, res) => {
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const roleCheck = await checkUserRole(token);
+    res.json(roleCheck);
+  } catch (error) {
+    res.status(401).json({ error: "Invalid token" });
+  }
+});
 // Fetch a specific user by ID
 router.get("/:userId", async (req, res, next) => {
   try {
@@ -66,7 +77,8 @@ router.post("/login", async (req, res, next) => {
       const payload = {
         userId: user.id,
         email: user.email,
-        user_name: user.username, // Include the user_name in the payload
+        user_name: user.username,
+        role: user.role,
       };
 
       const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "1h" });
@@ -79,29 +91,24 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-
-// Update user details
-router.put(
-  "/:userId",
-  upload.single("profilePicture"),
-  async (req, res, next) => {
-    try {
-      const userData = req.body;
-      if (req.file) {
-        userData.profilePicPath = req.file.path;
-      }
-
-      const updatedUser = await updateUser(req.params.userId, userData);
-      if (updatedUser) {
-        res.json({ success: true, data: updatedUser });
-      } else {
-        res.status(404).json({ success: false, message: "User not found" });
-      }
-    } catch (err) {
-      next(err);
+// Update user role
+router.put('/:userId/role', async (req, res, next) => {
+  try {
+    const { role } = req.body; 
+    
+    const updatedUser = await updateUserRole(req.params.userId, role);
+    
+    if (updatedUser) {
+      res.json({ success: true, data: updatedUser });
+    } else {
+      res.status(404).json({ success: false, message: "User not found" });
     }
+    
+  } catch (err) {
+    next(err);
   }
-);
+});
+
 
 // Delete a user
 router.delete("/:userId", async (req, res, next) => {

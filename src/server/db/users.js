@@ -5,8 +5,18 @@ const jwt = require('jsonwebtoken');
 const SALT_COUNT = 8;
 const JWT_SECRET = process.env.JWT_SECRET; 
 const generateToken = (user) => {
-    return jwt.sign({ id: user.id, email: user.email, user_name: user.username }, JWT_SECRET, { expiresIn: '1h' });
+    return jwt.sign(
+        { 
+            id: user.id, 
+            email: user.email, 
+            user_name: user.username,
+            role: user.role  // added user's role here
+        }, 
+        JWT_SECRET, 
+        { expiresIn: '1h' }
+    );
 }
+
 
 
 const createUser = async({ name = 'first last', email, password, username }) => {
@@ -93,11 +103,42 @@ const getUserByEmail = async(email) => {
         throw err;
     }
 }
+const checkUserRole = async(token) => {
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if (decoded.role && decoded.role === 'admin') {
+            return { isAdmin: true };
+        } else {
+            return { isAdmin: false };
+        }
+    } catch (error) {
+        throw new Error('Invalid token');
+    }
+};
+const updateUserRole = async (userId, newRole) => {
+    try {
+        const { rows: [user] } = await db.query(`
+            UPDATE users
+            SET role = $1
+            WHERE id = $2
+            RETURNING *;
+        `, [newRole, userId]);
+
+        if (!user) {
+            return null;
+        }
+        return user;
+    } catch (err) {
+        throw err;
+    }
+}
 
 module.exports = {
     createUser,
     getUser,
     getUserByEmail,
     getAllUsers,
-    validateUser
+    validateUser,
+    checkUserRole,
+    updateUserRole
 };
