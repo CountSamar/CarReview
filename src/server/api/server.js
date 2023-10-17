@@ -1,4 +1,4 @@
-require('dotenv').config();
+
 console.log("JWT_SECRET:", process.env.JWT_SECRET);  // For debugging. Ensure this is removed or commented out for production deployments.
 
 const express = require("express");
