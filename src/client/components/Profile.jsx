@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import { Link } from 'react-router-dom';
+
 import Logout from "./Logout";
 
 const Profile = ({
@@ -108,7 +110,7 @@ const Profile = ({
         const data = await response.json();
   
         if (!response.ok) {
-          throw new Error(data.message || "Error submitting the review");
+          throw  Error(data.message || "Error submitting the review");
         }
   
         if (data.success) {
@@ -152,7 +154,7 @@ const Profile = ({
         const data = await response.json();
 
         if (!response.ok) {
-            throw new Error(data.message || "Error deleting the review");
+            throw  Error(data.message || "Error deleting the review");
         }
 
         setMessage("Review deleted successfully!");
@@ -190,7 +192,7 @@ const handleUpdate = async (reviewId) => {
     );
 
     if (!response.ok) {
-      throw new Error("Network response was not ok");
+      throw Error("Network response was not ok");
     }
 
     let data;
@@ -215,194 +217,197 @@ const handleUpdate = async (reviewId) => {
   }
 };
 
+return (
+  <div style={{ marginTop: "2rem" }}>
+    <h1>Profile</h1>
+    <p>Welcome, {username}!</p>
 
+    <Logout
+      setToken={setToken}
+      setIsLoggedIn={setIsLoggedIn}
+      setShowLogoutMessage={setShowLogoutMessage}
+    />
 
-  return (
-    <div style={{ marginTop: "2rem" }}>
-      <h1>Profile</h1>
-      <p>Welcome, {username}!</p>
+    <h2>Write a Review</h2>
 
-      <Logout
-        setToken={setToken}
-        setIsLoggedIn={setIsLoggedIn}
-        setShowLogoutMessage={setShowLogoutMessage}
+    <label>
+      Car Model:
+      <input
+        type="text"
+        name="carModel"
+        value={formData.carModel}
+        onChange={handleChange}
+        placeholder="Enter car model"
       />
+    </label>
 
-      <h2>Write a Review</h2>
+    <label>
+      Car Brand:
+      <input
+        type="text"
+        name="carBrand"
+        value={formData.carBrand}
+        onChange={handleChange}
+        placeholder="Enter car brand"
+      />
+    </label>
 
-      <label>
-        Car Model:
-        <input
-          type="text"
-          name="carModel"
-          value={formData.carModel}
-          onChange={handleChange}
-          placeholder="Enter car model"
-        />
-      </label>
+    <label>
+      Car Year:
+      <input
+        type="number"
+        name="carYear"
+        value={formData.carYear}
+        onChange={handleChange}
+        placeholder="Enter car year"
+      />
+    </label>
 
-      <label>
-        Car Brand:
-        <input
-          type="text"
-          name="carBrand"
-          value={formData.carBrand}
-          onChange={handleChange}
-          placeholder="Enter car brand"
-        />
-      </label>
+    <label>
+      Review:
+      <textarea
+        name="reviewText"
+        value={formData.reviewText}
+        onChange={handleChange}
+        placeholder="Write your review here..."
+        rows="10"
+        cols="50"
+      />
+    </label>
 
-      <label>
-        Car Year:
-        <input
-          type="number"
-          name="carYear"
-          value={formData.carYear}
-          onChange={handleChange}
-          placeholder="Enter car year"
-        />
-      </label>
+    <label>
+      Upload Image:
+      <input type="file" name="imgFile" onChange={handleFileChange} />
+    </label>
 
-      <label>
-        Review:
-        <textarea
-          name="reviewText"
-          value={formData.reviewText}
-          onChange={handleChange}
-          placeholder="Write your review here..."
-          rows="10"
-          cols="50"
-        />
-      </label>
+    <br />
 
-      <label>
-        Upload Image:
-        <input type="file" name="imgFile" onChange={handleFileChange} />
-      </label>
+    <label>
+      Rating:
+      <select name="rating" value={formData.rating} onChange={handleChange}>
+        <option value="0">Select a rating</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+      </select>
+    </label>
 
-      <br />
+    <br />
 
-      <label>
-        Rating:
-        <select name="rating" value={formData.rating} onChange={handleChange}>
-          <option value="0">Select a rating</option>
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-        </select>
-      </label>
+    <button onClick={submitReview}>Submit Review</button>
 
-      <br />
+    {message && <p>{message}</p>}
 
-      <button onClick={submitReview}>Submit Review</button>
-
-      {message && <p>{message}</p>}
-
-      <h2>Your Reviews</h2>
-<ul>
-  {reviews.map((review) => (
-    <li className="review" key={review.id}>
-      {editingReview === review.id ? (
-        <div>
-         
-          <label>
-            Car Model:
-            <input
-              type="text"
-              name="carModel"
-              value={editFormData.carModel}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            Car Brand:
-            <input
-              type="text"
-              name="carBrand"
-              value={editFormData.carBrand}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            Car Year:
-            <input
-              type="number"
-              name="carYear"
-              value={editFormData.carYear}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            Review:
-            <textarea
-              name="reviewText"
-              value={editFormData.reviewText}
-              onChange={handleEditChange}
-            />
-          </label>
-          <label>
-            Rating:
-            <select name="rating" value={editFormData.rating} onChange={handleEditChange}>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-            </select>
-          </label>
-          <button onClick={() => handleUpdate(review.id)}>
-            Update Review
-          </button>
-          <button onClick={() => setEditingReview(null)}>
-            Cancel
-          </button>
-        </div>
-      ) : (
-        <div>
-         
-          <div>
-            <strong>Car Model:</strong> {review.car_model}
-          </div>
-          <div>
-            <strong>Car Brand:</strong> {review.car_brand}
-          </div>
-          <div>
-            <strong>Car Year:</strong> {review.car_year}
-          </div>
-          <div>
-            <strong>Rating:</strong> {review.rating}
-          </div>
-          <div>
-            <strong>Review:</strong> {review.comment}
-          </div>
-          <button onClick={() => handleDelete(review.id)}>
-            Delete Review
-          </button>
-          <button onClick={() => {
-            setFormData({
-              reviewText: review.comment,
-              carModel: review.car_model,
-              carBrand: review.car_brand,
-              carYear: review.car_year.toString(),
-              rating: review.rating.toString(),
-              imgFile: null,
-            });
-            setEditingReview(review.id);
-          }}>
-            Edit Review
-          </button>
-          <img
-            src={`http://localhost:5001/${review.imgpath}`}
-            alt={`Image of ${review.car_model}`}
-          />
-        </div>
-      )}
-    </li>
-  ))}
-</ul>
-</div>
+    <h2>Your Reviews</h2>
+    <ul>
+      {reviews.map((review) => (
+        <li className="review" key={review.id}>
+          {editingReview === review.id ? (
+            <div>
+              <label>
+                Car Model:
+                <input
+                  type="text"
+                  name="carModel"
+                  value={editFormData.carModel}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Car Brand:
+                <input
+                  type="text"
+                  name="carBrand"
+                  value={editFormData.carBrand}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Car Year:
+                <input
+                  type="number"
+                  name="carYear"
+                  value={editFormData.carYear}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Review:
+                <textarea
+                  name="reviewText"
+                  value={editFormData.reviewText}
+                  onChange={handleEditChange}
+                />
+              </label>
+              <label>
+                Rating:
+                <select
+                  name="rating"
+                  value={editFormData.rating}
+                  onChange={handleEditChange}
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                </select>
+              </label>
+              <button onClick={() => handleUpdate(review.id)}>
+                Update Review
+              </button>
+              <button onClick={() => setEditingReview(null)}>Cancel</button>
+            </div>
+          ) : (
+            <div>
+              <div>
+                <strong>Car Model:</strong> {review.car_model}
+              </div>
+              <div>
+                <strong>Car Brand:</strong> {review.car_brand}
+              </div>
+              <div>
+                <strong>Car Year:</strong> {review.car_year}
+              </div>
+              <div>
+                <strong>Rating:</strong> {review.rating}
+              </div>
+              <div>
+                <strong>Review:</strong> {review.comment}
+              </div>
+              <button onClick={() => handleDelete(review.id)}>
+                Delete Review
+              </button>
+              <button
+                onClick={() => {
+                  setFormData({
+                    reviewText: review.comment,
+                    carModel: review.car_model,
+                    carBrand: review.car_brand,
+                    carYear: review.car_year.toString(),
+                    rating: review.rating.toString(),
+                    imgFile: null,
+                  });
+                  setEditingReview(review.id);
+                }}
+              >
+                Edit Review
+              </button>
+              <img
+                src={`http://localhost:5001/${review.imgpath}`}
+                alt={`Image of ${review.car_model}`}
+              />
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+    
+    
+   
+  </div>
 );
 };
 

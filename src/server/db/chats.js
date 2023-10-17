@@ -54,6 +54,23 @@ const getCommentsForReview = async (reviewId) => {
     }
 };
 
+// Fetching comments (chats) for a specific user
+const getChatsByUser = async (userName, reviewId = null) => {
+    const query = `
+      SELECT chat_id, review_id, user_name, comm FROM chats
+      WHERE user_name = $1 ${reviewId ? 'AND review_id = $2' : ''}
+      ORDER BY chat_id DESC
+    `;
+    const values = reviewId ? [userName, reviewId] : [userName];
+  
+    try {
+      const { rows } = await db.query(query, values);
+      return rows;
+    } catch (err) {
+      throw err;
+    }
+  };
+  
 
 const deleteComment = async (chat_id, requestingUserName) => {
     try {
@@ -94,5 +111,6 @@ module.exports = {
     addComment,
     getCommentsForReview,
     deleteComment,
-    getCommentById 
+    getCommentById,
+   getChatsByUser
 };

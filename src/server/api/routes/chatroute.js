@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const { addComment, getCommentsForReview, deleteComment, getCommentById} = require('../../db/chats');
+const { addComment, getCommentsForReview, deleteComment, getCommentById, getChatsByUser} = require('../../db/chats');
 const JWT_SECRET = process.env.JWT_SECRET;
 
 // Define the function to decode a JWT token
@@ -14,7 +14,7 @@ function decodeToken(authorizationHeader) {
     console.log("Token to verify:", token);
     try {
         const decoded = jwt.verify(token, JWT_SECRET);
-        console.log('Decoded JWT payload:', decoded);
+       
         return decoded;
     } catch (error) {
         console.error("Error decoding token:", error);
@@ -56,6 +56,17 @@ router.get('/for-review/:reviewId', async (req, res) => {
         res.status(500).json({ error: "Internal server error" });
     }
 });
+router.get("/:userName", async (req, res) => {
+    const { userName } = req.params;
+  
+    try {
+      const chats = await getChatsByUser(userName);
+      res.json(chats);
+    } catch (error) {
+      console.error("Error fetching chat history:", error);
+      res.status(500).json({ error: "An error occurred while fetching chat history" });
+    }
+  });
 
 
 // Endpoint to delete a comment
