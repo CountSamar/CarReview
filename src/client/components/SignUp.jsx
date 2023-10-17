@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
+import { Link, useNavigate } from 'react-router-dom'
 
 function SignUp({ setToken }) {
     const [formData, setFormData] = useState({
@@ -36,7 +37,7 @@ function SignUp({ setToken }) {
                     username: formData.username
                 })
             });
-
+          
             const result = await response.json();
 
             if(!response.ok) {
@@ -46,7 +47,7 @@ function SignUp({ setToken }) {
             showToastMessage('Sign Up Successful !');
             if (result.token) {
                 setToken(result.token);
-                localStorage.setItem('token', result.token);
+        sessionStorage.setItem('token', result.token);
                 // Resetting form only on successful registration
                 setFormData({
                     firstName: '',
