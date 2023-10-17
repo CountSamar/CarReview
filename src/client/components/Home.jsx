@@ -3,8 +3,10 @@ import jwt_decode from "jwt-decode";
 import { Link } from 'react-router-dom'; // Import the Link component
 import SearchBar from "./SearchBar";
 import ChatHistory from "./ChatHistory"; // Import the ChatHistory component
+require('dotenv').config({ path: './url.env' });
 
 const Home = ({ username }) => {
+  const backendUrl = process.env.REACT_APP_API_BASE_URL 
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});
@@ -28,7 +30,7 @@ const Home = ({ username }) => {
 
   const fetchLatestReviews = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/reviews/latest");
+      const response = await fetch(`${backendUrl}/api/reviews/latest`);
       if (!response.ok) throw new Error("Failed to fetch latest reviews");
       const data = await response.json();
 
@@ -55,7 +57,7 @@ const Home = ({ username }) => {
     console.log("Searching for:", term);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/reviews/search?term=${term}`);
+      const response = await fetch(`${backendUrl}/api/reviews/search?term=${term}`);
       if (!response.ok) throw new Error("Failed to fetch reviews based on the search term.");
 
       const results = await response.json();
@@ -72,7 +74,7 @@ const Home = ({ username }) => {
       const commentText = newComments[reviewIndex];
       if (!commentText) return;
 
-      const response = await fetch(`http://localhost:5001/api/chats/add`, {
+      const response = await fetch(`${backendUrl}/api/chats/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -122,7 +124,7 @@ const Home = ({ username }) => {
       console.log("Deleting chat with ID:", chat_id);
       const token = sessionStorage.getItem("token");
       console.log("Token:", token);
-      response = await fetch(`http://localhost:5001/api/chats/delete/${chat_id}`, {
+      response = await fetch(`${backendUrl}/api/chats/delete/${chat_id}`, {
         method: 'DELETE',
         headers: {
           Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -171,7 +173,7 @@ const Home = ({ username }) => {
           <p>Car Model: {review.car_model}</p>
           <p>Car Make: {review.car_brand}</p>
           <p>Car Year: {review.car_year}</p>
-          <img src={`http://localhost:5001/${review.imgpath}`} alt="Review Image" />
+          <img src={`${backendUrl}${review.imgpath}`} alt="Review Image" />
           <div className="chat-section">
             <h2>Comments</h2>
             {review.comments?.map((comment, idx) => (
