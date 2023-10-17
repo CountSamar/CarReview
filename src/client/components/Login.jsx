@@ -19,7 +19,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
 
   const login = async () => {
     try {
-        const response = await fetch('http://localhost:5001/api/users/login', {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         showToastMessage();
 
         // Check user role
-        const roleResponse = await fetch('http://localhost:5001/api/users/check-role', {
+        const roleResponse = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/users/check-role`, {
             headers: {
                 Authorization: `Bearer ${result.token}`,
             },

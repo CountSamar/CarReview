@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 const ReviewManagement = () => {
   const [reviews, setReviews] = useState([]);
@@ -15,7 +16,8 @@ const ReviewManagement = () => {
   useEffect(() => {
     const fetchAdminReviews = async () => {
       try {
-        const response = await fetch('http://localhost:5001/api/reviews/admin');
+        const response = await fetch(`${BACKEND_URL}/api/reviews/admin`);
+
         const data = await response.json();
 
         if (!response.ok || !Array.isArray(data.data)) {
@@ -42,7 +44,7 @@ const ReviewManagement = () => {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch("http://localhost:5001/api/reviews/delete", {
+      const response = await fetch(`${BACKEND_URL}/api/reviews/delete`, {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -79,7 +81,7 @@ const ReviewManagement = () => {
   
     try {
       const response = await fetch(
-        `http://localhost:5001/api/reviews/update/${reviewId}`,
+        `${BACKEND_URL}/api/reviews/update/${reviewId}`,
         {
           method: "PATCH", // Change to PATCH
           headers: {

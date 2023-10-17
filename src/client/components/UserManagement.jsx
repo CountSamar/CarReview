@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 function UserManagement() {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
     const [confirmationMessage, setConfirmationMessage] = useState(null);
 
-    const BACKEND_URL = 'http://localhost:5001';
+    
 
     useEffect(() => {
         // Fetch all users from the API

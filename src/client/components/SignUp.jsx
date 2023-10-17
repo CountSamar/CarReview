@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom'
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 
 function SignUp({ setToken }) {
     const [formData, setFormData] = useState({
@@ -25,7 +26,7 @@ function SignUp({ setToken }) {
 
     const register = async() => {
         try {
-            const response = await fetch('http://localhost:5001/api/users/register', {
+            const response = await fetch(`${BACKEND_URL}/api/users/register`,  {
                 method: 'POST',
                 headers: {
                     'Content-Type' : 'application/json'
