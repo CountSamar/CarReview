@@ -80,7 +80,7 @@ const Home = ({ username }) => {
       <SearchBar onSearch={handleSearch} />
 
       {/* Add a link to the ChatHistory component */}
-      <Link to={`/chat-history/${username}`}>Go to Chat History</Link>
+      <Link to={`/chat-history/${username}`}>Comment History</Link>
 
 
       {filteredReviews.length ? (
