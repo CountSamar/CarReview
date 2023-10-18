@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import jwt_decode from "jwt-decode";
-
+const backendUrl = "http://localhost:5001";
 const ChatHistory = () => {
   const { userName } = useParams(); // Get the userName parameter from the URL
 
@@ -9,7 +9,7 @@ const ChatHistory = () => {
 
   useEffect(() => {
     // Define the API endpoint URL using the userName and the environment variable
-    const apiUrl = `${process.env.REACT_APP_BACKEND_URL}/api/chats/${userName}`;
+    const apiUrl = `${backendUrl}/api/chats/${userName}`;
     console.log('API URL:', apiUrl);
 
     fetch(apiUrl)
@@ -33,7 +33,7 @@ const ChatHistory = () => {
       <ul>
         {chats.map((chat) => (
           <li key={chat.chat_id}>
-            {/* Render chat details here */}
+         
             <p>Review ID: {chat.review_id}</p>
             <p>User: {chat.user_name}</p>
             <p>Message: {chat.comm}</p>

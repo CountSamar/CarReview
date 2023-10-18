@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-const backendUrl = "https://carreviewweb.onrender.com";
+const backendUrl = "http://localhost:5001";
 
 const customToastContainerStyle = {
   // Your custom styles here
@@ -47,7 +47,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         showToastMessage();
 
         // Check user role
-        const roleResponse = await fetch(`${backendUrl}}/api/users/check-role`, {
+        const roleResponse = await fetch(`${backendUrl}/api/users/check-role`, {
             headers: {
                 Authorization: `Bearer ${result.token}`,
             },

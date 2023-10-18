@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
 
 import Logout from "./Logout";
-const BACKEND_URL = "https://carreviewweb.onrender.com";
+const BACKEND_URL = "http://localhost:5001";
 
 const Profile = ({
   username,

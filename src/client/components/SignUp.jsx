@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Link, useNavigate } from 'react-router-dom'
-const BACKEND_URL = "https://carreviewweb.onrender.com";
+const BACKEND_URL = "http://localhost:5001";
 
 function SignUp({ setToken }) {
     const [formData, setFormData] = useState({
