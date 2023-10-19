@@ -1,9 +1,55 @@
+/* CSS Variables */
+:root {
+ 
+  --box-shadow-light: 0px 2px 5px rgba(87, 7, 74, 0.9);
+  --box-shadow-dark: 0px 0px 18px -6px rgba(20, 20, 20, 0.8);
+}
+
 .App {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; 
+  height: 100vh;
+}
+body {
+  background-color: rgb(0, 0, 0);
+}
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-300%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+.title-container {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  /* Vertical centering */
+  height: 25vh; /* Full viewport height to demonstrate centering */
+}
+
+.app-title {
+  font-family: "Vollkorn", sans-serif;
+
+  color: #ffc803;
+  font-size: 80px; /* Adjust the font size to make it bigger */
+  line-height: 1.2; /* Adjust the line height to make it taller */
+  background-image: url("src/client/wizard1.jpg");
+  background-size: 30%; /* Cover the entire area of the title */
+  background-repeat: no-repeat; /* Do not repeat the image */
+  background-position: bottom; /* Center the image */
+  border-radius: 3000px;
+
+  padding-top: -400px;
+  
+  background-color: #000000;
+
+  /* Add a drop shadow to the text */
+  text-shadow: 1px 1px 30px rgba(248, 175, 7, 0.722);
+
+  animation: slideInFromLeft 1s ease-in-out forwards;
 }
 
 .App-header {
@@ -11,41 +57,62 @@
   font-size: 24px;
 }
 
-#comp-img{
+#comp-img {
   width: 250px;
 }
 
-#review-container {
+#review-container,
+.latest-reviews {
+  display: flex;
   flex-direction: column;
-    width: 40rem;
-    border-radius: 5px;
-    padding: 1rem;
-    box-shadow: 0px 0px 18px -6px rgba(20, 20, 20, 0.8);
-    transition: all 0.3s ease;
-    gap: 2rem;
-    flex-wrap: wrap;
-    margin-top: 1rem;
+  align-items: center; /* Horizontally center the content */
+  justify-content: center; /* Vertically center the content */
+  gap: 2rem;
+  flex-wrap: wrap;
 }
-.nav-link {
-  display: inline-block;
-  padding-right: 5px;
+
+#review-container {
+  width: 40rem;
+  border-radius: 5px;
+  padding: 1rem;
+  box-shadow: let(--box-shadow-dark);
+  margin-top: 1rem;
+}
+
+.navbarcontainer,
+.star-rating {
+  display: flex;
+  justify-content: center;
 }
 
 .navbarcontainer {
-  display: flex;
-  justify-content: center; /* Align the nav items to the center */
-  padding: 10px 0; /* Some vertical padding for better appearance */
-  background-color: #f5f5f5; /* Light background to distinguish navbar */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* A slight shadow for depth */
+  padding: 15px 0; /* Adjusted padding */
+  justify-content: center; 
+ 
+  background-color: #000000; /* Slightly darker background */
+  box-shadow: var(--box-shadow-light);
+  border-top: var(--navbar-border);
+  border-bottom: var(--navbar-border);
 }
 
-.user-management {
-  font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f4f4f4;
-  border: 1px solid #e0e0e0;
+.nav-link {
+  font-family: "Vollkorn";
+  display: inline-block;
+  padding: 10px 5px;
+  font-size: 20px;
+  margin-right: 100px;
+  color: rgb(142, 21, 126);
+
+}
+.nav-link:last-of-type {
+  margin-right: 0; 
 }
 
+.admin-dashboard h1{
+  color: #ffc803;
+}
+
+/* Message styles */
 .error-message,
 .confirmation-message {
   padding: 10px;
@@ -54,23 +121,25 @@
 }
 
 .error-message {
-  background-color: #ffe5e5;
-  color: #d43f00;
+  background-color: var(--error-bg-color);
+  color: var(--error-color);
   border: 1px solid #ffcccc;
 }
 
 .confirmation-message {
-  background-color: #e5ffea;
-  color: #007a3d;
+  background-color: var(--confirm-bg-color);
+  color: var(--confirm-color);
   border: 1px solid #ccffd9;
 }
 
+/* List styles */
 ul {
   list-style-type: none;
   padding: 0;
 }
 
-li {
+li,
+.review {
   margin-bottom: 10px;
   padding: 10px;
   border: 1px solid #e0e0e0;
@@ -78,22 +147,23 @@ li {
   background-color: #fff;
 }
 
+/* Button styles */
 button {
+  padding: 10px 20px;
   margin-left: 10px;
-  padding: 5px 10px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: #fff;
+  background-color: let(--primary-bg-color);
+  color: #414aeff4;
   border: none;
-  border-radius: 4px;
+  border-radius: 5px;
   transition: background-color 0.2s;
+  cursor: pointer;
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: let(--hover-bg-color);
 }
 
-
+/* Box styles */
 .box-container {
   display: flex;
   flex-direction: column;
@@ -104,57 +174,11 @@ button:hover {
   padding: 20px;
   border: 2px solid #ccc;
   border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   background-color: #fff;
-  box-shadow: 0px 0px 18px -6px rgba(20, 20, 20, 0.8);
+  box-shadow: let(--box-shadow-dark);
 }
 
-.box {
-  padding: 15px;
-}
-.scroll-item {
-  margin-bottom: 10px;
-}
-
-.scroll-item h3 {
-  margin-bottom: 5px;
-}
-
-textarea {
-  width: 100%;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  resize: vertical;
-}
-
-button {
-  padding: 10px 20px;
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #f5f7f9;
-}
-
-
-.star-rating {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-}
-
-.star-container {
-  display: flex;
-  justify-content: space-between;
-  width: 200px;
-}
-
+/* Star Rating */
 .star-rating button {
   font-size: 40px;
   background-color: transparent;
@@ -171,53 +195,67 @@ button:hover {
 .star-rating button.off {
   color: #ccc;
 }
-.latest-reviews {
-  display: flex;
-  flex-direction: column; 
-  align-items: center; 
-}
 
-.review {
-  border: 1px solid #fcfffc; /* Add a border to each review */
-  padding: 16px; /* Add padding to separate reviews */
-  margin: 16px; /* Add margin to space out reviews */
-  width: 80%; /* Adjust the width as needed */
-  max-width: 600px; /* Set a maximum width to prevent reviews from becoming too wide */
-  background-color: #d9d3ed; /* Background color for reviews */
-}
-
-.review h3 {
-  font-size: 18px; 
-}
-
-.review p {
-  font-size: 16px; 
-}
-
-
+/* Custom Toasts */
 .custom-toast-container .Toastify__toast {
-  background-color: #333; 
-  color: #fff; 
-  border-radius: 4px; 
-  box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); 
-  font-size: 16px; 
+  background-color: #333;
+  color: #fff;
+  border-radius: 4px;
+  box-shadow: let(--box-shadow-light);
+  font-size: 16px;
 }
 
 .custom-toast-container .Toastify__toast--success {
-  background-color: #55b406; 
+  background-color: #55b406;
 }
 
 .custom-toast-container .Toastify__toast--error {
-  background-color: #f44336; 
+  background-color: #f44336;
+}
+
+/* login */
+.login-heading {
+  font-family: "Vollkorn";
+  color:  #920d75;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.login-input {
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.login-button {
+  padding: 10px 1px;
+  background-color: #780972;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
 
-.custom-toast-container .Toastify__toast-body::before {
-  font-size: 1px; 
+.logout-button {
+  background-color: #c11973; /* Red background */
+ 
+  color: white; 
+  border: none;
+  padding: 10px 20px; 
+  border-radius: 30px; 
+  cursor: pointer; 
+  transition: background-color 0.3s; 
 }
 
-
-.custom-toast-container .Toastify__toast-container {
-  width: 1px; 
-}
 

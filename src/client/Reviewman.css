@@ -1,0 +1,83 @@
+/* General Styles */
+.review-management {
+    font-family: 'Vollkorn', sans-serif;
+    max-width:  700px;
+    margin: 20px;
+ 
+    padding: 20px;
+    background-color: #d02e2e;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-management h1, 
+.review-management h2 {
+    color: #c010db;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Feedback messages */
+.error-message,
+.confirmation-message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.error-message {
+    background-color: #ffebee;
+    color: #f44336;
+}
+
+.confirmation-message {
+    background-color: #e8f5e9;
+    color: #4caf50;
+}
+
+/* Review List */
+.review-management ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.review-management .review {
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.review-management .review:last-child {
+    border-bottom: none; /* Remove border for the last item */
+}
+
+.review-management button {
+    margin-left: 10px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #91138d;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.review-management button:hover {
+    background-color: #610959;
+}
+
+/* Input Fields and Textareas */
+.review-management textarea,
+.review-management input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.2s;
+}
+
+.review-management textarea:focus,
+.review-management input[type="text"]:focus {
+    border-color: #91138d;
+}

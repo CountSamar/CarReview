@@ -32,8 +32,12 @@ export default function App() {
 
     return (
         <>
-            <h1>Car Wizard</h1>
+        <div className="title-container">
+            {/* <h1 className="app-title">_ _ _ _ _ _</h1> */}
+            <h1 className="app-title new-title">Car Wizard</h1>
+            </div>
             {showLogoutMessage && <p>Successfully logged out!</p>}
+
             <NavBar
                 setToken={setToken}
                 setIsLoggedIn={setIsLoggedIn}

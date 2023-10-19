@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
-import { Link } from 'react-router-dom'; // Import the Link component
+import { Link } from "react-router-dom"; // Import the Link component
 import SearchBar from "./SearchBar";
 import ChatHistory from "./ChatHistory"; // Import the ChatHistory component
+import "../Home.css";
 
 const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
   const [error, setError] = useState(null);
   const [newComments, setNewComments] = useState({});
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [postError, setPostError] = useState(null); 
-  const [filteredReviews, setFilteredReviews] = useState([]); 
+  const [postError, setPostError] = useState(null);
+  const [filteredReviews, setFilteredReviews] = useState([]);
 
   const isAuthenticated = () => sessionStorage.getItem("token");
   let token = isAuthenticated();
@@ -50,13 +51,32 @@ const Home = ({ username }) => {
       setError(error.message);
     }
   };
-
+  const fetchCommentsForReview = async (reviewId, reviewIndex) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5001/api/chats/for-review/${reviewId}`
+      );
+      if (!response.ok)
+        throw new Error("Failed to fetch comments for the review");
+      const commentsData = await response.json();
+      setLatestReviews((prev) => {
+        const updatedReviews = [...prev];
+        updatedReviews[reviewIndex].comments = commentsData.data;
+        return updatedReviews;
+      });
+    } catch (error) {
+      console.error("Failed to fetch comments:", error);
+    }
+  };
   const handleSearch = async (term) => {
     console.log("Searching for:", term);
 
     try {
-      const response = await fetch(`http://localhost:5001/api/reviews/search?term=${term}`);
-      if (!response.ok) throw new Error("Failed to fetch reviews based on the search term.");
+      const response = await fetch(
+        `http://localhost:5001/api/reviews/search?term=${term}`
+      );
+      if (!response.ok)
+        throw new Error("Failed to fetch reviews based on the search term.");
 
       const results = await response.json();
       setFilteredReviews(results);
@@ -66,11 +86,16 @@ const Home = ({ username }) => {
   };
 
   const postComment = async (reviewIndex) => {
+    if (!isLoggedIn) {
+      console.warn("Unauthorized user attempted to post a comment.");
+      return;
+    }
+
     try {
       const review = latestReviews[reviewIndex];
       const commentText = newComments[reviewIndex];
       if (!commentText) return;
-  
+
       const response = await fetch(`http://localhost:5001/api/chats/add`, {
         method: "POST",
         headers: {
@@ -79,83 +104,73 @@ const Home = ({ username }) => {
         },
         body: JSON.stringify({
           reviewId: review.id,
-          userName: username, // Use the username from your context
+          userName: username,
           commentText,
         }),
       });
-  
+
       if (!response.ok) throw new Error("Failed to post comment");
-  
-      const newComment = await response.json();
-      setLatestReviews((prev) => {
-        const newReviews = [...prev];
-        if (!newReviews[reviewIndex].comments)
-          newReviews[reviewIndex].comments = [];
-        newReviews[reviewIndex].comments.push(newComment);
-        return newReviews;
-      });
-  
+
+      // Fetch latest comments
+      fetchCommentsForReview(review.id, reviewIndex);
+
+      // Clear the input field
       setNewComments((prev) => ({ ...prev, [reviewIndex]: "" }));
-  
-      // Clear the postError state when there's no error
+
+      // Clear the postError state
       setPostError(null);
     } catch (error) {
-      if (
-        error.message === "Failed to post comment" &&
-        error.response.status === 401
-      ) {
-        localStorage.removeItem("token");
-        // Optionally redirect to login or show a message
-      }
       console.error("Failed to post comment:", error);
-  
-      // Set the postError state when there's an error
       setPostError("Failed to post comment. Please try again later.");
     }
   };
-  
 
   const deleteComment = async (reviewIndex, chat_id) => {
-    let response;  // Declare the response variable here
+    let response; // Declare the response variable here
     try {
       console.log("Deleting chat with ID:", chat_id);
       const token = sessionStorage.getItem("token");
       console.log("Token:", token);
-      response = await fetch(`http://localhost:5001/api/chats/delete/${chat_id}`, {
-        method: 'DELETE',
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
-        },
-      });
+      response = await fetch(
+        `http://localhost:5001/api/chats/delete/${chat_id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (!response.ok) throw new Error("Failed to delete comment");
 
-      setLatestReviews(prev => {
+      setLatestReviews((prev) => {
         const updatedReviews = [...prev];
-        updatedReviews[reviewIndex].comments = updatedReviews[reviewIndex].comments.filter(comment => comment.chat_id !== chat_id);
+        updatedReviews[reviewIndex].comments = updatedReviews[
+          reviewIndex
+        ].comments.filter((comment) => comment.chat_id !== chat_id);
         return updatedReviews;
       });
     } catch (error) {
       console.error("Failed to delete comment:", error);
-      if (response) {  // Now response is accessible here
+      if (response) {
+        // Now response is accessible here
         console.error("Response status:", response.status);
         console.error("Response text:", await response.text());
       }
     }
   };
 
-
   console.log(latestReviews.map((review) => review.comments));
 
-  const reviewsToDisplay = filteredReviews.length ? filteredReviews : latestReviews;
+  const reviewsToDisplay = filteredReviews.length
+    ? filteredReviews
+    : latestReviews;
 
   return (
     <section className="latest-reviews">
       <SearchBar onSearch={handleSearch} />
 
-     
       <Link to={`/chat-history/${username}`}>Comment History</Link>
-
 
       {filteredReviews.length ? (
         <button onClick={() => setFilteredReviews([])}>Clear Search</button>
@@ -164,13 +179,18 @@ const Home = ({ username }) => {
       {/* Displaying the reviews to display (filtered or latest reviews) */}
       {reviewsToDisplay.map((review, index) => (
         <div className="review" key={review.id}>
-          <h2>Rating: {review.rating} out of 5</h2>
-          <p>Review: {review.comment}</p>
+          <h1>
+            {review.car_year} {review.car_brand} {review.car_model} 
+          </h1>
+
+          <img
+            src={`http://localhost:5001/${review.imgpath}`}
+            alt="Review Image"
+          />
+          <p> {review.comment}</p>
           <p>Reviewed by: {review.user_name}</p>
-          <p>Car Model: {review.car_model}</p>
-          <p>Car Make: {review.car_brand}</p>
-          <p>Car Year: {review.car_year}</p>
-          <img src={`http://localhost:5001/${review.imgpath}`} alt="Review Image" />
+          <h2>Rating: {review.rating} out of 5</h2>
+
           <div className="chat-section">
             <h2>Comments</h2>
             {review.comments?.map((comment, idx) => (
@@ -185,7 +205,10 @@ const Home = ({ username }) => {
             ))}
             {!isLoggedIn ? (
               <div className="prompt-login">
-                <p>Please <a href="/signup">sign up</a> or <a href="/login">login</a> to add a comment.</p>
+                <p>
+                  Please <a href="/signup">sign up</a> or{" "}
+                  <a href="/login">login</a> to add a comment.
+                </p>
               </div>
             ) : (
               <div className="logged-in-content">
@@ -193,13 +216,16 @@ const Home = ({ username }) => {
                   <textarea
                     placeholder="Add a comment..."
                     value={newComments[index] || ""}
-                    onChange={(e) => setNewComments((prev) => ({...prev, [index]: e.target.value}))}
+                    onChange={(e) =>
+                      setNewComments((prev) => ({
+                        ...prev,
+                        [index]: e.target.value,
+                      }))
+                    }
                   />
                   <button onClick={() => postComment(index)}>Post</button>
                 </div>
-                {postError && (
-                  <div className="error-message">{postError}</div>
-                )}
+                {postError && <div className="error-message">{postError}</div>}
               </div>
             )}
           </div>
@@ -207,7 +233,6 @@ const Home = ({ username }) => {
       ))}
 
       {/* Render the ChatHistory component */}
-      
     </section>
   );
 };

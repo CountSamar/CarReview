@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from 'react-router-dom';
+import "../profile.css"
 
 import Logout from "./Logout";
 const BACKEND_URL = "http://localhost:5001";
@@ -220,8 +221,9 @@ const handleUpdate = async (reviewId) => {
 
 return (
   <div style={{ marginTop: "2rem" }}>
-    <h1>Profile</h1>
-    <p>Welcome, {username}!</p>
+    <h1 className="profile">Profile</h1>
+    <p className="welcome-message">Welcome, {username}!</p>
+
 
     <Logout
       setToken={setToken}

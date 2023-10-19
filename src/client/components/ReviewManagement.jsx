@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../Reviewman.css"
 const BACKEND_URL = "http://localhost:5001";
 
 const ReviewManagement = () => {
@@ -118,36 +119,36 @@ const ReviewManagement = () => {
   };
 
   return (
-    <div style={{ marginTop: '2rem' }}>
-      <h1>Review Management</h1>
-
-      {message && <p>{message}</p>}
-
-      <h2>All Reviews</h2>
-      <ul>
+    <div className="review-management-container" style={{ marginTop: '2rem' }}>
+      <h1 className="review-management-header">Review Management</h1>
+  
+      {message && <p className="review-management-message">{message}</p>}
+  
+      <h2 className="review-list-header">All Reviews</h2>
+      <ul className="review-list">
         {reviews.map((review) => (
-          <li className="review" key={review.id}>
+          <li className="review-item" key={review.id}>
             {editingReview === review.id ? (
-              <div>
-                <textarea name="reviewText" value={editFormData.reviewText} onChange={handleEditChange} />
-                <input type="text" name="carModel" value={editFormData.carModel} onChange={handleEditChange} />
-                <input type="text" name="carBrand" value={editFormData.carBrand} onChange={handleEditChange} />
-                <input type="text" name="carYear" value={editFormData.carYear} onChange={handleEditChange} />
-                <input type="text" name="rating" value={editFormData.rating} onChange={handleEditChange} />
-                <button onClick={() => handleUpdate(review.id)}>Save</button>
-                <button onClick={() => setEditingReview(null)}>Cancel</button>
+              <div className="review-edit-form">
+                <textarea className="review-textarea" name="reviewText" value={editFormData.reviewText} onChange={handleEditChange} />
+                <input className="review-input" type="text" name="carModel" value={editFormData.carModel} onChange={handleEditChange} />
+                <input className="review-input" type="text" name="carBrand" value={editFormData.carBrand} onChange={handleEditChange} />
+                <input className="review-input" type="text" name="carYear" value={editFormData.carYear} onChange={handleEditChange} />
+                <input className="review-input" type="text" name="rating" value={editFormData.rating} onChange={handleEditChange} />
+                <button className="btn btn-save" onClick={() => handleUpdate(review.id)}>Save</button>
+                <button className="btn btn-cancel" onClick={() => setEditingReview(null)}>Cancel</button>
               </div>
             ) : (
-              <div>
-                <p>{review.comment}</p>
-                <p>{review.car_model}</p>
-                <p>{review.car_brand}</p>
-                <p>{review.car_year}</p>
-                <p>{review.rating}</p>
-                <button onClick={() => handleDelete(review.id)}>
+              <div className="review-display">
+                <p className="review-comment">{review.comment}</p>
+                <p className="review-car-model">{review.car_model}</p>
+                <p className="review-car-brand">{review.car_brand}</p>
+                <p className="review-car-year">{review.car_year}</p>
+                <p className="review-rating">{review.rating}</p>
+                <button className="btn btn-delete" onClick={() => handleDelete(review.id)}>
                   Delete Review
                 </button>
-                <button onClick={() => {
+                <button className="btn btn-edit" onClick={() => {
                   setEditFormData({
                     reviewText: review.comment,
                     carModel: review.car_model,

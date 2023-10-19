@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import "../Userman.css"
 const BACKEND_URL = "http://localhost:5001";
 function UserManagement() {
     const [users, setUsers] = useState([]);

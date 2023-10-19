@@ -3,6 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import "../style.css"
 const backendUrl = "http://localhost:5001";
 
 const customToastContainerStyle = {
@@ -77,8 +78,8 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
   };
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="sign-up-container">
+      <h2 className="login-heading">Login</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor='email'>Email:</label>
@@ -106,10 +107,11 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
       <ToastContainer
         position='bottom-center'
         className='custom-toast-container'
-        style={customToastContainerStyle}
       />
     </div>
-  );
+);
+
+
 };
 
 export default Login;
