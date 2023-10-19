@@ -1,0 +1,104 @@
+/* Profile.css */
+
+/* General styling */
+h1, h2 {
+    color: #ddad00;
+    text-align: center;
+  }
+  .welcome-message {
+    font-size: 1.5rem;
+    color: #8a0cad;
+   text-shadow:0px  0px 30px #e2ba04;
+  
+}
+  p {
+    color: #ffc803;;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+
+    text-align: center;
+    font-size: 1.2rem;
+    
+  }
+  
+  .review {
+    border: 1px solid #ccc;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    position: relative;
+  }
+  
+  button {
+    background-color: #6d0970;
+    color: #fff;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 0.5rem 0;
+    transition: background-color 0.3s;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Review input fields styling */
+  label {
+    color: rgb(255, 255, 255);
+    display: block;
+    margin-top: 1rem;
+  }
+  
+  input[type="text"], 
+  input[type="number"], 
+  textarea, 
+  select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 30px;
+  }
+  
+  input[type="file"] {
+    margin-top: 1rem;
+  }
+  
+  /* Review image styling */
+  img {
+    max-width: 200px;
+    height: auto;
+    margin-top: 1rem;
+    border-radius: 4px;
+  }
+  
+  /* Error/Succes messages */
+  p {
+    color: rgb(0, 0, 0); /* Change this if you want another color for error messages */
+  }
+  
+  /* If you want a different style for success messages, you might need to add a class to it in the JSX */
+  .profile {
+    color: #ffc803;;
+  }
+  .navbarcontainer {
+    padding: 15px 0; /* Adjusted padding */
+    justify-content: center; 
+   
+    background-color: #000000; /* Slightly darker background */
+    box-shadow: var(--box-shadow-light);
+    border-top: var(--navbar-border);
+    border-bottom: var(--navbar-border);
+  }
+  .nav-link {
+    font-family: "Vollkorn";
+    display: inline-block;
+    padding: 10px 5px;
+    font-size: 20px;
+    margin-right: 100px;
+    color: rgb(142, 21, 126);
+  
+  }
+  .nav-link:last-of-type {
+    margin-right: 0; 
+  }

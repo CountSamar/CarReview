@@ -1,0 +1,66 @@
+/* General Styles */
+.user-management {
+    font-family: 'Vollkorn', sans-serif; /* A neutral font; you can choose another */
+    max-width: 700px; 
+    margin: 20px auto ; /* Centers in the middle of the page with auto margins */
+    padding: 20px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-management h2 {
+    
+    color: #c010db;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+}
+
+/* Feedback messages */
+.error-message,
+.confirmation-message {
+    padding: 10px 15px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+}
+
+.error-message {
+    background-color: #ffebee; /* Light Red */
+    color: #f44336; /* Red */
+}
+
+.confirmation-message {
+    background-color: #e8f5e9; /* Light Green */
+    color: #4caf50; /* Green */
+}
+
+/* User List */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px 0;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+li:last-child {
+    border-bottom: none; /* Remove border for the last item */
+}
+
+button {
+    margin-left: 10px;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 4px;
+    background-color: #91138d; /* Blue */
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #610959; /* Darker blue on hover */
+}

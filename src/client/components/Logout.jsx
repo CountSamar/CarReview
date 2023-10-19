@@ -23,9 +23,9 @@ const Logout = ({ setToken, setIsLoggedIn, setShowLogoutMessage }) => {
   }
 
   return (
-    <button onClick={handleLogout}>
-      Logout
-    </button>
+    <button onClick={handleLogout} className="logout-button">
+    Logout
+  </button>
   );
 };
 

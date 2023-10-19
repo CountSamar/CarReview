@@ -2,8 +2,9 @@ const express = require("express");
 const cors = require("cors");
 const path = require("path");
 
-const API_BASE_URL = 'https://carreviewweb.onrender.com'; 
-const PORT = process.env.PORT || 3000;  // Define the PORT constant here.
+
+const PORT = 5001;
+
 
 const userRoutes = require("./routes/userroutes");
 const carRoutes = require("./routes/carroute");
@@ -13,7 +14,8 @@ const chatRoutes = require("./routes/chatroute");
 const app = express();
 
 // List of allowed origins for CORS.
-const allowedOrigins = ["http://localhost:3000", "https://carreviewweb.onrender.com"];
+const allowedOrigins = ["http://localhost:3000", "http://localhost:5001", ];
+
 
 app.use(
   cors({
@@ -51,6 +53,6 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Server is running on ${API_BASE_URL}:${PORT}`);
+  console.log(`Server is running on :${PORT}`);
 });
 

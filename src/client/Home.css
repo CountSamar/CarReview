@@ -1,0 +1,148 @@
+/* General styling for the entire comment section */
+.review .chat-section {
+    border-top: 2px solid #ccc;
+    padding: 15px;
+    margin-top: 20px;
+}
+
+/* Heading for the comments section */
+.review .chat-section h2 {
+    font-family: 'Vollkorn';
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+/* Each comment styling */
+.comment {
+    padding: 10px;
+    border: 1px solid #cdb3d1;
+    margin-top: 10px;
+    border-radius: 30px;
+    position: relative;
+}
+
+
+
+
+/* Timestamp for each comment */
+.comment .timestamp {
+    color: #888;
+    font-size: 0.8em;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+/* Styling for the button that deletes a comment */
+.comment button {
+    background-color: #e74c3c; /* Red */
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.comment button:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+/* Prompt for users to sign up or log in */
+.prompt-login {
+    text-align: center;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border: 1px solid #e0e0e0;
+    border-radius: 30px;
+}
+
+.prompt-login a {
+    color: #3498db; /* Blue color for links */
+    text-decoration: none;
+}
+
+.prompt-login a:hover {
+    text-decoration: underline;
+}
+
+/* Textarea to add a new comment */
+.add-comment-section textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: vertical; /* Allow only vertical resizing */
+}
+
+.add-comment-section button {
+    background-color: #3498db; /* Blue */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: block;
+}
+
+.add-comment-section button:hover {
+    background-color: #2980b9; /* Darker blue on hover */
+}
+
+/* Error message styling */
+.error-message {
+    color: #e74c3c; /* Red */
+    background-color: #fbeaea; /* Light red background */
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+}
+/* reviews */
+
+.review {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center the content */
+    border: 3px solid #b515b87c; /* Add a border around each review */
+    border-radius: 30px; /* Round the corners */
+    padding: 20px;
+    margin: 20px 0; /* Space between each review */
+    width: 600px; /* Restrict the max width for wider screens */
+    box-shadow: 0px 0px 100px rgba(156, 23, 177, 0.779); /* Slight shadow for depth */
+    background-color: #fefefe; /* Just in case the body has a different background */
+}
+
+.review p {
+    width: 100%;
+    
+    text-align: center; /* Center align text */
+    margin: 8px 0; /* Adjust space between elements */
+}
+
+.review img {
+    max-width: 80%; /* Make sure the image isn't too wide */
+    height: auto;
+    margin-top: 20px; /* Space above the image */
+    margin-bottom: 20px; /* Space below the image */
+    border-radius: 5px; /* Round the corners of the image */
+}
+
+.review h2 {
+    font-size: 1.5em; /* Make the rating stand out more */
+    color: #333; /* Slightly darker text color for emphasis */
+    margin-top: 25px; /* More spacing above the rating */
+ 
+}
+
+h1 {
+    font-family: 'Vollkorn', sans-serif; /* Setting the font family */
+    font-size: 2em;                      /* Setting the font size */
+    color: #333;                         /* Setting the text color */
+    text-align: center;                  /* Centering the text */
+    margin-top: 20px;                    /* Space above the h1 */
+    margin-bottom: 20px;                 /* Space below the h1 */
+    text-shadow: 1px 1px 3px rgba(221, 197, 17, 0.65);  /* Adding a subtle text shadow */
+  }
+  
