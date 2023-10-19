@@ -3,7 +3,7 @@ import jwt_decode from 'jwt-decode';
 import { toast } from 'react-toastify';
 import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import "../style.css"
+import "../login.css"
 const backendUrl = "http://localhost:5001";
 
 const customToastContainerStyle = {

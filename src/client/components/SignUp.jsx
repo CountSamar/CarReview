@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import "../SignUp.css";
-import "../style.css"
+
 
 const BACKEND_URL = "http://localhost:5001";
 
@@ -79,7 +79,7 @@ function SignUp() {
 
     return (
         <div className="sign-up-container">
-            <h2>Create User</h2>
+            <h2>Create Account</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>First Name:</label>

@@ -1,4 +1,4 @@
-/* SignUp Container and Login */
+/* SignUp Container */
 .sign-up-container {
     display: flex;
     flex-direction: column;
@@ -7,23 +7,17 @@
     margin-bottom: 20px;  /* Add some bottom margin if needed */
     margin-left: auto;  /* For centering */
     margin-right: auto;  /* For centering */
-    padding: 20px;
-  
-    
-   
+    padding: 80px;
     border: 1px solid #6b0755;
-   
     border-radius: 30px;
     box-shadow: 0px 4px 10px  #6b0755;
 }
 
-/* Input Fields and Labels */
+/* Input Fields and Labels for SignUp */
 .sign-up-container div {
     display: flex;
     flex-direction: column;
     margin: 10px 0;
-   
-   
 }
 
 .sign-up-container label {
@@ -34,7 +28,6 @@
 
 .sign-up-container input {
     padding: 10px;
-    
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
@@ -46,7 +39,7 @@
     box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
 }
 
-/* Submit Button */
+/* Submit Button for SignUp */
 .sign-up-container button {
     padding: 10px 15px;
     background-color: #6f0972;
@@ -59,4 +52,7 @@
 
 .sign-up-container button:hover {
     background-color: #9b07c4; /* Darker shade for hover */
+}
+.sign-up-container h2 {
+    color: #6f0972;
 }
