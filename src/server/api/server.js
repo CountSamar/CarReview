@@ -40,11 +40,11 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/chats", chatRoutes);
 
 // Serve static files from the React app build directory
-app.use(express.static(path.join(__dirname, '..', '..', 'dist')));
+app.use(express.static(path.join(__dirname, '..', 'dist')));
 
 // Route to handle any requests to unhandled endpoints
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '..', 'dist', 'index.html'));
+  res.sendFile(path.join(__dirname, '..',  'dist', 'index.html'));
 });
 
 // Error handler
