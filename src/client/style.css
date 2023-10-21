@@ -36,7 +36,7 @@ body {
   color: #ffc803;
   font-size: 80px; /* Adjust the font size to make it bigger */
   line-height: 1.2; /* Adjust the line height to make it taller */
-  background-image: url("src/client/wizard1.jpg");
+  background-image: url("/public/wizard1.jpg");
   background-size: 30%; /* Cover the entire area of the title */
   background-repeat: no-repeat; /* Do not repeat the image */
   background-position: bottom; /* Center the image */

@@ -42,6 +42,8 @@ app.use("/api/chats", chatRoutes);
 // Serve static files from the React app build directory
 app.use(express.static(path.join(__dirname, '..', '..', '..', 'dist')));
 
+app.use("/uploads", express.static(path.join(__dirname, 'uploads')));
+
 // Route to handle any requests to unhandled endpoints
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, '..', '..', '..', 'dist', 'index.html'));
