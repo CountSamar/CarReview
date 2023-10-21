@@ -399,7 +399,7 @@ return (
                 Edit Review
               </button>
               <img
-                src={`http://localhost:5001/${review.imgpath}`}
+                src={ `${BACKEND_URL}/${review.imgpath}`}
                 alt={`Image of ${review.car_model}`}
               />
             </div>
