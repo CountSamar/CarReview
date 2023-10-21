@@ -48,6 +48,7 @@ const Home = ({ username }) => {
       );
 
       setLatestReviews(formattedReviews);
+      setError(null);
     } catch (error) {
       setError(error.message);
     }
@@ -71,6 +72,7 @@ const Home = ({ username }) => {
   };
   const handleSearch = async (term) => {
     console.log("Searching for:", term);
+    setError(null);
 
     try {
       const response = await fetch(
@@ -180,6 +182,7 @@ const Home = ({ username }) => {
       {/* Displaying the reviews to display (filtered or latest reviews) */}
       {reviewsToDisplay.map((review, index) => (
         <div className="review" key={review.id}>
+           {error && <div className="error-message">Error: {error}</div>}
           <h1>
             {review.car_year} {review.car_brand} {review.car_model} 
           </h1>
