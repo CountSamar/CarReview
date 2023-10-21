@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import "../Reviewman.css"
-const BACKEND_URL = "http://localhost:5001";
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const ReviewManagement = () => {
   const [reviews, setReviews] = useState([]);

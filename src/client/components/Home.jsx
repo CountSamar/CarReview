@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"; // Import the Link component
 import SearchBar from "./SearchBar";
 import ChatHistory from "./ChatHistory"; // Import the ChatHistory component
 import "../Home.css";
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const Home = ({ username }) => {
   const [latestReviews, setLatestReviews] = useState([]);
@@ -29,14 +30,14 @@ const Home = ({ username }) => {
 
   const fetchLatestReviews = async () => {
     try {
-      const response = await fetch("http://localhost:5001/api/reviews/latest");
+      const response = await fetch(`${BACKEND_URL}/api/reviews/latest`);
       if (!response.ok) throw new Error("Failed to fetch latest reviews");
       const data = await response.json();
 
       const formattedReviews = await Promise.all(
         data.data.map(async (review) => {
           const chatResponse = await fetch(
-            `http://localhost:5001/api/chats/for-review/${review.id}`
+            `${BACKEND_URL}/api/chats/for-review/${review.id}`
           );
           const chats = await chatResponse.json();
           return {
@@ -54,7 +55,7 @@ const Home = ({ username }) => {
   const fetchCommentsForReview = async (reviewId, reviewIndex) => {
     try {
       const response = await fetch(
-        `http://localhost:5001/api/chats/for-review/${reviewId}`
+        `${BACKEND_URL}/api/chats/for-review/${reviewId}`
       );
       if (!response.ok)
         throw new Error("Failed to fetch comments for the review");
@@ -73,7 +74,7 @@ const Home = ({ username }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5001/api/reviews/search?term=${term}`
+        `${BACKEND_URL}/api/reviews/search?term=${term}`
       );
       if (!response.ok)
         throw new Error("Failed to fetch reviews based on the search term.");
@@ -96,7 +97,7 @@ const Home = ({ username }) => {
       const commentText = newComments[reviewIndex];
       if (!commentText) return;
 
-      const response = await fetch(`http://localhost:5001/api/chats/add`, {
+      const response = await fetch(`${BACKEND_URL}/api/chats/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -132,7 +133,7 @@ const Home = ({ username }) => {
       const token = sessionStorage.getItem("token");
       console.log("Token:", token);
       response = await fetch(
-        `http://localhost:5001/api/chats/delete/${chat_id}`,
+        `${BACKEND_URL}/api/chats/delete/${chat_id}`,
         {
           method: "DELETE",
           headers: {
@@ -184,7 +185,7 @@ const Home = ({ username }) => {
           </h1>
 
           <img
-            src={`http://localhost:5001/${review.imgpath}`}
+            src={`${BACKEND_URL}/${review.imgpath}`}
             alt="Review Image"
           />
           <p> {review.comment}</p>

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import "../SignUp.css";
 
 
-const BACKEND_URL = "http://localhost:5001";
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 function SignUp() {
     const [formData, setFormData] = useState({
@@ -79,7 +79,7 @@ function SignUp() {
 
     return (
         <div className="sign-up-container">
-            <h2>Create Account</h2>
+            <h2 >Create Account</h2>
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>First Name:</label>
@@ -101,7 +101,7 @@ function SignUp() {
                     <label>Password:</label>
                     <input type="password" name="password" value={formData.password} onChange={handleChange} />
                 </div>
-                <button type="submit">Create User</button>
+                <button type="submit">Create Account</button>
             </form>
 
             {/* Including ToastContainer to handle the toasts */}

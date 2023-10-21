@@ -14,7 +14,11 @@ const chatRoutes = require("./routes/chatroute");
 const app = express();
 
 // List of allowed origins for CORS.
-const allowedOrigins = ["http://localhost:3000", "http://localhost:5001", ];
+const allowedOrigins = [
+  "http://localhost:3000", 
+  "http://localhost:5001", 
+  "https://carreviewweb.onrender.com"
+];
 
 
 app.use(

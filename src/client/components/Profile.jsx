@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import "../profile.css"
 
 import Logout from "./Logout";
-const BACKEND_URL = "http://localhost:5001";
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const Profile = ({
   username,
