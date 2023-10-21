@@ -168,6 +168,17 @@ const Profile = ({
         setMessage("There was an error. Please try again.");
     }
 };
+const handleEdit = (review) => {
+  setEditFormData({
+    reviewText: review.comment,
+    carModel: review.car_model,
+    carBrand: review.car_brand,
+    carYear: review.car_year.toString(),
+    rating: review.rating.toString(),
+    imgFile: null,
+  });
+  setEditingReview(review.id);
+};
 const handleUpdate = async (reviewId) => {
   console.log("State or Prop ID:", reviewId);
   console.log("Edit Form Data:", editFormData);
@@ -381,25 +392,11 @@ return (
                 <strong>Review:</strong> {review.comment}
               </div>
               <button onClick={() => handleDelete(review.id)}>
-                Delete Review
+              Delete Review
               </button>
-              <button
-                onClick={() => {
-                  setFormData({
-                    reviewText: review.comment,
-                    carModel: review.car_model,
-                    carBrand: review.car_brand,
-                    carYear: review.car_year.toString(),
-                    rating: review.rating.toString(),
-                    imgFile: null,
-                  });
-                  setEditingReview(review.id);
-                }}
-              >
-                Edit Review
-              </button>
+              <button onClick={() => handleEdit(review)}>Edit Review</button>
               <img
-                src={ `${BACKEND_URL}/${review.imgpath}`}
+                src={`${BACKEND_URL}/${review.imgpath}`}
                 alt={`Image of ${review.car_model}`}
               />
             </div>
@@ -407,9 +404,6 @@ return (
         </li>
       ))}
     </ul>
-    
-    
-   
   </div>
 );
 };
