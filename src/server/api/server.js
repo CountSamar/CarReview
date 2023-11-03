@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 const allowedOrigins = [
   "http://localhost:3000",
   "http://localhost:5001",
-  "https://carreviewweb.onrender.com"
+  "https://carreviewweb.onrender.com",
 ];
 
 // CORS middleware setup.
@@ -51,7 +51,7 @@ const distDir = path.join(__dirname, '..', '..', '..', 'dist');
 console.log(`Serving static files from: ${distDir}`);
 app.use(express.static(distDir));
 
-// Serve static files from the uploads directory
+// Serve static files from the uploads directory in the server directory
 const uploadsDir = path.join(__dirname, 'uploads');
 console.log(`Serving uploads from: ${uploadsDir}`);
 app.use("/uploads", express.static(uploadsDir));
