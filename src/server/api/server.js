@@ -13,6 +13,7 @@ const allowedOrigins = [
   "https://carreviewweb.onrender.com"
 ];
 
+// CORS middleware setup.
 app.use(cors({
   origin: function (origin, callback) {
     if (!origin) return callback(null, true); // Allow requests with no origin like mobile apps or curl requests.
@@ -26,10 +27,11 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
 }));
 
+// JSON and URL-encoded parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Use morgan to log HTTP requests
+// Logging HTTP requests
 app.use(morgan('combined'));
 
 // API routes
@@ -38,6 +40,7 @@ const carRoutes = require("./routes/carroute");
 const reviewRoutes = require("./routes/reviewroute");
 const chatRoutes = require("./routes/chatroute");
 
+// Use the API routes
 app.use("/api/users", userRoutes);
 app.use("/api/cars", carRoutes);
 app.use("/api/reviews", reviewRoutes);
@@ -48,22 +51,12 @@ const distDir = path.join(__dirname, '..', '..', '..', 'dist');
 console.log(`Serving static files from: ${distDir}`);
 app.use(express.static(distDir));
 
+// Serve static files from the uploads directory
 const uploadsDir = path.join(__dirname, 'uploads');
 console.log(`Serving uploads from: ${uploadsDir}`);
-app.use("/uploads", express.static(uploadsDir, {
-  setHeaders: (res, filePath) => {
-    console.log(`File requested: ${filePath}`);
-  },
-  fallthrough: true, // Continue to the next middleware if the file is not found
-}));
+app.use("/uploads", express.static(uploadsDir));
 
-app.use("/uploads", (req, res) => {
-  const filePath = path.join(uploadsDir, req.path);
-  console.error(`File not found: ${filePath}`);
-  res.status(404).send("File not found");
-});
-
-// Route to handle any requests to unhandled endpoints
+// Fallback route for handling SPA client-side routing. Must be below static file serving.
 app.get('*', (req, res) => {
   res.sendFile(path.join(distDir, 'index.html'));
 });
@@ -77,3 +70,4 @@ app.use((err, req, res, next) => {
 
 // Start the server
 app.listen(port, () => console.log(`Server running on port ${port}`));
+
