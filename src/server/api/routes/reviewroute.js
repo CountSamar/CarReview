@@ -90,11 +90,10 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
   // Assuming the 'uploads' directory is directly accessible under the server root
   if (imgPath) {
     // This is the base server path that should be removed from the imgPath
-    const basePath = '/opt/render/project/src/src/server/'; 
+    const basePath = '/opt/render/project/src/server/'; 
     // Remove the server path to make the path relative to the server root
     imgPath = imgPath.replace(basePath, ''); 
-    // Prepend '/uploads/' if your static files are served from the 'uploads' directory
-    imgPath = '/uploads/' + imgPath.split('/').pop();
+  
   }
 
   // Validation for the presence of all fields
