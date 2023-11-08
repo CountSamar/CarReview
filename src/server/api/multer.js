@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Set the directory for the uploads to /CarReview/src/server/uploads
-const uploadDir = path.join(__dirname, '..', 'uploads'); // Goes up one level to /CarReview/src/server
+const uploadDir = path.join(__dirname, '..', '..', 'uploads'); // Goes up one level to /CarReview/src/server
 
 // Ensure the uploads directory exists
 if (!fs.existsSync(uploadDir)) {
