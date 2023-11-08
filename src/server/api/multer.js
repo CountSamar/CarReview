@@ -4,7 +4,8 @@ const fs = require('fs');
 
 // Set the directory for the uploads to /CarReview/src/server/uploads
 const uploadDir = path.join(__dirname, '..', '..', 'uploads'); // Goes up one level to /CarReview/src/server
-
+// Log the upload directory path
+console.log(`Upload directory is set to: ${uploadDir}`);
 // Ensure the uploads directory exists
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
