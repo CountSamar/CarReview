@@ -3,7 +3,7 @@ const path = require('path');
 const fs = require('fs');
 
 // Set the directory for the uploads to /CarReview/src/server/uploads
-const uploadDir = path.join(__dirname, 'uploads');
+const uploadDir = path.join( 'uploads');
 // Log the upload directory path
 console.log(`Upload directory is set to: ${uploadDir}`);
 // Ensure the uploads directory exists
