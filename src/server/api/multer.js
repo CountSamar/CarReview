@@ -7,6 +7,7 @@ const path = require('path');
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Ensure these are set in your environment
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
+  
 });
 
 const s3 = new AWS.S3();
