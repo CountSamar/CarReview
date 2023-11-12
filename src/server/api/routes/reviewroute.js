@@ -80,23 +80,21 @@ router.get("/user/:username", async (req, res) => {
 
 router.post("/create", upload.single("imgpath"), async (req, res) => {
   console.log("Received data from frontend:", req.body);
-  console.log("File Data:", req.file);
+  if (!req.file) {
+    return res.status(400).json({
+      success: false,
+      message: "Image file is required.",
+    });
+  }
 
-  // Extract data from the body
   const { user_name, carModel, carBrand, carYear, comment, rating } = req.body;
 
-  // Get the URL of the uploaded file from multer's file object
-  // This URL will be the direct link to the file in your S3 bucket
-  let imgPath = req.file ? req.file.location : null;
-
-  // Validation for the presence of all fields
   if (
     !user_name ||
     !carModel ||
     !carBrand ||
     !carYear ||
     !comment ||
-    !imgPath ||
     rating === undefined
   ) {
     return res.status(400).json({
@@ -105,18 +103,23 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
     });
   }
 
-  // Try to create a new review with the provided data
   try {
+    // Upload file to S3
+    const uploadResult = await uploadFileToS3(req.file);
+    let imgPath = uploadResult.Location; // URL of the uploaded file
+
+    // Create a new review with the provided data
     const review = await createReview({
       username: user_name,
       carModel,
       carBrand,
       carYear,
       comment,
-      imgPath, // Store the S3 URL
+      imgPath,
       rating,
     });
     res.json({ success: true, review });
+
   } catch (err) {
     console.error("Error while creating review:", err);
     res.status(500).json({
