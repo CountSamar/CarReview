@@ -82,19 +82,12 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
   console.log("Received data from frontend:", req.body);
   console.log("File Data:", req.file);
 
-  // Extract data from the body and the file path from multer's file object
+  // Extract data from the body
   const { user_name, carModel, carBrand, carYear, comment, rating } = req.body;
-  let imgPath = req.file ? req.file.path : null;
 
-  // Here we modify the imgPath to create a relative path
-  // Assuming the 'uploads' directory is directly accessible under the server root
-  if (imgPath) {
-    // This is the base server path that should be removed from the imgPath
-    const basePath = '/opt/render/project/server/'; 
-    // Remove the server path to make the path relative to the server root
-    imgPath = imgPath.replace(basePath, ''); 
-  
-  }
+  // Get the URL of the uploaded file from multer's file object
+  // This URL will be the direct link to the file in your S3 bucket
+  let imgPath = req.file ? req.file.location : null;
 
   // Validation for the presence of all fields
   if (
@@ -120,7 +113,7 @@ router.post("/create", upload.single("imgpath"), async (req, res) => {
       carBrand,
       carYear,
       comment,
-      imgPath, // Store the relative path
+      imgPath, // Store the S3 URL
       rating,
     });
     res.json({ success: true, review });

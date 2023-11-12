@@ -51,15 +51,7 @@ const distDir = path.join(__dirname, '..', '..', '..', 'dist');
 console.log(`Serving static files from: ${distDir}`);
 app.use(express.static(distDir));
 
-// Serve static files from the uploads directory in the server directory
-const uploadsDir = path.join( 'uploads');
-console.log(`Serving uploads from: ${uploadsDir}`);
-app.use("/uploads", express.static(uploadsDir));
 
-// Handle requests for non-existent files in the uploads directory
-app.use("/uploads", function(req, res) {
-  res.status(404).send('File not found');
-});
 
 // Fallback route for handling SPA client-side routing. Must be below static file serving.
 app.get('*', (req, res) => {

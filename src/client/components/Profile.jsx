@@ -396,7 +396,7 @@ return (
               </button>
               <button onClick={() => handleEdit(review)}>Edit Review</button>
               <img
-                src={`${BACKEND_URL}/${review.imgpath}`}
+                src={review.imgpath}
 
                 alt={`Image of ${review.car_model}`}
               />
