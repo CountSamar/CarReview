@@ -5,18 +5,18 @@ const path = require('path');
 
 // Configure the AWS SDK
 AWS.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID, // Ensure these are set in your environment
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
-  
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  // Consider adding the region if necessary
 });
 
 const s3 = new AWS.S3();
 
-// Configure multer to use multer-s3 for uploading files to S3
+// Configure multer to use multer-s3 for uploading files to the S3 access point
 const upload = multer({
   storage: multerS3({
     s3: s3,
-    bucket: 'reviewbucket333', // Replace with your actual S3 bucket name
+    bucket: 'arn:aws:s3:us-east-2:812347084154:accesspoint/soulunknown', // Replace with your access point ARN
     metadata: function (req, file, cb) {
       cb(null, { fieldName: file.fieldname });
     },
@@ -29,4 +29,5 @@ const upload = multer({
 });
 
 module.exports = upload;
+
 
