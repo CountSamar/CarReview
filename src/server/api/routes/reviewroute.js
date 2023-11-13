@@ -63,13 +63,11 @@ router.get("/user/:username", async (req, res) => {
   const username = req.params.username;
   try {
     const reviews = await getReviewsByUsername(username);
-    if (reviews && reviews.length > 0) {
+    if (reviews) {
       res.json({ success: true, data: reviews });
     } else {
-      res.status(404).send({
-        success: false,
-        message: `No reviews found for user with the username ${username}`,
-      });
+      // Even if no reviews are found, return an empty array with a success status
+      res.json({ success: true, data: [] });
     }
   } catch (error) {
     console.error("Error fetching reviews for user:", error);
@@ -79,6 +77,7 @@ router.get("/user/:username", async (req, res) => {
     });
   }
 });
+
 
 router.post("/create", upload.single('imgpath'), async (req, res) => {
   console.log("Received data from frontend:", req.body);
