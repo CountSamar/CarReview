@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../profile.css";
-
 import Logout from "./Logout";
+
 const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const Profile = ({
@@ -80,8 +80,7 @@ const Profile = ({
 
   const submitReview = async () => {
     setMessage(null);
-    const { reviewText, carModel, carBrand, carYear, imgFile, rating } =
-      formData;
+    const { reviewText, carModel, carBrand, carYear, imgFile, rating } = formData;
 
     if (
       reviewText.trim() &&
@@ -114,10 +113,7 @@ const Profile = ({
         }
 
         if (data.success) {
-          // Assuming that the `data` object contains the review that was just created,
-          // including its ID and image path, we can add this to our current reviews.
           setReviews((prevReviews) => [...prevReviews, data.review]);
-
           setFormData({
             reviewText: "",
             carModel: "",
