@@ -1,11 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const upload = require("../multer");
+const { upload, uploadFileToS3 } = require("../multer");
 
 const {
   getAllReviews,
   deleteReview,
-
   createReview,
   updateReview,
   getAdminAllReviews,
@@ -19,35 +18,42 @@ const {
 router.get("/admin", async (req, res, next) => {
   try {
     const reviews = await getAdminAllReviews();
-    res.json({ message: "No reviews found", data: reviews });
+    let message = reviews.length > 0 ? "Reviews found" : "No reviews found";
+    res.json({ message: message, data: reviews });
   } catch (err) {
     next(err);
   }
 });
+
 router.get("/admin/filtered", async (req, res, next) => {
   try {
     const { carModel, carYear, carBrand } = req.query;
     const reviews = await getFilteredAdminReviews(carModel, carYear, carBrand);
-    res.json({ message: "No reviews found", data: reviews });
+    let message = reviews.length > 0 ? "Reviews found" : "No reviews found";
+    res.json({ message: message, data: reviews });
   } catch (err) {
     next(err);
   }
 });
+
 // Fetch all reviews
 router.get("/", async (req, res, next) => {
   try {
     const reviews = await getAllReviews();
-    res.json({ success: true, data: reviews });
+    let message = reviews.length > 0 ? "Reviews found" : "No reviews found";
+    res.json({ success: true, message: message, data: reviews });
   } catch (err) {
     next(err);
   }
 });
+
 // Fetch the latest 10 reviews
 router.get("/latest", async (req, res, next) => {
   try {
-    const limit = req.query.limit || 10; // get the limit from the query or default to 10
-    const reviews = await getLatestReviews(limit); // pass the limit to the function
-    res.json({ success: true, data: reviews });
+    const limit = req.query.limit || 10;
+    const reviews = await getLatestReviews(limit);
+    let message = reviews.length > 0 ? "Reviews found" : "No reviews found";
+    res.json({ success: true, message: message, data: reviews });
   } catch (err) {
     next(err);
   }
@@ -55,14 +61,10 @@ router.get("/latest", async (req, res, next) => {
 
 router.get("/user/:username", async (req, res) => {
   const username = req.params.username;
-
-  // Consider adding some basic validation for the username if needed
-
   try {
     const reviews = await getReviewsByUsername(username);
-
     if (reviews && reviews.length > 0) {
-      res.json(reviews);
+      res.json({ success: true, data: reviews });
     } else {
       res.status(404).send({
         success: false,
@@ -78,7 +80,7 @@ router.get("/user/:username", async (req, res) => {
   }
 });
 
-router.post("/create",  async (req, res) => {
+router.post("/create", upload.single('imgpath'), async (req, res) => {
   console.log("Received data from frontend:", req.body);
   if (!req.file) {
     return res.status(400).json({
@@ -89,14 +91,7 @@ router.post("/create",  async (req, res) => {
 
   const { user_name, carModel, carBrand, carYear, comment, rating } = req.body;
 
-  if (
-    !user_name ||
-    !carModel ||
-    !carBrand ||
-    !carYear ||
-    !comment ||
-    rating === undefined
-  ) {
+  if (!user_name || !carModel || !carBrand || !carYear || !comment || rating === undefined) {
     return res.status(400).json({
       success: false,
       message: "All fields including image and rating are required.",
@@ -104,11 +99,9 @@ router.post("/create",  async (req, res) => {
   }
 
   try {
-    // Upload file to S3
     const uploadResult = await uploadFileToS3(req.file);
-    let imgPath = uploadResult.Location; // URL of the uploaded file
-
-    // Create a new review with the provided data
+    let imgPath = uploadResult.Location;
+    
     const review = await createReview({
       username: user_name,
       carModel,
@@ -119,7 +112,6 @@ router.post("/create",  async (req, res) => {
       rating,
     });
     res.json({ success: true, review });
-
   } catch (err) {
     console.error("Error while creating review:", err);
     res.status(500).json({
@@ -133,11 +125,7 @@ router.post("/create",  async (req, res) => {
 router.delete("/delete", async (req, res) => {
   try {
     const { id } = req.body;
-
-    // Update the deleteReview function to accept the id.
     const deletedCount = await deleteReview(id);
-
-    // If no reviews were deleted, assume it wasn't found
     if (deletedCount === 0) {
       return res.status(404).json({
         success: false,
@@ -147,60 +135,60 @@ router.delete("/delete", async (req, res) => {
         },
       });
     }
-
     res.json({ success: true, message: "Review deleted successfully!" });
-  } catch (err) {
-    console.error("Error while deleting review:", err); // Log the error for debugging purposes
+  // ... previous code
 
-    // Send a general internal server error message
-    res.status(500).json({
-      success: false,
-      error: {
-        code: "INTERNAL_SERVER_ERROR",
-        message: "An internal error occurred. Please try again later.",
-      },
-    });
-  }
+} catch (err) {
+  console.error("Error while deleting review:", err);
+  res.status(500).json({
+    success: false,
+    error: {
+      code: "INTERNAL_SERVER_ERROR",
+      message: "An internal error occurred. Please try again later.",
+    },
+  });
+}
 });
 
 router.patch("/update/:id", async (req, res) => {
-  const { id } = req.params;
-  const { comment, rating, carModel, carBrand, carYear } = req.body;
+const { id } = req.params;
+const { comment, rating, carModel, carBrand, carYear } = req.body;
 
-  try {
-    const updatedReview = await updateReview({
-      id,
-      comment,
-      rating,
-      car_model: carModel,
-      car_brand: carBrand,
-      car_year: carYear,
-    });
+try {
+  const updatedReview = await updateReview({
+    id,
+    comment,
+    rating,
+    car_model: carModel,
+    car_brand: carBrand,
+    car_year: carYear,
+  });
 
-    if (updatedReview) {
-      res.status(200).json({ success: true, review: updatedReview });
-    } else {
-      res.status(404).json({ message: "Review not found." });
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to update review." });
+  if (updatedReview) {
+    res.status(200).json({ success: true, review: updatedReview });
+  } else {
+    res.status(404).json({ success: false, message: "Review not found." });
   }
+} catch (error) {
+  console.error("Error updating review:", error);
+  res.status(500).json({ success: false, message: "Failed to update review." });
+}
 });
 
 router.get("/search", async (req, res) => {
-  const searchTerm = req.query.term;
+const searchTerm = req.query.term;
 
-  if (!searchTerm) {
-    return res.status(400).json({ error: "Search term is required." });
-  }
+if (!searchTerm) {
+  return res.status(400).json({ success: false, error: "Search term is required." });
+}
 
-  try {
-    const results = await searchReviews(searchTerm);
-    res.json(results);
-  } catch (err) {
-    res.status(500).json({ error: "Database error" });
-  }
+try {
+  const results = await searchReviews(searchTerm);
+  res.json({ success: true, data: results });
+} catch (err) {
+  res.status(500).json({ success: false, error: "Database error" });
+}
 });
 
 module.exports = router;
+

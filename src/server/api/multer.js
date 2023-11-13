@@ -6,7 +6,7 @@ const { Readable } = require('stream');
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  // region: 'us-east-2', // Uncomment if necessary
+ 
   endpoint: 'arn:aws:s3:us-east-2:812347084154:accesspoint/soulunknown', // Access Point ARN
   s3ForcePathStyle: true, // Necessary for access points
 });
@@ -25,7 +25,7 @@ const upload = multer({
 // Function to upload a file to S3
 async function uploadFileToS3(file) {
   const params = {
-    Bucket: 'your-bucket-name', // Regular bucket name
+    Bucket: 'reviewbucket333', // Regular bucket name
     Key: `imgpath-${Date.now()}-${file.originalname}`, // File key
     Body: Readable.from(file.buffer),
     // Add other necessary S3 parameters like ContentType, ACL, etc.
