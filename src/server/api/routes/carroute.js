@@ -55,9 +55,9 @@ router.post('/', upload.single('carImage'), async (req, res, next) => {
 
 
 
+
 // Update car details
-// Update car details
-router.put('/:carId', upload.single('carImage'), async (req, res, next) => {
+router.put('/:carId', async (req, res, next) => {
     try {
         const carData = req.body;
         if (req.file) {
