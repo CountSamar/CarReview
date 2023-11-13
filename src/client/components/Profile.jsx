@@ -316,7 +316,7 @@ return (
 
     <h2>Your Reviews</h2>
     <ul>
-      {reviews.map((review) => (
+      {Array.isArray(reviews) && reviews.map((review) => (
         <li className="review" key={review.id}>
           {editingReview === review.id ? (
             <div>
