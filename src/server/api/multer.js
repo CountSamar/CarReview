@@ -6,8 +6,7 @@ const { Readable } = require('stream');
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  endpoint: 'arn:aws:s3:us-east-2:812347084154:accesspoint/soulunknown', 
-  s3ForcePathStyle: true, 
+  region: 'us-east-2', // Set to your bucket's region
 });
 
 const storage = multer.memoryStorage();
