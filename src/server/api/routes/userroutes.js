@@ -51,7 +51,7 @@ router.get("/:userId", async (req, res, next) => {
 // Register a new user
 router.post(
   "/register",
-  upload.single("profilePicture"),
+  
   async (req, res, next) => {
     try {
       const userData = req.body;
