@@ -37,7 +37,7 @@ router.get('/:carId', async (req, res, next) => {
 });
 
 // Add a new car
-router.post('/', upload.single('carImage'), async (req, res, next) => {
+router.post('/',  async (req, res, next) => {
     try {
         const carData = req.body;
         
