@@ -188,7 +188,7 @@ const Home = ({ username }) => {
           </h1>
 
           <img
-            src={`${BACKEND_URL}/${review.imgpath}`}
+            src={`${review.imgpath}`}
             alt="Review Image"
           />
           <p> {review.comment}</p>
