@@ -78,7 +78,7 @@ router.get("/user/:username", async (req, res) => {
   }
 });
 
-router.post("/create", upload.single("imgpath"), async (req, res) => {
+router.post("/create",  async (req, res) => {
   console.log("Received data from frontend:", req.body);
   if (!req.file) {
     return res.status(400).json({
