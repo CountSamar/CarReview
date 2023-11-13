@@ -14,8 +14,12 @@ const storage = multer.memoryStorage();
 const upload = multer({
   storage: storage,
   fileFilter: function (req, file, cb) {
-    // File filter logic
-    cb(null, true);
+    // Allow only image files
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Not an image! Please upload only images.'), false);
+    }
   }
 });
 
@@ -24,11 +28,11 @@ async function uploadFileToS3(file) {
     Bucket: 'reviewbucket333',
     Key: `imgpath-${Date.now()}-${file.originalname}`,
     Body: Readable.from(file.buffer),
-    // Additional parameters
+    ContentType: file.mimetype, // Set the content type
+    // Optionally, you can add 'ACL: "public-read"' if you want the file to be publicly accessible
   };
 
   return s3.upload(params).promise();
 }
 
 module.exports = { upload, uploadFileToS3 };
-
