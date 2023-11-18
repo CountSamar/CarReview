@@ -32,6 +32,10 @@ const Profile = ({
   const [editingReview, setEditingReview] = useState(null);
 
   useEffect(() => {
+    console.log("Updated reviews state:", reviews);
+  }, [reviews]);
+
+  useEffect(() => {
     const fetchReviews = async () => {
       try {
         const response = await fetch(
@@ -79,6 +83,7 @@ const Profile = ({
   };
 
   const submitReview = async () => {
+    console.log("Form data before submission:", formData);
     setMessage(null);
     const { reviewText, carModel, carBrand, carYear, imgFile, rating } = formData;
 
@@ -105,8 +110,9 @@ const Profile = ({
           method: "POST",
           body: formSubmission,
         });
-
+        console.log("Response from server:", response);
         const data = await response.json();
+        console.log("Data received from server:", data);
 
         if (!response.ok) {
           throw Error(data.message || "Error submitting the review");
