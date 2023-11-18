@@ -112,27 +112,23 @@ const Profile = ({
         });
         console.log("Response from server:", response);
         const data = await response.json();
-        console.log("Data received from server:", data);
-
-        if (!response.ok) {
-          throw Error(data.message || "Error submitting the review");
+        console.log("Response data from server:", data);
+      
+        if (!data.success) {
+          throw new Error(data.message || "Error submitting the review");
         }
+      
         console.log("Review data from server:", data.review);
-
-        if (data.success) {
-          setReviews((prevReviews) => [...prevReviews, data.review]);
-          setFormData({
-            reviewText: "",
-            carModel: "",
-            carBrand: "",
-            carYear: "",
-            rating: "0",
-            imgFile: null,
-          });
-          setMessage("Review submitted successfully!");
-        } else {
-          setMessage(data.message || "Error submitting the review");
-        }
+        setReviews(prevReviews => [...prevReviews, data.review]);
+        setFormData({
+          reviewText: "",
+          carModel: "",
+          carBrand: "",
+          carYear: "",
+          rating: "0",
+          imgFile: null
+        });
+        setMessage("Review submitted successfully!");
       } catch (error) {
         console.error("There was an issue saving the review:", error);
         setMessage("There was an error. Please try again.");
