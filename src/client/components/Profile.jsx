@@ -117,6 +117,7 @@ const Profile = ({
         if (!response.ok) {
           throw Error(data.message || "Error submitting the review");
         }
+        console.log("Review data from server:", data.review);
 
         if (data.success) {
           setReviews((prevReviews) => [...prevReviews, data.review]);
