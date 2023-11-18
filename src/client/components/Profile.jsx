@@ -86,7 +86,7 @@ const Profile = ({
     console.log("Form data before submission:", formData);
     setMessage(null);
     const { reviewText, carModel, carBrand, carYear, imgFile, rating } = formData;
-
+  
     if (
       reviewText.trim() &&
       carModel.trim() &&
@@ -105,33 +105,40 @@ const Profile = ({
         formSubmission.append("comment", reviewText);
         formSubmission.append("imgpath", imgFile);
         formSubmission.append("rating", rating);
-
+  
         const response = await fetch(`${BACKEND_URL}/api/reviews/create`, {
           method: "POST",
           body: formSubmission,
         });
-        console.log("Response from server:", response);
+  
         const data = await response.json();
-        console.log("Response data from server:", data);
-      
+        console.log("Data received from server:", data);
+  
         if (!data.success) {
           throw new Error(data.message || "Error submitting the review");
         }
-      
+  
         console.log("Review data from server:", data.review);
-        setReviews(prevReviews => [...prevReviews, data.review]);
-        setFormData({
-          reviewText: "",
-          carModel: "",
-          carBrand: "",
-          carYear: "",
-          rating: "0",
-          imgFile: null
-        });
-        setMessage("Review submitted successfully!");
+        
+        // Ensuring that data.review is an object before updating state
+        if (typeof data.review === 'object' && data.review !== null) {
+          setReviews(prevReviews => Array.isArray(prevReviews) ? [...prevReviews, data.review] : [data.review]);
+          setFormData({
+            reviewText: "",
+            carModel: "",
+            carBrand: "",
+            carYear: "",
+            rating: "0",
+            imgFile: null
+          });
+          setMessage("Review submitted successfully!");
+        } else {
+          throw new Error("Invalid review format received from server");
+        }
+        
       } catch (error) {
         console.error("There was an issue saving the review:", error);
-        setMessage("There was an error. Please try again.");
+        setMessage(error.message || "There was an error. Please try again.");
       }
     } else {
       setMessage(
@@ -139,6 +146,7 @@ const Profile = ({
       );
     }
   };
+  
 
   const handleDelete = async (id) => {
     try {
