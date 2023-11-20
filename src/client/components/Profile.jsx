@@ -325,10 +325,10 @@ const Profile = ({
 
       <h2>Your Reviews</h2>
       <ul>
-        {Array.isArray(reviews) &&
-          reviews.data.map((review) => (
-            <li className="review" key={review.id}>
-              {editingReview === review.id ? (
+      {reviews.length > 0 ? (
+        reviews.map((review) => (
+          <li className="review" key={review.id}>
+            {editingReview === review.id ? (
                 <div>
                   <label>
                     Car Model:
@@ -414,7 +414,10 @@ const Profile = ({
                 </div>
               )}
             </li>
-          ))}
+          ))
+      ):(
+        <p>No reviews to display</p>
+      )}
       </ul>
     </div>
   );
