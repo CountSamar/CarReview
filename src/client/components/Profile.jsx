@@ -325,8 +325,8 @@ const Profile = ({
 
       <h2>Your Reviews</h2>
       <ul>
-      {reviews.length > 0 ? (
-        reviews.map((review) => (
+      {reviews.data && reviews.data.length > 0 ? (
+          reviews.data.map((review) => (
           <li className="review" key={review.id}>
             {editingReview === review.id ? (
                 <div>
