@@ -36,28 +36,33 @@ const Profile = ({
   }, [reviews]);
 
   useEffect(() => {
+    console.log("Fetching reviews for user:", username);
+  
     const fetchReviews = async () => {
       try {
-        const response = await fetch(
-          `${BACKEND_URL}/api/reviews/user/${username}`
-        );
+        console.log("Sending request to:", `${BACKEND_URL}/api/reviews/user/${username}`);
+        
+        const response = await fetch(`${BACKEND_URL}/api/reviews/user/${username}`);
         const data = await response.json();
-
+        console.log("Response received:", data);
+  
         if (!response.ok) {
-          const errorMessage =
-            data && data.message ? data.message : "Error fetching reviews";
+          const errorMessage = data && data.message ? data.message : "Error fetching reviews";
+          console.error("Fetch error:", errorMessage);
           throw new Error(errorMessage);
         }
-
+  
         setReviews(data);
+        console.log("Reviews state updated with:", data);
       } catch (error) {
         console.error("Error fetching user's reviews:", error);
         setMessage("Error fetching your reviews. Please try again.");
       }
     };
-
+  
     fetchReviews();
   }, [username]);
+  
 
   const handleChange = (e) => {
     const { name, value } = e.target;
