@@ -86,7 +86,7 @@ const Home = ({ username }) => {
       const results = await response.json();
       console.log("Search results:", results); // Log the parsed data
 
-      setFilteredReviews(results);
+      setFilteredReviews(results.data);
     } catch (error) {
       console.error("Error during search:", error.message); // Log errors in the catch block
       setError(error.message);
@@ -241,7 +241,6 @@ const Home = ({ username }) => {
         </div>
       ))}
 
-      {/* Render the ChatHistory component */}
     </section>
   );
 };
