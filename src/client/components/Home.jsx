@@ -71,20 +71,25 @@ const Home = ({ username }) => {
     }
   };
   const handleSearch = async (term) => {
-    console.log("Searching for:", term);
+    console.log("Searching for term:", term); // Log the search term
     setError(null);
 
     try {
-      const response = await fetch(
-        `${BACKEND_URL}/api/reviews/search?term=${term}`
-      );
-      if (!response.ok)
-        throw new Error("Failed to fetch reviews based on the search term.");
+      const searchUrl = `${BACKEND_URL}/api/reviews/search?term=${term}`;
+      console.log("Fetch URL:", searchUrl); // Log the fetch URL
+
+      const response = await fetch(searchUrl);
+      console.log("Fetch response:", response); // Log the fetch response
+
+      if (!response.ok) throw new Error("Failed to fetch reviews based on the search term.");
 
       const results = await response.json();
+      console.log("Search results:", results); // Log the parsed data
+
       setFilteredReviews(results);
     } catch (error) {
-      console.error("Error during search:", error.message);
+      console.error("Error during search:", error.message); // Log errors in the catch block
+      setError(error.message);
     }
   };
 
