@@ -71,7 +71,10 @@ router.post(
 router.post("/login", async (req, res, next) => {
   try {
     const { email, password } = req.body;
+    console.log("Login attempt with email:", email);
+
     const user = await validateUser(email, password);
+    console.log("User found:", user);
 
     if (user) {
       const payload = {
@@ -87,9 +90,11 @@ router.post("/login", async (req, res, next) => {
       res.status(401).json({ success: false, message: "Invalid credentials" });
     }
   } catch (err) {
+    console.error("Login error:", err);
     next(err);
   }
 });
+
 
 // Update user role
 router.put('/:userId/role', async (req, res, next) => {

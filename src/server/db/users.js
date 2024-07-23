@@ -35,21 +35,30 @@ const createUser = async({ name = 'first last', email, password, username }) => 
 }
 const validateUser = async (email, password) => {
     if (!email || !password) {
+        console.log('Email or password not provided');
         return null;
     }
 
     try {
         const user = await getUserByEmail(email); // Fetch user by email from the database
-        if (!user) return null;
+        if (!user) {
+            console.log('User not found with email:', email);
+            return null;
+        }
 
         const hashedPassword = user.password; // Get the stored hashed password
         const passwordsMatch = await bcrypt.compare(password, hashedPassword); // Compare the given password with the hashed one
 
-        if (!passwordsMatch) return null;
-        
+        if (!passwordsMatch) {
+            console.log('Password does not match for email:', email);
+            return null;
+        }
+
         delete user.password; // Don't send the hashed password to the client
+        console.log('User validated successfully:', email);
         return user; // Return the user if email and password match
     } catch (err) {
+        console.error('Error during user validation:', err);
         throw err;
     }
 };
