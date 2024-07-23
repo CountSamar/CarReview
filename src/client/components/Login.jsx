@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import jwt_decode from 'jwt-decode';
-import { toast } from 'react-toastify';
-import { ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
-import "../login.css"
-const BACKEND_URL = "https://carreviewweb.onrender.com";
+import 'react-toastify/dist/ReactToastify.css';
+import "../login.css";
 
-const customToastContainerStyle = {
-  // Your custom styles here
-};
+const BACKEND_URL = "https://carreviewweb.onrender.com";
 
 const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn, setUsername, setUserId }) => {
   const [message, setMessage] = useState('');
@@ -31,19 +28,21 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
                 password,
             }),
         });
-        
+
         const result = await response.json();
 
         if (!response.ok) {
-            throw result;
+            // Handle server errors
+            setMessage(result.message || 'Invalid credentials');
+            return;
         }
 
         const decodedToken = jwt_decode(result.token);
 
         setToken(result.token);
         sessionStorage.setItem('token', result.token);
-        setUsername(decodedToken.user_name);  // Assuming this is how you stored username in JWT
-        setUserId(decodedToken.id);  // Assuming this is how you stored user id in JWT
+        setUsername(decodedToken.user_name);  
+        setUserId(decodedToken.id);  
         setIsLoggedIn(true);
         showToastMessage();
 
@@ -55,7 +54,8 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         });
 
         if (!roleResponse.ok) {
-            throw new Error('Role check failed');
+            setMessage('Role check failed');
+            return;
         }
 
         const { isAdmin } = await roleResponse.json();
@@ -67,7 +67,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         }
 
     } catch (err) {
-        setMessage(err.message);
+        setMessage('An error occurred during login. Please try again.');
         console.error(`Login error: ${err.message}`);
     }
   };
@@ -109,9 +109,7 @@ const Login = ({ email, setEmail, password, setPassword, setToken, setIsLoggedIn
         className='custom-toast-container'
       />
     </div>
-);
-
-
+  );
 };
 
 export default Login;
